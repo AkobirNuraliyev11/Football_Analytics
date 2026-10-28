@@ -24,9 +24,14 @@ def main(argv: list[str] | None = None) -> int:
     ingest.add_argument("--video-stream", type=int, default=0)
     ingest.add_argument("--cut-threshold", type=float, default=0.30)
     ingest.add_argument("--max-gap-s", type=float, default=0.25)
+    calibrate = commands.add_parser("calibrate-pitch", help="Fit pixel-to-meter mapping from landmark JSON")
+    calibrate.add_argument("path", type=Path)
     args = parser.parse_args(argv)
     try:
-        if args.command == "probe-video":
+        if args.command == "calibrate-pitch":
+            from .calibration import fit_landmark_file
+            result = fit_landmark_file(args.path)
+        elif args.command == "probe-video":
             from .video import probe_video
             result = probe_video(args.path, args.video_stream).to_dict()
         elif args.command == "ingest-video":
@@ -39,7 +44,8 @@ def main(argv: list[str] | None = None) -> int:
             config = AppConfig.load(args.path) if args.command == "validate-config" else AppConfig()
             result = config.to_dict()
     except (OSError, ValueError) as exc:
-        label = "Configuration error" if args.command in {"default-config", "validate-config"} else "Video error"
+        label = ("Configuration error" if args.command in {"default-config", "validate-config"}
+                 else "Calibration error" if args.command == "calibrate-pitch" else "Video error")
         print(f"{label}: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(result, indent=2, allow_nan=False))

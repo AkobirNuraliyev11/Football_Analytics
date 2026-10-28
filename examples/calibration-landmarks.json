@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "match_id": "synthetic-calibration-example",
+  "shot_id": 0,
+  "frame_index": 0,
+  "width": 1280,
+  "height": 720,
+  "landmarks": [
+    {"name": "corner-x0-y0", "pixel": [100, 100], "pitch": [0, 0]},
+    {"name": "corner-x105-y0", "pixel": [1150, 100], "pitch": [105, 0]},
+    {"name": "corner-x105-y68", "pixel": [1150, 644], "pitch": [105, 68]},
+    {"name": "corner-x0-y68", "pixel": [100, 644], "pitch": [0, 68]},
+    {"name": "halfway-y0", "pixel": [625, 100], "pitch": [52.5, 0]},
+    {"name": "halfway-y68", "pixel": [625, 644], "pitch": [52.5, 68]}
+  ],
+  "validation_landmarks": [
+    {"name": "center-spot", "pixel": [625, 372], "pitch": [52.5, 34]},
+    {"name": "penalty-spot-x11", "pixel": [210, 372], "pitch": [11, 34]}
+  ]
+}

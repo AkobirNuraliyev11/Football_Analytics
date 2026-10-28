@@ -1,8 +1,8 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–2 — foundation, video ingestion, and timing.** No object detection,
-calibration, telemetry computation, backend, or dashboard is implemented yet.
+**Status: Steps 1–3 — foundation, video ingestion, and pitch calibration.** No object
+detection, telemetry computation, backend, or dashboard is implemented yet.
 This foundation is not a production-ready analytics platform.
 
 ## Architectural roadmap and review gates
@@ -13,7 +13,7 @@ tests, and documentation to GitHub before stopping for that review.
 
 1. **Foundation (implemented):** Python package, strict configuration, coordinate and athlete observation contracts, CLI, tests.
 2. **Video ingestion (implemented):** Probe metadata, decode timestamped frames, handle variable frame rates, flag candidate camera cuts, define job manifests.
-3. **Calibration:** Landmark correspondences, homography estimation, outlier rejection, quality checks, camera motion updates, and shot resets.
+3. **Calibration (implemented):** Supplied landmark correspondences, homography estimation, outlier rejection, quality checks, guarded optical-flow updates, and shot reset enforcement.
 4. **Detection and tracking:** Detector adapter, separate ball observations, multi-object tracking, occlusion handling, and uncertain identity associations.
 5. **Team and role classification:** Torso color features, stable team assignments, goalkeeper and official classification with confidence.
 6. **Telemetry:** Time-based smoothing, displacement and observation-gap gates, airborne uncertainty, track maturation, speed, distance, and sprint state machines.
@@ -135,4 +135,17 @@ The output directory must be new. It contains `manifest.json` and, on successful
 completion, `frames.jsonl`. Video arrays are streamed for future pipeline consumers,
 not exported as images. Generated data stays out of Git when stored under `data/`.
 
-**Review gate:** stop here. Step 3 begins only after explicit user approval.
+## Step 3: pitch calibration
+
+```sh
+python3 -m pip install -e ".[video,calibration]"
+python3 -m football_intelligence calibrate-pitch examples/calibration-landmarks.json
+python3 -m unittest discover -s tests -v
+```
+
+The example is synthetic. Real footage requires measured pixel-to-pitch landmark
+correspondences; the system does not yet find pitch markings automatically.
+See [the Step 3 guide](docs/step-03-pitch-calibration.md) for geometry, quality gates,
+camera updates, and usage.
+
+**Review gate:** stop here. Step 4 begins only after explicit user approval.
