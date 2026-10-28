@@ -26,9 +26,26 @@ def main(argv: list[str] | None = None) -> int:
     ingest.add_argument("--max-gap-s", type=float, default=0.25)
     calibrate = commands.add_parser("calibrate-pitch", help="Fit pixel-to-meter mapping from landmark JSON")
     calibrate.add_argument("path", type=Path)
+    download = commands.add_parser("download-models", help="Download published football detection and pitch models")
+    download.add_argument("--model-dir", type=Path, default=Path("data/models"))
+    analyze = commands.add_parser("analyze-video", help="Automatically detect, track and fit pitch geometry")
+    analyze.add_argument("path", type=Path)
+    analyze.add_argument("--output", type=Path, required=True)
+    analyze.add_argument("--match-id", required=True)
+    analyze.add_argument("--model-dir", type=Path, default=Path("data/models"))
+    analyze.add_argument("--device", default="cpu")
+    analyze.add_argument("--max-frames", type=int)
+    analyze.add_argument("--pitch-every", type=int, default=10)
     args = parser.parse_args(argv)
     try:
-        if args.command == "calibrate-pitch":
+        if args.command == "download-models":
+            from .model_assets import download_models
+            result = download_models(args.model_dir)
+        elif args.command == "analyze-video":
+            from .analysis import analyze_video
+            result = analyze_video(args.path,args.output,match_id=args.match_id,model_dir=args.model_dir,
+                                   device=args.device,max_frames=args.max_frames,pitch_every=args.pitch_every)
+        elif args.command == "calibrate-pitch":
             from .calibration import fit_landmark_file
             result = fit_landmark_file(args.path)
         elif args.command == "probe-video":

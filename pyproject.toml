@@ -12,6 +12,7 @@ dependencies = []
 [project.optional-dependencies]
 video = ["av>=16,<17", "numpy>=2,<3"]
 calibration = ["opencv-python-headless>=4.10,<6", "numpy>=2,<3"]
+detection = ["av>=16,<17", "numpy>=2,<3", "ultralytics>=8.4,<9", "scipy>=1.15,<2", "gdown>=6,<7"]
 
 [project.scripts]
 football-intelligence = "football_intelligence.cli:main"

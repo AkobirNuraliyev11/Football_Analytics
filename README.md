@@ -1,8 +1,9 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–3 — foundation, video ingestion, and pitch calibration.** No object
-detection, telemetry computation, backend, or dashboard is implemented yet.
+**Status: Steps 1–4 — ingestion, calibration, automatic detection, and tracking.**
+Telemetry computation, stable team classification, the backend, and dashboard are not
+implemented yet. Automatic analysis produces an annotated preview and JSONL records.
 This foundation is not a production-ready analytics platform.
 
 ## Architectural roadmap and review gates
@@ -14,7 +15,7 @@ tests, and documentation to GitHub before stopping for that review.
 1. **Foundation (implemented):** Python package, strict configuration, coordinate and athlete observation contracts, CLI, tests.
 2. **Video ingestion (implemented):** Probe metadata, decode timestamped frames, handle variable frame rates, flag candidate camera cuts, define job manifests.
 3. **Calibration (implemented):** Supplied landmark correspondences, homography estimation, outlier rejection, quality checks, guarded optical-flow updates, and shot reset enforcement.
-4. **Detection and tracking:** Detector adapter, separate ball observations, multi-object tracking, occlusion handling, and uncertain identity associations.
+4. **Detection and tracking (implemented):** Football-specific detector, separate ball observations, timestamp-aware tracking, short-occlusion association, automatic pitch keypoints, calibration updates, and review-video export.
 5. **Team and role classification:** Torso color features, stable team assignments, goalkeeper and official classification with confidence.
 6. **Telemetry:** Time-based smoothing, displacement and observation-gap gates, airborne uncertainty, track maturation, speed, distance, and sprint state machines.
 7. **Tactical visualization:** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports.
@@ -143,9 +144,26 @@ python3 -m football_intelligence calibrate-pitch examples/calibration-landmarks.
 python3 -m unittest discover -s tests -v
 ```
 
-The example is synthetic. Real footage requires measured pixel-to-pitch landmark
-correspondences; the system does not yet find pitch markings automatically.
+The example is synthetic and exercises the manual calibration API. Step 4's automatic
+pipeline supplies model-detected pitch landmarks without asking for pixel coordinates.
 See [the Step 3 guide](docs/step-03-pitch-calibration.md) for geometry, quality gates,
 camera updates, and usage.
 
-**Review gate:** stop here. Step 4 begins only after explicit user approval.
+## Step 4: automatic analysis
+
+```sh
+python3 -m pip install -e ".[detection]"
+python3 -m football_intelligence download-models
+python3 -m football_intelligence analyze-video /absolute/path/to/match.mp4 --match-id match-001 --output data/match-001/analysis-001 --max-frames 100
+```
+
+Model downloads total about 277 MB and are cached in ignored `data/models/`.
+Remove `--max-frames 100` to process the full video. The output includes a silent
+`preview.mp4`, `tracks.jsonl`, `calibrations.jsonl`, and `manifest.json`. CPU inference
+can be substantially slower than real time. No dimensions or pixel annotations are needed.
+Pitch size defaults to an explicit 105×68 m assumption, not a measurement from the video.
+
+See the [Step 4 guide](docs/step-04-detection-tracking.md),
+[intended final product](docs/final-product.md), and [model provenance/licensing](THIRD_PARTY.md).
+
+**Review gate:** stop here. Step 5 begins only after explicit user approval.
