@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "pitch": {"length_m": 105.0, "width_m": 68.0},
+  "analytics": {
+    "sprint_threshold_kmh": 18.0,
+    "max_speed_kmh": 36.0,
+    "smoothing_window_s": 0.5,
+    "min_track_duration_s": 2.0,
+    "min_sprint_duration_s": 1.0,
+    "duel_distance_m": 1.3,
+    "min_duel_duration_s": 0.5,
+    "highlight_padding_s": 1.5,
+    "max_observation_gap_s": 0.25
+  }
+}
