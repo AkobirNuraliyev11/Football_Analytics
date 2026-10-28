@@ -1,16 +1,18 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Step 1 only — foundation and observation contracts.** No video inference,
+**Status: Steps 1–2 — foundation, video ingestion, and timing.** No object detection,
 calibration, telemetry computation, backend, or dashboard is implemented yet.
 This foundation is not a production-ready analytics platform.
 
 ## Architectural roadmap and review gates
 
 Each numbered module requires user review and explicit approval before the next.
+After completing and validating each step, commit and push its implementation,
+tests, and documentation to GitHub before stopping for that review.
 
 1. **Foundation (implemented):** Python package, strict configuration, coordinate and athlete observation contracts, CLI, tests.
-2. **Video ingestion:** Probe metadata, decode timestamped frames, handle variable frame rates, identify camera cuts, define job manifests.
+2. **Video ingestion (implemented):** Probe metadata, decode timestamped frames, handle variable frame rates, flag candidate camera cuts, define job manifests.
 3. **Calibration:** Landmark correspondences, homography estimation, outlier rejection, quality checks, camera motion updates, and shot resets.
 4. **Detection and tracking:** Detector adapter, separate ball observations, multi-object tracking, occlusion handling, and uncertain identity associations.
 5. **Team and role classification:** Torso color features, stable team assignments, goalkeeper and official classification with confidence.
@@ -117,4 +119,20 @@ Density heatmaps describe occupancy; true pitch control requires a separate mode
 reachability and possession. Calibration accuracy must be reported with an actual metric
 and validation sample count, never an invented percentage.
 
-**Review gate:** stop here. Step 2 begins only after explicit user approval.
+## Step 2: video ingestion
+
+See [the Step 2 guide](docs/step-02-video-ingestion.md) for mathematics, data contracts,
+limitations, and integration test coverage. Install optional video dependencies if needed:
+
+```sh
+python3 -m pip install -e ".[video]"
+python3 -m football_intelligence probe-video /absolute/path/to/match.mp4
+python3 -m football_intelligence ingest-video /absolute/path/to/match.mp4 --match-id match-001 --output data/match-001/ingestion-001
+python3 -m unittest discover -s tests -v
+```
+
+The output directory must be new. It contains `manifest.json` and, on successful
+completion, `frames.jsonl`. Video arrays are streamed for future pipeline consumers,
+not exported as images. Generated data stays out of Git when stored under `data/`.
+
+**Review gate:** stop here. Step 3 begins only after explicit user approval.

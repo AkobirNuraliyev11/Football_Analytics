@@ -1,4 +1,4 @@
-"""Step 1 entry point: emit or validate configuration without processing video."""
+"""Configuration and local video ingestion commands."""
 
 import argparse
 import json
@@ -14,11 +14,33 @@ def main(argv: list[str] | None = None) -> int:
     commands.add_parser("default-config", help="Print default configuration as JSON")
     validate = commands.add_parser("validate-config", help="Validate and print effective configuration")
     validate.add_argument("path", type=Path)
+    probe = commands.add_parser("probe-video", help="Inspect a local video stream")
+    probe.add_argument("path", type=Path)
+    probe.add_argument("--video-stream", type=int, default=0)
+    ingest = commands.add_parser("ingest-video", help="Decode video and write timing/shot records")
+    ingest.add_argument("path", type=Path)
+    ingest.add_argument("--output", type=Path, required=True)
+    ingest.add_argument("--match-id", required=True)
+    ingest.add_argument("--video-stream", type=int, default=0)
+    ingest.add_argument("--cut-threshold", type=float, default=0.30)
+    ingest.add_argument("--max-gap-s", type=float, default=0.25)
     args = parser.parse_args(argv)
     try:
-        config = AppConfig.load(args.path) if args.command == "validate-config" else AppConfig()
+        if args.command == "probe-video":
+            from .video import probe_video
+            result = probe_video(args.path, args.video_stream).to_dict()
+        elif args.command == "ingest-video":
+            from .ingestion import ingest_video
+            from .shots import ShotConfig
+            result = ingest_video(args.path, args.output, match_id=args.match_id,
+                                  video_stream=args.video_stream,
+                                  shot_config=ShotConfig(args.cut_threshold, args.max_gap_s))
+        else:
+            config = AppConfig.load(args.path) if args.command == "validate-config" else AppConfig()
+            result = config.to_dict()
     except (OSError, ValueError) as exc:
-        print(f"Configuration error: {exc}", file=sys.stderr)
+        label = "Configuration error" if args.command in {"default-config", "validate-config"} else "Video error"
+        print(f"{label}: {exc}", file=sys.stderr)
         return 2
-    print(json.dumps(config.to_dict(), indent=2, allow_nan=False))
+    print(json.dumps(result, indent=2, allow_nan=False))
     return 0

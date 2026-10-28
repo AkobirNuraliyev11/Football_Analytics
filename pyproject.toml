@@ -9,6 +9,9 @@ description = "Single-camera football analytics — incremental implementation"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+video = ["av>=16,<17", "numpy>=2,<3"]
+
 [project.scripts]
 football-intelligence = "football_intelligence.cli:main"
 
