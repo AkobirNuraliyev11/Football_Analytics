@@ -1,0 +1,462 @@
+{
+  "source": "Roboflow sample 0bfacc_0.mp4",
+  "method": "Assistant visual review of extracted player crops; visible kit only, not verified athlete identities. Overlapping or unclear crops excluded. Development frames 100/250; later frames are checks from the same clip, not an independent match.",
+  "observations": [
+    {
+      "frame_index": 100,
+      "source_track_id": 8,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 18,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 11,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 24,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 20,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 15,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 23,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 19,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 17,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 13,
+      "team": "A"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 12,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 2,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 5,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 3,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 16,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 6,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 22,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 7,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 10,
+      "team": "B"
+    },
+    {
+      "frame_index": 100,
+      "source_track_id": 9,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 18,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 15,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 20,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 11,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 13,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 19,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 8,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 17,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 42,
+      "team": "A"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 12,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 2,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 7,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 10,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 5,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 9,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 3,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 6,
+      "team": "B"
+    },
+    {
+      "frame_index": 250,
+      "source_track_id": 16,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 18,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 42,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 15,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 8,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 11,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 38,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 13,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 19,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 17,
+      "team": "A"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 2,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 12,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 5,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 3,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 16,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 6,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 10,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 7,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 22,
+      "team": "B"
+    },
+    {
+      "frame_index": 375,
+      "source_track_id": 9,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 20,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 18,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 15,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 8,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 42,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 19,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 11,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 38,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 17,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 13,
+      "team": "A"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 5,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 12,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 6,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 22,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 7,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 10,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 3,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 2,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 9,
+      "team": "B"
+    },
+    {
+      "frame_index": 500,
+      "source_track_id": 16,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 11,
+      "team": "A"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 42,
+      "team": "A"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 18,
+      "team": "A"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 38,
+      "team": "A"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 15,
+      "team": "A"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 8,
+      "team": "A"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 7,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 10,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 5,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 12,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 2,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 6,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 16,
+      "team": "B"
+    },
+    {
+      "frame_index": 749,
+      "source_track_id": 3,
+      "team": "B"
+    }
+  ],
+  "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51"
+}

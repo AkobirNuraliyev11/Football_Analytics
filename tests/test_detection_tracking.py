@@ -70,6 +70,29 @@ class TrackingTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.update([],1)
 
+    def test_ambiguous_assignment_breaks_measurement_continuity(self):
+        self.update([self.detection(10),self.detection(10)],0)
+        result=self.update([self.detection(10),self.detection(10)],.04)
+        self.assertTrue(all(not t.continuity_safe and t.continuity_segment==1 for t,_ in result))
+        self.assertTrue(all(t.association_reason=="ambiguous_assignment" for t,_ in result))
+
+    def test_reacquisition_keeps_id_but_breaks_measurement_link(self):
+        first=self.update([self.detection()],0)[0][0].track_id
+        self.update([],.04);self.update([],.08);self.update([],.12)
+        track,_=self.update([self.detection()],.16)[0]
+        self.assertEqual(track.track_id,first)
+        self.assertFalse(track.continuity_safe)
+        self.assertEqual(track.association_reason,"reacquired_after_gap")
+
+    def test_contradictory_kit_cannot_take_over_mature_track(self):
+        self.rgb[:]=(220,30,30)
+        for i in range(4):track,_=self.update([self.detection()],i*.04)[0]
+        first=track.track_id
+        self.rgb[:]=(210,210,210)
+        next_track,_=self.update([self.detection()],.16)[0]
+        self.assertNotEqual(next_track.track_id,first)
+        self.assertFalse(next_track.continuity_safe)
+
     def test_automatic_keypoints_filter_confidence_and_ambiguous_labels(self):
         import numpy as np
         points = np.array([[100+i,100,.9] for i in range(32)])
@@ -117,6 +140,10 @@ class AnalysisTests(unittest.TestCase):
             records = [json.loads(line) for line in (output/"tracks.jsonl").read_text().splitlines()]
             self.assertEqual([r["timestamp_s"] for r in records],[0,.04,.14])
             self.assertTrue(records[-1]["detections"][0]["confirmed"])
+            self.assertFalse(records[0]["detections"][0]["measurement_link_eligible"])
+            self.assertEqual(records[0]["detections"][0]["association_reason"],"new_track")
+            self.assertTrue(records[-1]["detections"][0]["measurement_link_eligible"])
+            self.assertEqual(records[-1]["detections"][0]["continuity_segment"],0)
             self.assertFalse(records[-1]["detections"][0]["ground_contact_reliable"])
             self.assertEqual(records[-1]["detections"][1]["projection_state"],"ball_depth_unknown")
             preview = list(iter_frames(output/"preview.mp4"))

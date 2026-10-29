@@ -149,12 +149,18 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                         except CalibrationError:
                             projection_state = "outside_calibrated_support"
                     records.append({"track_id":track.track_id,"confirmed":confirmed,"kind":detection.kind,
+                        "continuity_segment":track.continuity_segment,
+                        "association_reason":track.association_reason,
+                        "continuity_safe":track.continuity_safe,
                         "role_candidate":detection.role.value,"team":"unknown","bbox":asdict(box),
                         "confidence":detection.confidence,"image_anchor":asdict(anchor),
                         "pitch_position_candidate":position,"projection_state":projection_state,
                         "ground_contact_reliable":False,
                         "calibration_id":calibration.calibration_id if position else None})
                 records = classifier.update(frame.rgb,records,timestamp_s=frame.timestamp_s,shot_id=shot["shot_id"])
+                for item in records:
+                    item["measurement_link_eligible"]=(item["confirmed"] and item["continuity_safe"]
+                        and not item["classification_conflict"] and not item["team_changed"])
                 record = frame.timing_record() | shot | {"match_id":match_id,"detections":records,
                     "calibration_status":"fit_unvalidated" if calibration else "unavailable",
                     "calibration_reason":reason}

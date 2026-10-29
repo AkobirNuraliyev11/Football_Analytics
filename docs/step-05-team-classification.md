@@ -31,6 +31,9 @@ initialization. At least eight supported outfield tracks are required, each with
 observations. A deterministic two-cluster fit needs at least three tracks per cluster,
 sufficient separation, and limited within-cluster spread. If those checks fail, the system
 keeps collecting evidence and returns unknown rather than forcing a split.
+The reliability pass filters isolated color samples before fitting and compares separation
+with within-group variation. Learned per-team acceptance radii and a separation-dependent
+margin allow compact, less saturated groups without accepting every nearest color.
 
 The more chromatic group is labeled A; ties use deterministic feature ordering. The two
 reference colors are then frozen for the match, preventing A/B swaps at camera cuts.
@@ -45,6 +48,9 @@ from the other to be usable. Initial assignment requires three consecutive usabl
 Changing an already assigned team additionally requires 0.8 seconds of consistent opposing
 evidence. Such changes emit `team_changed: true`, which later telemetry can use to flag
 possible tracker identity errors. Unknown or conflicting evidence breaks the pending streak.
+An opposing usable color immediately hides the old team label while the correction is
+pending and sets `classification_conflict`; internal hysteresis still prevents one-frame
+team switches. Repeated consistent opposing evidence can complete the correction.
 
 For a short missing-color interval, a previous team label may remain with a decaying quality
 score. After two seconds without supporting evidence it becomes unknown. Track histories
@@ -77,6 +83,10 @@ the keeper belongs to, especially across halves or camera orientations.
 Each detection in `tracks.jsonl` now includes `team`, `role`, `team_confidence`,
 `role_confidence`, `classification_reason`, and `team_changed`. The original
 `role_candidate` is retained for comparison. Non-person objects retain unknown team/role.
+The reliability pass adds `classification_conflict`, `continuity_segment`,
+`continuity_safe`, `association_reason`, and `measurement_link_eligible`.
+The last field is only a preliminary association gate, not permission to calculate speed;
+geometry and ground-contact checks remain necessary. See the reliability review for details.
 `manifest.json` contains a `classification` section with readiness, parameters, learned
 reference features, and initialization support. The preview draws officials in cyan,
 goalkeepers and the ball in gold, outfield teams in red/white, and unknown tracks in gray.

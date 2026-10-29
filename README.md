@@ -6,6 +6,10 @@ Telemetry computation, the backend, and dashboard are not
 implemented yet. Automatic analysis produces an annotated preview and JSONL records.
 This foundation is not a production-ready analytics platform.
 
+The tracking/classification reliability pass is complete: ambiguous associations now
+carry continuity warnings, conflicting kits can remain unknown, and kit tolerances
+adapt to the observed groups. See [the measured comparison and limits](docs/tracking-reliability-review.md).
+
 ## Architectural roadmap and review gates
 
 Each numbered module requires user review and explicit approval before the next.

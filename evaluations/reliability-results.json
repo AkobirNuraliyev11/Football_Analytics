@@ -1,0 +1,120 @@
+{
+  "baseline_commit": "a287b360dc22f383c3ef4392c8c71bfaa4ba618f",
+  "method": "Assistant-reviewed visible kits on development footage, not athlete identity ground truth or held-out accuracy. Replay retains old emitted detections and geometry.",
+  "first_clip": {
+    "frames": 750,
+    "label_scores": {
+      "before": {
+        "correct": 88,
+        "wrong": 3,
+        "unknown": 0
+      },
+      "after": {
+        "correct": 88,
+        "wrong": 1,
+        "unknown": 2
+      }
+    },
+    "labels_requested": 91,
+    "old_track_count": 68,
+    "new_track_count": 65,
+    "team_changes": 1,
+    "rejected_measurement_links": 334,
+    "classification": {
+      "status": "ready",
+      "config": {
+        "min_bootstrap_tracks": 8,
+        "min_cluster_tracks": 3,
+        "min_samples": 3,
+        "min_cluster_separation": 0.04,
+        "max_color_distance": 0.22,
+        "min_color_margin": 0.06,
+        "switch_duration_s": 0.8,
+        "stale_after_s": 2.0
+      },
+      "features": "median_normalized_rgb",
+      "team_centers": [
+        [
+          0.5340168716772824,
+          0.26894086211301044,
+          0.19845159598369527
+        ],
+        [
+          0.35017841144167616,
+          0.34496554379481414,
+          0.30314681187243453
+        ]
+      ],
+      "team_color_radii": [
+        0.10784541537671669,
+        0.06
+      ],
+      "bootstrap_track_support": [
+        10,
+        10
+      ],
+      "labels": "arbitrary persistent A/B; not team names or attacking direction",
+      "confidence": "heuristic quality scores, not calibrated probabilities"
+    },
+    "scope": "Replay of retained detections; geometry fixed; track counts are not identity accuracy",
+    "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51"
+  },
+  "second_clip": {
+    "frames": 50,
+    "label_scores": {
+      "before": {
+        "correct": 0,
+        "wrong": 0,
+        "unknown": 19
+      },
+      "after": {
+        "correct": 18,
+        "wrong": 1,
+        "unknown": 0
+      }
+    },
+    "labels_requested": 19,
+    "old_track_count": 27,
+    "new_track_count": 27,
+    "team_changes": 0,
+    "rejected_measurement_links": 69,
+    "classification": {
+      "status": "ready",
+      "config": {
+        "min_bootstrap_tracks": 8,
+        "min_cluster_tracks": 3,
+        "min_samples": 3,
+        "min_cluster_separation": 0.04,
+        "max_color_distance": 0.22,
+        "min_color_margin": 0.06,
+        "switch_duration_s": 0.8,
+        "stale_after_s": 2.0
+      },
+      "features": "median_normalized_rgb",
+      "team_centers": [
+        [
+          0.2945047531055521,
+          0.34286656032088275,
+          0.35676902808552435
+        ],
+        [
+          0.3366768264371086,
+          0.3389954449208774,
+          0.32401299272651474
+        ]
+      ],
+      "team_color_radii": [
+        0.03212341476472715,
+        0.03212341476472715
+      ],
+      "bootstrap_track_support": [
+        7,
+        13
+      ],
+      "labels": "arbitrary persistent A/B; not team names or attacking direction",
+      "confidence": "heuristic quality scores, not calibrated probabilities"
+    },
+    "scope": "Replay of retained detections; geometry fixed; track counts are not identity accuracy",
+    "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "source": "Second Roboflow sample",
+  "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+  "method": "Assistant visual kit review at frame 49. Dark blue=A, white=B. Excludes red goalkeeper and unclear ID23. This clip was used during development, not a held-out benchmark.",
+  "observations": [
+    {
+      "frame_index": 49,
+      "source_track_id": 11,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 15,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 19,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 18,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 14,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 16,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 21,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 20,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 17,
+      "team": "A"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 7,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 1,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 2,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 4,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 10,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 8,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 5,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 6,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 13,
+      "team": "B"
+    },
+    {
+      "frame_index": 49,
+      "source_track_id": 12,
+      "team": "B"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ class ClassificationConfig:
     min_bootstrap_tracks: int = 8
     min_cluster_tracks: int = 3
     min_samples: int = 3
-    min_cluster_separation: float = 0.16
+    min_cluster_separation: float = 0.04
     max_color_distance: float = 0.22
     min_color_margin: float = 0.06
     switch_duration_s: float = 0.8
@@ -69,6 +69,7 @@ class TeamRoleClassifier:
         self.states = {}
         self.bootstrap = {}
         self.centers = None
+        self.color_radii = None
         self.shot_id = None
         self.previous_time = None
         self.bootstrap_support = None
@@ -82,6 +83,12 @@ class TeamRoleClassifier:
         samples=np.array(samples)
         # Deterministic two-means, seeded at the most separated pair; no random label flips.
         distances=np.linalg.norm(samples[:,None,:]-samples[None,:,:],axis=2)
+        # Isolated kit colors (e.g. a keeper misdetected as outfield) must not seed a team.
+        supported=np.sort(distances,axis=1)[:,cfg.min_cluster_tracks-1]<=cfg.max_color_distance/2
+        samples=samples[supported]
+        if len(samples)<cfg.min_bootstrap_tracks:
+            return
+        distances=np.linalg.norm(samples[:,None,:]-samples[None,:,:],axis=2)
         i,j=np.unravel_index(distances.argmax(),distances.shape)
         centers=samples[[i,j]].copy()
         for _ in range(30):
@@ -93,7 +100,8 @@ class TeamRoleClassifier:
                 centers=new
                 break
             centers=new
-        if np.linalg.norm(centers[0]-centers[1])<cfg.min_cluster_separation:
+        scatter=max(float(np.median(np.linalg.norm(samples[labels==k]-centers[k],axis=1))) for k in (0,1))
+        if np.linalg.norm(centers[0]-centers[1])<max(cfg.min_cluster_separation,3*scatter):
             return
         # Reject diffuse clusters instead of separating one uniform kit arbitrarily.
         if any(float(np.median(np.linalg.norm(samples[labels==k]-centers[k],axis=1)))>
@@ -101,6 +109,9 @@ class TeamRoleClassifier:
             return
         order=sorted(range(2),key=lambda k:(-float(centers[k].max()-centers[k].min()),tuple(centers[k])))
         self.centers=centers[order]
+        separation=float(np.linalg.norm(centers[0]-centers[1]))
+        self.color_radii=np.array([min(cfg.max_color_distance,.6*separation,max(.06,float(np.percentile(
+            np.linalg.norm(samples[labels==k]-centers[k],axis=1),90))*1.5)) for k in order])
         self.bootstrap_support=[int((labels==k).sum()) for k in order]
         self.bootstrap.clear()
 
@@ -112,10 +123,12 @@ class TeamRoleClassifier:
         index=int(distances.argmin())
         nearest=float(distances[index])
         margin=float(distances[1-index]-distances[index])
-        if nearest>self.config.max_color_distance or margin<self.config.min_color_margin:
+        radius=float(self.color_radii[index]) if self.color_radii is not None else self.config.max_color_distance
+        separation=float(np.linalg.norm(self.centers[0]-self.centers[1]))
+        if nearest>radius or margin<min(self.config.min_color_margin,.35*separation):
             return "unknown",0.0
         # A quality score, not a calibrated probability.
-        score=min(1.,margin/.3)*max(0.,1-nearest/self.config.max_color_distance)
+        score=min(1.,margin/.3)*max(0.,1-nearest/radius)
         return ("A","B")[index],score
 
     def _role(self,state,record,feature):
@@ -180,12 +193,14 @@ class TeamRoleClassifier:
         for record in records:
             enriched=dict(record)
             enriched.update(team="unknown",role="unknown",team_confidence=0.,role_confidence=0.,
-                            classification_reason="non_person",team_changed=False)
+                            classification_reason="non_person",team_changed=False,classification_conflict=False)
             if record["kind"]=="person":
                 state=self.states[record["track_id"]]
                 feature=features[record["track_id"]]
                 role,role_score,reason=self._role(state,record,feature)
                 candidate,score=self._color(feature)
+                conflict=state.team!="unknown" and candidate!="unknown" and candidate!=state.team
+                enriched["classification_conflict"]=conflict
                 # A single conflicting referee/keeper candidate blocks team output immediately.
                 eligible=(role=="outfield" and record.get("role_candidate")=="outfield"
                           and record.get("projection_state")!="outside_pitch")
@@ -211,6 +226,8 @@ class TeamRoleClassifier:
                 if eligible:
                     enriched.update(team=state.team,team_confidence=state.team_confidence*math.exp(-age)
                                     if math.isfinite(age) else 0.)
+                    if conflict and not enriched["team_changed"]:
+                        enriched.update(team="unknown",team_confidence=0.,classification_reason="conflicting_kit_evidence")
             output.append(enriched)
         return output
 
@@ -218,6 +235,7 @@ class TeamRoleClassifier:
         return {"status":"ready" if self.centers is not None else "insufficient_kit_evidence",
                 "config":asdict(self.config),"features":"median_normalized_rgb",
                 "team_centers":self.centers.tolist() if self.centers is not None else None,
+                "team_color_radii":self.color_radii.tolist() if self.color_radii is not None else None,
                 "bootstrap_track_support":self.bootstrap_support,
                 "labels":"arbitrary persistent A/B; not team names or attacking direction",
                 "confidence":"heuristic quality scores, not calibrated probabilities"}

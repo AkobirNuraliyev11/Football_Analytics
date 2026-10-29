@@ -47,7 +47,8 @@ class ClassificationTests(unittest.TestCase):
         original=self.warmup()
         changed=self.colors.copy();changed[0]=self.colors[4]
         result=self.frame(changed)
-        self.assertEqual(result[0]["team"],original[0]["team"])
+        self.assertEqual(result[0]["team"],"unknown")
+        self.assertTrue(result[0]["classification_conflict"])
         self.assertFalse(result[0]["team_changed"])
 
     def test_sustained_new_color_corrects_identity_with_flag(self):
@@ -109,6 +110,27 @@ class ClassificationTests(unittest.TestCase):
         self.warmup()
         for _ in range(52): result=self.frame(roles=["unknown"]*8)
         self.assertTrue(all(x["role"]=="unknown" and x["team"]=="unknown" for x in result))
+
+    def test_desaturated_number_crop_not_forced_into_white_team(self):
+        original=self.warmup()
+        colors=self.colors.copy();colors[0]=(105,80,65)
+        for _ in range(55):
+            result=self.frame(colors)
+            self.assertNotEqual(result[0]["team"],original[4]["team"])
+        self.assertEqual(result[0]["team"],"unknown")
+
+    def test_isolated_third_kit_does_not_block_bootstrap(self):
+        colors=self.colors+[(20,230,30)]
+        for _ in range(12): result=self.frame(colors)
+        self.assertEqual(self.classifier.summary()["status"],"ready")
+        self.assertNotEqual(result[0]["team"],result[4]["team"])
+        self.assertEqual(result[-1]["team"],"unknown")
+
+    def test_low_saturation_distinct_kits_can_initialize(self):
+        colors=[(90,100,110)]*4+[(210,210,210)]*4
+        for _ in range(12): result=self.frame(colors)
+        self.assertEqual(self.classifier.summary()["status"],"ready")
+        self.assertNotEqual(result[0]["team"],result[4]["team"])
 
     def test_invalid_configuration_and_time(self):
         with self.assertRaises(ValueError): ClassificationConfig(min_samples=0)
