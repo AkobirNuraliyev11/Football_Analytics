@@ -8,6 +8,7 @@ from pathlib import Path
 import uuid
 
 from .calibration import CalibrationError, update_camera
+from .classification import TeamRoleClassifier
 from .config import PitchConfig
 from .detection import FootballDetector
 from .ingestion import write_manifest
@@ -57,11 +58,14 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
     output = rgb.copy()
     for record in records:
         box = record["bbox"]
-        color = (255,210,60) if record["kind"] == "ball" else (60,220,180)
+        color = {"A":(250,95,105),"B":(235,235,245)}.get(record.get("team"),(155,155,155))
+        if record.get("role")=="official": color=(40,220,220)
+        if record.get("role")=="goalkeeper" or record["kind"]=="ball": color=(255,210,60)
         p1 = (int(box["x_min"]), int(box["y_min"]))
         p2 = (int(box["x_max"]), int(box["y_max"]))
         cv2.rectangle(output,p1,p2,color,2)
-        label = f'{record["kind"]} #{record["track_id"]} {record["confidence"]:.2f}'
+        label = f'{record.get("role",record["kind"])} #{record["track_id"]} {record.get("team","unknown")}'
+        if record["kind"]=="ball": label=f'ball #{record["track_id"]}'
         cv2.putText(output,label,(p1[0],max(16,p1[1]-5)),cv2.FONT_HERSHEY_SIMPLEX,.45,color,1)
     if calibration:
         for point in calibration.landmarks:
@@ -99,6 +103,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
         source_before = source.stat()
         manifest["source_sha256"] = sha256(source)
         shots, tracker = ShotDetector(ShotConfig()), MultiObjectTracker()
+        classifier = TeamRoleClassifier(pitch=pitch)
         calibration, previous = None, None
         preview = PreviewWriter(output/"preview.partial.mp4", metadata.width,metadata.height,
                                 Fraction(metadata.average_rate) if metadata.average_rate else Fraction(25))
@@ -149,6 +154,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                         "pitch_position_candidate":position,"projection_state":projection_state,
                         "ground_contact_reliable":False,
                         "calibration_id":calibration.calibration_id if position else None})
+                records = classifier.update(frame.rgb,records,timestamp_s=frame.timestamp_s,shot_id=shot["shot_id"])
                 record = frame.timing_record() | shot | {"match_id":match_id,"detections":records,
                     "calibration_status":"fit_unvalidated" if calibration else "unavailable",
                     "calibration_reason":reason}
@@ -165,6 +171,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
             stem,suffix = name.rsplit(".",1)
             (output/f"{stem}.partial.{suffix}").replace(output/name)
         manifest.update(status="completed",shot_count=shots.shot_id+1,
+                        classification=classifier.summary(),
                         artifacts=["tracks.jsonl","calibrations.jsonl","preview.mp4"],
                         completed_at=datetime.now(timezone.utc).isoformat())
         write_manifest(output/"manifest.json",manifest)

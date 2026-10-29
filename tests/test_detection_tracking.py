@@ -113,6 +113,7 @@ class AnalysisTests(unittest.TestCase):
             self.assertEqual(manifest["processed_frames"],3)
             self.assertEqual(manifest["status"],"completed")
             self.assertEqual(manifest["frames_with_pitch_fit"],0)
+            self.assertEqual(manifest["classification"]["status"],"insufficient_kit_evidence")
             records = [json.loads(line) for line in (output/"tracks.jsonl").read_text().splitlines()]
             self.assertEqual([r["timestamp_s"] for r in records],[0,.04,.14])
             self.assertTrue(records[-1]["detections"][0]["confirmed"])

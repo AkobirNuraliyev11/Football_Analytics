@@ -1,8 +1,8 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–4 — ingestion, calibration, automatic detection, and tracking.**
-Telemetry computation, stable team classification, the backend, and dashboard are not
+**Status: Steps 1–5 — ingestion, calibration, detection, tracking, and team/role classification.**
+Telemetry computation, the backend, and dashboard are not
 implemented yet. Automatic analysis produces an annotated preview and JSONL records.
 This foundation is not a production-ready analytics platform.
 
@@ -16,7 +16,7 @@ tests, and documentation to GitHub before stopping for that review.
 2. **Video ingestion (implemented):** Probe metadata, decode timestamped frames, handle variable frame rates, flag candidate camera cuts, define job manifests.
 3. **Calibration (implemented):** Supplied landmark correspondences, homography estimation, outlier rejection, quality checks, guarded optical-flow updates, and shot reset enforcement.
 4. **Detection and tracking (implemented):** Football-specific detector, separate ball observations, timestamp-aware tracking, short-occlusion association, automatic pitch keypoints, calibration updates, and review-video export.
-5. **Team and role classification:** Torso color features, stable team assignments, goalkeeper and official classification with confidence.
+5. **Team and role classification (implemented):** Automatic torso-color clustering, temporal team assignments, official separation, and goalkeeper color/position checks with uncertainty.
 6. **Telemetry:** Time-based smoothing, displacement and observation-gap gates, airborne uncertainty, track maturation, speed, distance, and sprint state machines.
 7. **Tactical visualization:** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports.
 8. **Events and clips:** Candidate duels, sustained sprints, deduplication, padded MP4 extraction, and annotation overlays.
@@ -166,4 +166,14 @@ Pitch size defaults to an explicit 105×68 m assumption, not a measurement from 
 See the [Step 4 guide](docs/step-04-detection-tracking.md),
 [intended final product](docs/final-product.md), and [model provenance/licensing](THIRD_PARTY.md).
 
-**Review gate:** stop here. Step 5 begins only after explicit user approval.
+## Step 5: stable teams and roles
+
+The same `analyze-video` command now learns two outfield kit groups automatically and
+adds stable `team`, `role`, quality scores, and change flags to each detection. The preview
+uses red/white team boxes, cyan officials, gold goalkeepers/ball, and gray unknowns.
+Team A/B are arbitrary labels, not club names or attacking directions. Unknown is retained
+when evidence is insufficient; goalkeeper team membership is not inferred from position.
+
+See the [Step 5 guide](docs/step-05-team-classification.md) for behavior and test coverage.
+
+**Review gate:** stop here. Step 6 begins only after explicit user approval.
