@@ -151,7 +151,7 @@ def stabilize_camera(previous_rgb,rgb,previous_fit,current_fit,previous_items,cu
     return PaintFit(transported,evidence,current_fit.check_pixels,current_fit.check_labels)
 
 
-def foot_candidate(rgb,item,others,fit,pitch=None):
+def foot_candidate(rgb,item,others,fit,pitch=None,*,anchor_px=None):
     """Conservative visibility screen; deliberately does NOT assert ground contact."""
     import numpy as np
     pitch = pitch or PitchConfig()
@@ -167,13 +167,19 @@ def foot_candidate(rgb,item,others,fit,pitch=None):
         if (min(x2,o["x_max"])-max(x1,o["x_min"])>0 and
             min(y2+3,o["y_max"])-max(y1+.65*(y2-y1),o["y_min"])>0):
             return None,"feet_occluded"
-    below=rgb[int(y2)+1:min(height,int(y2)+7),max(0,int(x1)):min(width,int(x2))].astype(float)
+    anchor=[(x1+x2)/2,y2] if anchor_px is None else list(map(float,anchor_px))
+    if len(anchor)!=2 or not np.isfinite(anchor).all() or not (x1-.1*(y2-y1)<=anchor[0]<=x2+.1*(y2-y1) and y1<=anchor[1]<=y2+.1*(y2-y1)):
+        return None,"invalid_foot_anchor"
+    if anchor_px is None:
+        below=rgb[int(y2)+1:min(height,int(y2)+7),max(0,int(x1)):min(width,int(x2))].astype(float)
+    else:
+        radius=max(3,int(.08*(y2-y1)))
+        below=rgb[int(anchor[1])+2:min(height,int(anchor[1])+7),max(0,int(anchor[0])-radius):min(width,int(anchor[0])+radius+1)].astype(float)
     if not below.size:
         return None,"no_visible_ground"
     grass=(below[:,:,1]>1.1*below[:,:,0])&(below[:,:,1]>1.1*below[:,:,2])
     if grass.mean()<.65:
         return None,"no_visible_ground"
-    anchor=[(x1+x2)/2,y2]
     xy=transform(fit.matrix,[anchor])[0]
     if np.linalg.norm(xy-[pitch.length_m/2,pitch.width_m/2])>9.15:
         return None,"outside_checked_midfield"

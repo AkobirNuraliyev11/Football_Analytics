@@ -47,9 +47,27 @@ def main(argv: list[str] | None = None) -> int:
     review.add_argument("--tracks",type=Path)
     review.add_argument("--output",type=Path,required=True)
     review.add_argument("--max-frames",type=int)
+    pose_download=commands.add_parser("download-pose-model",help="Download the pinned optional ankle model")
+    pose_download.add_argument("--model-dir",type=Path,default=Path("data/models"))
+    feet=commands.add_parser("review-feet",help="Compare experimental pose-guided feet with saved box-anchor estimates")
+    feet.add_argument("path",type=Path)
+    feet.add_argument("--geometry",type=Path,required=True)
+    feet.add_argument("--tracks",type=Path,required=True)
+    feet.add_argument("--output",type=Path,required=True)
+    feet.add_argument("--pose-model",type=Path,default=Path("data/models/yolo11n-pose.pt"))
+    feet.add_argument("--start-s",type=float,default=0)
+    feet.add_argument("--max-frames",type=int)
+    feet.add_argument("--allow-ankle-proxy",action="store_true",help="Experimental current-ankle anchor with a recently observed shoe offset")
     args = parser.parse_args(argv)
     try:
-        if args.command == "review-measurements":
+        if args.command == "download-pose-model":
+            from .feet import download_pose_model
+            result=download_pose_model(args.model_dir)
+        elif args.command == "review-feet":
+            from .foot_review import review_feet
+            result=review_feet(args.path,args.geometry,args.tracks,args.output,pose_model=args.pose_model,
+                               start_s=args.start_s,max_frames=args.max_frames,allow_ankle_proxy=args.allow_ankle_proxy)
+        elif args.command == "review-measurements":
             from .real_measurements import estimate_video
             result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames)
         elif args.command == "compute-telemetry":

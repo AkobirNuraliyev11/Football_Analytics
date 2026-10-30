@@ -23,6 +23,10 @@ foot-visibility screening. The 30-second development clip produced four short
 estimated movement segments. Coverage remains low and ground contact is unverified;
 these are not trusted player totals. The normal analysis mode retains its strict gates.
 
+The [optional foot-position trial](docs/foot-position-review.md) now compares pose-guided
+ankles/shoes on two clips. It improves visible-shoe localization on a small paired sample,
+but reduces continuous measurement coverage; it is therefore **not the default**.
+
 ## Architectural roadmap and review gates
 
 Each numbered module requires user review and explicit approval before the next.

@@ -1,0 +1,34 @@
+{
+  "method": "Assistant visual review of native-resolution crops, approximately 3-pixel annotation uncertainty. Lowest visible shoe point; alternatives are allowed when both shoes are at similar height. Measures shoe localization, not athlete-center position or speed accuracy. Both clips informed development; neither is a held-out benchmark.",
+  "first": {
+    "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+    "frame_index": 75,
+    "excluded": [{"track_id":4,"reason":"Dark shoe and shadow are difficult to separate"}],
+    "points": [
+      {"track_id":12,"shoe_pixels":[[1523,657]]},
+      {"track_id":5,"shoe_pixels":[[1161,825],[1196,824]]},
+      {"track_id":18,"shoe_pixels":[[586,754]]},
+      {"track_id":2,"shoe_pixels":[[1534,496],[1552,495]]},
+      {"track_id":23,"shoe_pixels":[[858,532]]},
+      {"track_id":22,"shoe_pixels":[[817,479]]},
+      {"track_id":3,"shoe_pixels":[[492,738]]},
+      {"track_id":24,"shoe_pixels":[[535,544],[562,544]]},
+      {"track_id":20,"shoe_pixels":[[491,613]]}
+    ]
+  },
+  "second": {
+    "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+    "frame_index": 49,
+    "excluded": [{"track_id":15,"reason":"Dark shoe and shadow merge"},{"track_id":10,"reason":"Shoe merges with the painted line"}],
+    "points": [
+      {"track_id":7,"shoe_pixels":[[1184,633]]},
+      {"track_id":1,"shoe_pixels":[[1482,485]]},
+      {"track_id":11,"shoe_pixels":[[325,509]]},
+      {"track_id":2,"shoe_pixels":[[764,524]]},
+      {"track_id":4,"shoe_pixels":[[1379,403]]},
+      {"track_id":19,"shoe_pixels":[[870,680]]},
+      {"track_id":8,"shoe_pixels":[[546,381]]},
+      {"track_id":18,"shoe_pixels":[[1251,365]]}
+    ]
+  }
+}

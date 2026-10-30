@@ -14,6 +14,16 @@ grant permission to deploy these components in a proprietary hosted product. Res
 the applicable obligations or replace the detector before commercial deployment.
 The surrounding project's license is not changed by this document.
 
+The optional foot-review tool additionally uses Ultralytics YOLO11n-pose, with the same
+runtime/model licensing considerations. Official model documentation:
+https://docs.ultralytics.com/models/yolo11/ and https://docs.ultralytics.com/tasks/pose/.
+Pinned download: https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-pose.pt.
+The exercised file's SHA-256 is
+`869e83fcdffdc7371fa4e34cd8e51c838cc729571d1635e5141e3075e9319dc0`.
+This hash records the downloaded official asset, not independently signed publisher
+authenticity. The adapter checks it before loading. Weights remain in ignored `data/`.
+`download-pose-model` is explicit; normal analysis does not download or load this model.
+
 Model SHA-256 hashes are pinned to the files exercised in the Step 4 smoke test, recorded
 after downloading, and checked before loading. This detects local/upstream changes, not
 independent publisher authenticity. Downloads use the published
