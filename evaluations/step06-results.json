@@ -1,0 +1,80 @@
+{
+  "scope": "Synthetic calculator validation plus real-video withholding checks; not real-match measurement accuracy",
+  "synthetic": {
+    "duration_s": 8,
+    "fragments": [
+      {
+        "fragment_id": 1,
+        "match_id": "synthetic-demo-not-real-footage",
+        "shot_id": 0,
+        "track_id": 1,
+        "continuity_segment": 0,
+        "team": "A",
+        "role": "outfield",
+        "coordinate_reference_id": "synthetic-pitch",
+        "start_s": 0.0,
+        "end_s": 8.0,
+        "observed_duration_s": 8.0,
+        "observed_distance_m": 24.000000000000053,
+        "top_speed_kmh": 10.800000000000022,
+        "sprint_count": 0,
+        "sprints": [],
+        "end_reason": "end_of_input"
+      },
+      {
+        "fragment_id": 2,
+        "match_id": "synthetic-demo-not-real-footage",
+        "shot_id": 0,
+        "track_id": 2,
+        "continuity_segment": 0,
+        "team": "A",
+        "role": "outfield",
+        "coordinate_reference_id": "synthetic-pitch",
+        "start_s": 0.0,
+        "end_s": 8.0,
+        "observed_duration_s": 8.0,
+        "observed_distance_m": 48.000000000000114,
+        "top_speed_kmh": 21.600000000000044,
+        "sprint_count": 1,
+        "sprints": [
+          {
+            "start_s": 0.0,
+            "end_s": 8.0,
+            "duration_s": 8.0,
+            "peak_speed_kmh": 21.600000000000044,
+            "end_reason": "end_of_input",
+            "truncated": true
+          }
+        ],
+        "end_reason": "end_of_input"
+      }
+    ],
+    "discarded_short_fragments": 1
+  },
+  "real_replay": {
+    "input_records_sha256": "df3a9617f6a11fb0e1e19f04c6fc443da47266ff5195523ef820d30040ff94ac",
+    "processed_frames": 750,
+    "person_observations": 17460,
+    "measured_observations": 0,
+    "rejection_counts": {
+      "role_unknown": 257,
+      "unconfirmed_track": 83,
+      "uncertain_association": 282,
+      "calibration_unvalidated": 17460,
+      "missing_calibration_id": 10296,
+      "missing_coordinate_reference_id": 17460,
+      "ground_contact_unverified": 17460,
+      "projection_unvalidated": 17460,
+      "position_unavailable": 10296,
+      "classification_discontinuity": 62
+    },
+    "status": "unavailable"
+  },
+  "new_inference": {
+    "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+    "processed_frames": 25,
+    "status": "completed",
+    "metric_telemetry_enabled": true,
+    "metric_measurements_available": false
+  }
+}

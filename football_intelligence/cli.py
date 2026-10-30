@@ -36,15 +36,25 @@ def main(argv: list[str] | None = None) -> int:
     analyze.add_argument("--device", default="cpu")
     analyze.add_argument("--max-frames", type=int)
     analyze.add_argument("--pitch-every", type=int, default=10)
+    analyze.add_argument("--config", type=Path)
+    telemetry = commands.add_parser("compute-telemetry", help="Compute quality-gated telemetry from frame JSONL")
+    telemetry.add_argument("path", type=Path)
+    telemetry.add_argument("--output", type=Path, required=True)
+    telemetry.add_argument("--config", type=Path)
     args = parser.parse_args(argv)
     try:
-        if args.command == "download-models":
+        if args.command == "compute-telemetry":
+            from .telemetry_io import compute_telemetry
+            result = compute_telemetry(args.path,args.output,
+                                      config=AppConfig.load(args.config) if args.config else AppConfig())
+        elif args.command == "download-models":
             from .model_assets import download_models
             result = download_models(args.model_dir)
         elif args.command == "analyze-video":
             from .analysis import analyze_video
             result = analyze_video(args.path,args.output,match_id=args.match_id,model_dir=args.model_dir,
-                                   device=args.device,max_frames=args.max_frames,pitch_every=args.pitch_every)
+                                   device=args.device,max_frames=args.max_frames,pitch_every=args.pitch_every,
+                                   config=AppConfig.load(args.config) if args.config else AppConfig())
         elif args.command == "calibrate-pitch":
             from .calibration import fit_landmark_file
             result = fit_landmark_file(args.path)
@@ -60,9 +70,10 @@ def main(argv: list[str] | None = None) -> int:
         else:
             config = AppConfig.load(args.path) if args.command == "validate-config" else AppConfig()
             result = config.to_dict()
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, KeyError, TypeError) as exc:
         label = ("Configuration error" if args.command in {"default-config", "validate-config"}
-                 else "Calibration error" if args.command == "calibrate-pitch" else "Video error")
+                 else "Calibration error" if args.command == "calibrate-pitch"
+                 else "Telemetry error" if args.command == "compute-telemetry" else "Video error")
         print(f"{label}: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(result, indent=2, allow_nan=False))

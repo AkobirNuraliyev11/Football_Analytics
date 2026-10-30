@@ -9,13 +9,14 @@ import uuid
 
 from .calibration import CalibrationError, update_camera
 from .classification import TeamRoleClassifier
-from .config import PitchConfig
+from .config import AppConfig, PitchConfig
 from .detection import FootballDetector
 from .ingestion import write_manifest
 from .model_assets import sha256
 from .models import PixelPoint
 from .shots import ShotConfig, ShotDetector
 from .tracking import MultiObjectTracker
+from .telemetry import TelemetryEngine
 from .validation import identifier, integer
 from .video import iter_frames, local_source, probe_video
 
@@ -66,12 +67,18 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
         cv2.rectangle(output,p1,p2,color,2)
         label = f'{record.get("role",record["kind"])} #{record["track_id"]} {record.get("team","unknown")}'
         if record["kind"]=="ball": label=f'ball #{record["track_id"]}'
+        elif "telemetry" in record:
+            speed = record["telemetry"]["speed_kmh"]
+            label += f" | {speed:.1f} km/h" if speed is not None else " | -- km/h"
         cv2.putText(output,label,(p1[0],max(16,p1[1]-5)),cv2.FONT_HERSHEY_SIMPLEX,.45,color,1)
     if calibration:
         for point in calibration.landmarks:
             if point.name in calibration.inlier_names:
                 cv2.circle(output,(round(point.pixel.x),round(point.pixel.y)),4,(70,220,70),-1)
     state = "pitch fit (unvalidated)" if calibration else "pitch unavailable"
+    if any("telemetry" in r for r in records):
+        available = any(r.get("telemetry",{}).get("speed_kmh") is not None for r in records)
+        state += " | telemetry " + ("available" if available else "unavailable")
     cv2.rectangle(output,(0,0),(output.shape[1],30),(12,20,32),-1)
     cv2.putText(output,f"Frame {frame_index} | shot {shot_id} | {state}",(10,21),
                 cv2.FONT_HERSHEY_SIMPLEX,.5,(240,240,240),1)
@@ -80,13 +87,16 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
 
 def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("data/models"),
                   device="cpu", max_frames=None, pitch_every=10, detector=None,
-                  pitch: PitchConfig | None = None):
+                  pitch: PitchConfig | None = None, config: AppConfig | None = None):
     """Pipeline has injectable detector for deterministic integration tests."""
     identifier("match_id",match_id)
     integer("pitch_every",pitch_every,minimum=1)
     if max_frames is not None:
         integer("max_frames",max_frames,minimum=1)
-    pitch = pitch or PitchConfig()
+    if pitch is not None and config is not None and pitch != config.pitch:
+        raise ValueError("Pitch override disagrees with configuration")
+    config = config or AppConfig(pitch=pitch or PitchConfig())
+    pitch = config.pitch
     source = local_source(source)
     metadata = probe_video(source)
     detector = detector or FootballDetector(model_dir,device=device)
@@ -96,7 +106,8 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 "pitch":asdict(pitch),"pitch_dimensions_assumed":True,"max_frames":max_frames,
                 "pitch_every":pitch_every,"device":device,"processed_frames":0,
                 "frames_with_pitch_fit":0,"preview_audio":False,"model_hashes":detector.fingerprints,
-                "metric_telemetry_enabled":False,
+                "metric_telemetry_enabled":True,"metric_measurements_available":False,
+                "analytics":asdict(config.analytics),
                 "orientation":"model-canonical; cross-shot physical-end identity unverified"}
     write_manifest(output/"manifest.json",manifest)
     try:
@@ -104,11 +115,13 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
         manifest["source_sha256"] = sha256(source)
         shots, tracker = ShotDetector(ShotConfig()), MultiObjectTracker()
         classifier = TeamRoleClassifier(pitch=pitch)
+        telemetry = TelemetryEngine(config)
         calibration, previous = None, None
         preview = PreviewWriter(output/"preview.partial.mp4", metadata.width,metadata.height,
                                 Fraction(metadata.average_rate) if metadata.average_rate else Fraction(25))
         with closing(preview), closing(iter_frames(source)) as frames, \
              (output/"tracks.partial.jsonl").open("x") as track_file, \
+             (output/"telemetry.partial.jsonl").open("x") as telemetry_file, \
              (output/"calibrations.partial.jsonl").open("x") as calibration_file:
             for frame in frames:
                 shot = shots.update(frame)
@@ -156,6 +169,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                         "confidence":detection.confidence,"image_anchor":asdict(anchor),
                         "pitch_position_candidate":position,"projection_state":projection_state,
                         "ground_contact_reliable":False,
+                        "coordinate_reference_id":None,
                         "calibration_id":calibration.calibration_id if position else None})
                 records = classifier.update(frame.rgb,records,timestamp_s=frame.timestamp_s,shot_id=shot["shot_id"])
                 for item in records:
@@ -164,6 +178,10 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 record = frame.timing_record() | shot | {"match_id":match_id,"detections":records,
                     "calibration_status":"fit_unvalidated" if calibration else "unavailable",
                     "calibration_reason":reason}
+                measurement = telemetry.update(record)
+                telemetry_file.write(json.dumps(measurement,allow_nan=False)+"\n")
+                for item, values in zip(records,measurement["observations"]):
+                    item["telemetry"] = values
                 track_file.write(json.dumps(record,allow_nan=False)+"\n")
                 preview.write(annotate(frame.rgb,records,calibration,frame.frame_index,shot["shot_id"]),frame.timestamp_s)
                 manifest["processed_frames"] += 1
@@ -173,12 +191,15 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
         source_after = source.stat()
         if (source_before.st_size,source_before.st_mtime_ns) != (source_after.st_size,source_after.st_mtime_ns):
             raise ValueError("Source changed during analysis")
-        for name in ("tracks.jsonl","calibrations.jsonl","preview.mp4"):
+        summary = telemetry.finish()
+        write_manifest(output/"telemetry-summary.partial.json",summary)
+        artifacts = ["tracks.jsonl","calibrations.jsonl","preview.mp4","telemetry.jsonl","telemetry-summary.json"]
+        for name in artifacts:
             stem,suffix = name.rsplit(".",1)
             (output/f"{stem}.partial.{suffix}").replace(output/name)
         manifest.update(status="completed",shot_count=shots.shot_id+1,
                         classification=classifier.summary(),
-                        artifacts=["tracks.jsonl","calibrations.jsonl","preview.mp4"],
+                        artifacts=artifacts,metric_measurements_available=summary["status"]=="available",
                         completed_at=datetime.now(timezone.utc).isoformat())
         write_manifest(output/"manifest.json",manifest)
         return manifest
