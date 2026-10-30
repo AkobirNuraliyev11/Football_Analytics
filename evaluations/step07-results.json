@@ -1,0 +1,285 @@
+{
+  "step": 7,
+  "status": "passed",
+  "cases": {
+    "known-motion": {
+      "input_hashes": {
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/demo-step-06/known-motion/synthetic-tracks.jsonl": "bcf09180d3b2ed52121bc5ccffdf1a2a00fe5b4f2c2aa8b5938ff02c4e047106"
+      },
+      "quality": "input_validated",
+      "frames": 201,
+      "coverage": {
+        "person_samples": 614,
+        "radar_samples": 302,
+        "sample_fraction": 0.49185667752442996,
+        "input_span_s": 8.0,
+        "statuses": {
+          "warming_up": 111,
+          "withheld": 201,
+          "measured": 302
+        },
+        "reasons": {
+          "first_eligible_sample": 3,
+          "ground_contact_unverified": 201,
+          "short_track": 108
+        }
+      },
+      "groups": [
+        {
+          "id": "21b7098792876c075991",
+          "identity": {
+            "match_id": "synthetic-demo-not-real-footage",
+            "shot_id": 0,
+            "coordinate_reference_id": "synthetic-pitch",
+            "type": "track",
+            "track_id": 2,
+            "continuity_segment": 0,
+            "team": "A",
+            "role": "outfield"
+          },
+          "observed_person_seconds": 6.0,
+          "intervals": 150
+        },
+        {
+          "id": "6a1b4e0b2e6d91f795c3",
+          "identity": {
+            "match_id": "synthetic-demo-not-real-footage",
+            "shot_id": 0,
+            "coordinate_reference_id": "synthetic-pitch",
+            "type": "team",
+            "team": "A"
+          },
+          "observed_person_seconds": 11.999999999999915,
+          "intervals": 300
+        },
+        {
+          "id": "fdec4425a3e3f142ebfa",
+          "identity": {
+            "match_id": "synthetic-demo-not-real-footage",
+            "shot_id": 0,
+            "coordinate_reference_id": "synthetic-pitch",
+            "type": "track",
+            "track_id": 1,
+            "continuity_segment": 0,
+            "team": "A",
+            "role": "outfield"
+          },
+          "observed_person_seconds": 6.0,
+          "intervals": 150
+        }
+      ],
+      "preview_frames": 201,
+      "preview_last_timestamp_s": 8.0
+    },
+    "first-experimental": {
+      "input_hashes": {
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/tracking-review/revised-final/tracks.jsonl": "df3a9617f6a11fb0e1e19f04c6fc443da47266ff5195523ef820d30040ff94ac",
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/real-measurement-review/run-004/quality.jsonl": "e32d6ad0d726e4e50c1ffe96c9aab5d37012feaa6d71ea6ffb9875741ee271df",
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/real-measurement-review/run-004/manifest.json": "192f7ec51b50214a37c4c189784e082a6fe562342ef091abea00711f9a617e87",
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/demo-step-04/source.mp4": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51"
+      },
+      "quality": "experimental_estimate",
+      "frames": 750,
+      "coverage": {
+        "person_samples": 17460,
+        "radar_samples": 83,
+        "sample_fraction": 0.004753722794959908,
+        "input_span_s": 29.96,
+        "statuses": {
+          "withheld": 16079,
+          "warming_up": 1298,
+          "measured": 83
+        },
+        "reasons": {
+          "role_unknown": 257,
+          "unconfirmed_track": 83,
+          "uncertain_association": 282,
+          "missing_calibration_id": 9941,
+          "missing_coordinate_reference_id": 15995,
+          "paint_check_unavailable": 15995,
+          "feet_evidence_unavailable": 15995,
+          "camera_stability_unverified": 16048,
+          "position_unavailable": 15995,
+          "first_eligible_sample": 94,
+          "short_track": 1203,
+          "identity_or_reference_change": 1,
+          "implausible_displacement": 23,
+          "classification_discontinuity": 62
+        }
+      },
+      "groups": [
+        {
+          "id": "06f0e8e6a1a3f7aad582",
+          "identity": {
+            "match_id": "full-preview",
+            "shot_id": 0,
+            "coordinate_reference_id": "midfield-estimate-shot-0",
+            "type": "team",
+            "team": "A"
+          },
+          "observed_person_seconds": 1.4399999999999973,
+          "intervals": 36
+        },
+        {
+          "id": "48c9dfac209674127dac",
+          "identity": {
+            "match_id": "full-preview",
+            "shot_id": 0,
+            "coordinate_reference_id": "midfield-estimate-shot-0",
+            "type": "track",
+            "track_id": 7,
+            "continuity_segment": 0,
+            "team": "B",
+            "role": "outfield"
+          },
+          "observed_person_seconds": 1.5599999999999987,
+          "intervals": 39
+        },
+        {
+          "id": "8ca138b3dd8361d1166e",
+          "identity": {
+            "match_id": "full-preview",
+            "shot_id": 0,
+            "coordinate_reference_id": "midfield-estimate-shot-0",
+            "type": "track",
+            "track_id": 11,
+            "continuity_segment": 0,
+            "team": "A",
+            "role": "outfield"
+          },
+          "observed_person_seconds": 1.1199999999999974,
+          "intervals": 28
+        },
+        {
+          "id": "9fa228184d8310eac35b",
+          "identity": {
+            "match_id": "full-preview",
+            "shot_id": 0,
+            "coordinate_reference_id": "midfield-estimate-shot-0",
+            "type": "track",
+            "track_id": 32,
+            "continuity_segment": 5,
+            "team": "unknown",
+            "role": "official"
+          },
+          "observed_person_seconds": 0.16000000000000014,
+          "intervals": 4
+        },
+        {
+          "id": "e5cc28d00d19b34d9e3a",
+          "identity": {
+            "match_id": "full-preview",
+            "shot_id": 0,
+            "coordinate_reference_id": "midfield-estimate-shot-0",
+            "type": "track",
+            "track_id": 23,
+            "continuity_segment": 1,
+            "team": "A",
+            "role": "outfield"
+          },
+          "observed_person_seconds": 0.31999999999999984,
+          "intervals": 8
+        },
+        {
+          "id": "f4730fa7ef624fc4f091",
+          "identity": {
+            "match_id": "full-preview",
+            "shot_id": 0,
+            "coordinate_reference_id": "midfield-estimate-shot-0",
+            "type": "team",
+            "team": "B"
+          },
+          "observed_person_seconds": 1.5599999999999987,
+          "intervals": 39
+        }
+      ],
+      "preview_frames": 300,
+      "preview_last_timestamp_s": 11.96
+    },
+    "second-experimental": {
+      "input_hashes": {
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/foot-review/second-analysis/tracks.jsonl": "b87b1f6452e4eb1e6783394302a5fa2970a58da5edb62eedc8fe2c4e9128730b",
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/foot-review/second-geometry/quality.jsonl": "e9c72e44d4b607a7c86975bcd00ea929d4fabacfcf91d9c97573289a1f9be451",
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/foot-review/second-geometry/manifest.json": "4945ce1222ae80c3b60345adcae78cb94e9b1504173956fe2dd11c2316bc1e5a",
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/tracking-review/second-source.mp4": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96"
+      },
+      "quality": "experimental_estimate",
+      "frames": 150,
+      "coverage": {
+        "person_samples": 3606,
+        "radar_samples": 0,
+        "sample_fraction": 0.0,
+        "input_span_s": 5.96,
+        "statuses": {
+          "withheld": 3194,
+          "warming_up": 412
+        },
+        "reasons": {
+          "role_unknown": 90,
+          "unconfirmed_track": 64,
+          "uncertain_association": 174,
+          "missing_calibration_id": 979,
+          "missing_coordinate_reference_id": 3159,
+          "paint_check_unavailable": 3159,
+          "feet_evidence_unavailable": 3159,
+          "camera_stability_unverified": 3183,
+          "position_unavailable": 3159,
+          "first_eligible_sample": 29,
+          "short_track": 383,
+          "classification_discontinuity": 52,
+          "implausible_displacement": 9
+        }
+      },
+      "groups": [],
+      "preview_frames": 150,
+      "preview_last_timestamp_s": 5.96
+    },
+    "first-strict": {
+      "input_hashes": {
+        "/Users/akobir/Documents/ChatGPT/Football Analytics/data/tracking-review/revised-final/tracks.jsonl": "df3a9617f6a11fb0e1e19f04c6fc443da47266ff5195523ef820d30040ff94ac"
+      },
+      "quality": "input_validated",
+      "frames": 750,
+      "coverage": {
+        "person_samples": 17460,
+        "radar_samples": 0,
+        "sample_fraction": 0.0,
+        "input_span_s": 29.96,
+        "statuses": {
+          "withheld": 17460
+        },
+        "reasons": {
+          "role_unknown": 257,
+          "unconfirmed_track": 83,
+          "uncertain_association": 282,
+          "calibration_unvalidated": 17460,
+          "missing_calibration_id": 10296,
+          "missing_coordinate_reference_id": 17460,
+          "ground_contact_unverified": 17460,
+          "projection_unvalidated": 17460,
+          "position_unavailable": 10296,
+          "classification_discontinuity": 62
+        }
+      },
+      "groups": [],
+      "preview_frames": 300,
+      "preview_last_timestamp_s": 11.96
+    }
+  },
+  "analytic_reference_evaluation": {
+    "reference_method": "Analytic constant-velocity fixture, NOT real footage",
+    "reference_independence": "asserted by label supplier, not verified by scorer",
+    "labeled_samples": 402,
+    "available_samples": 302,
+    "availability": 0.7512437810945274,
+    "position_mae_m": 1.0940475898292934e-15,
+    "position_rmse_m": 2.495455736189504e-15,
+    "paired_interval_count": 300,
+    "interval_speed_mae_kmh": 1.4921397450962104e-13,
+    "scope": "Matched visible positions and same-fragment labeled intervals; not full-path or sprint accuracy"
+  },
+  "real_video_independent_reference": "Unavailable: no independently measured meter trajectories provided",
+  "continuity_decision": "Preserve existing gates; no demonstrated real-video continuity improvement",
+  "limits": "Sparse experimental occupancy only; reliable real-video telemetry and pitch control remain unresolved",
+  "unit_tests_passed": 109
+}

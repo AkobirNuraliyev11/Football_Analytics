@@ -58,9 +58,26 @@ def main(argv: list[str] | None = None) -> int:
     feet.add_argument("--start-s",type=float,default=0)
     feet.add_argument("--max-frames",type=int)
     feet.add_argument("--allow-ankle-proxy",action="store_true",help="Experimental current-ankle anchor with a recently observed shoe offset")
+    tactics=commands.add_parser("build-tactics",help="Export quality-gated radar and observed-occupancy heatmaps")
+    tactics.add_argument("path",type=Path,help="Saved tracks JSONL")
+    tactics.add_argument("--output",type=Path,required=True)
+    tactics.add_argument("--review",type=Path,help="Explicit experimental measurement-review directory")
+    tactics.add_argument("--config",type=Path)
+    tactics.add_argument("--video",type=Path,help="Exact source video for synchronized radar overlay")
+    tactics.add_argument("--cell-m",type=float,default=1.)
+    tactics.add_argument("--sigma-m",type=float,default=2.)
+    tactics.add_argument("--rotate",action="store_true",help="Rotate display 180 degrees; stored coordinates unchanged")
+    tactics.add_argument("--preview-start-s",type=float,default=0.)
+    tactics.add_argument("--preview-seconds",type=float,default=12.)
     args = parser.parse_args(argv)
     try:
-        if args.command == "download-pose-model":
+        if args.command == "build-tactics":
+            from .tactical_io import build_tactics
+            result=build_tactics(args.path,args.output,review=args.review,
+                config=AppConfig.load(args.config) if args.config else None,video=args.video,
+                cell_m=args.cell_m,sigma_m=args.sigma_m,rotate=args.rotate,
+                preview_start_s=args.preview_start_s,preview_seconds=args.preview_seconds)
+        elif args.command == "download-pose-model":
             from .feet import download_pose_model
             result=download_pose_model(args.model_dir)
         elif args.command == "review-feet":

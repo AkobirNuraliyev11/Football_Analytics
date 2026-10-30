@@ -1,7 +1,7 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–6 — ingestion, calibration, detection, tracking, classification, and a gated telemetry engine.**
+**Status: Steps 1–7 — ingestion, calibration, detection, tracking, classification, gated telemetry, and tactical visualization.**
 The backend and dashboard are not implemented yet. Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings
 remain unavailable until geometry and ground contact are validated; automatic pitch
@@ -27,11 +27,18 @@ The [optional foot-position trial](docs/foot-position-review.md) now compares po
 ankles/shoes on two clips. It improves visible-shoe localization on a small paired sample,
 but reduces continuous measurement coverage; it is therefore **not the default**.
 
+[Step 7](docs/step-07-tactical-visualization.md) exports timestamped radar positions,
+video overlays, observed-occupancy grids, and Gaussian heatmap PNGs for teams and local
+tracks. It preserves strict/experimental quality labels and unavailable states. It
+does not resolve the real-video measurement limitations or implement pitch control.
+
 ## Architectural roadmap and review gates
 
 Each numbered module requires user review and explicit approval before the next.
 After completing and validating each step, commit and push its implementation,
 tests, and documentation to GitHub before stopping for that review.
+The user authorized continuing through Step 7 together and withholding video previews
+until it is finished. The next review gate is before Step 8.
 
 1. **Foundation (implemented):** Python package, strict configuration, coordinate and athlete observation contracts, CLI, tests.
 2. **Video ingestion (implemented):** Probe metadata, decode timestamped frames, handle variable frame rates, flag candidate camera cuts, define job manifests.
@@ -39,7 +46,7 @@ tests, and documentation to GitHub before stopping for that review.
 4. **Detection and tracking (implemented):** Football-specific detector, separate ball observations, timestamp-aware tracking, short-occlusion association, automatic pitch keypoints, calibration updates, and review-video export.
 5. **Team and role classification (implemented):** Automatic torso-color clustering, temporal team assignments, official separation, and goalkeeper color/position checks with uncertainty.
 6. **Telemetry (engine implemented):** Time-based smoothing, displacement and observation-gap gates, ground-contact uncertainty, track maturation, speed, distance, and sprint state machines. Automatic evidence needed to enable trusted real-video measurements remains unresolved.
-7. **Tactical visualization:** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports.
+7. **Tactical visualization (implemented):** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports. Real-video output remains limited to eligible observations.
 8. **Events and clips:** Candidate duels, sustained sprints, deduplication, padded MP4 extraction, and annotation overlays.
 9. **Backend:** FastAPI, durable job records, worker integration, telemetry and artifact endpoints, HTTP range streaming, CORS, and exports.
 10. **Dashboard:** React and TypeScript, synchronized video and radar, KPI cards, sortable telemetry, charts, heatmaps, clips, and clearly labeled cached demo data.
@@ -199,4 +206,4 @@ when evidence is insufficient; goalkeeper team membership is not inferred from p
 
 See the [Step 5 guide](docs/step-05-team-classification.md) for behavior and test coverage.
 
-**Review gate:** stop here. Step 6 begins only after explicit user approval.
+**Current review gate:** Steps 6 and 7 are implemented. Step 8 begins only after explicit user approval.
