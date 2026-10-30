@@ -3,7 +3,7 @@
 An incremental implementation of a single-camera football analytics platform.
 **Status: Steps 1–6 — ingestion, calibration, detection, tracking, classification, and a gated telemetry engine.**
 The backend and dashboard are not implemented yet. Automatic analysis produces an
-annotated preview, track records, and telemetry outputs. Real-video metric readings
+annotated preview, track records, and telemetry outputs. Validated real-video metric readings
 remain unavailable until geometry and ground contact are validated; automatic pitch
 fits alone do not satisfy those requirements.
 This foundation is not a production-ready analytics platform.
@@ -16,6 +16,12 @@ Step 6 adds a [telemetry engine and known-motion demo](docs/step-06-telemetry.md
 Run `python3 scripts/demo_telemetry.py --output data/my-telemetry-demo` to see checked
 synthetic speed/distance/sprint results. New `analyze-video` runs export telemetry
 automatically; unavailable measurements remain null, with explicit reasons.
+
+A [real-video measurement review](docs/real-video-measurements.md) now provides a
+separate experimental mode with visible-paint refinement, camera-motion checks, and
+foot-visibility screening. The 30-second development clip produced four short
+estimated movement segments. Coverage remains low and ground contact is unverified;
+these are not trusted player totals. The normal analysis mode retains its strict gates.
 
 ## Architectural roadmap and review gates
 

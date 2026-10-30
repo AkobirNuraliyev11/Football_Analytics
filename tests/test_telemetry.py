@@ -132,6 +132,13 @@ class TelemetryTests(unittest.TestCase):
         rejected=engine.update(frame(.3,x=3.01))["observations"][0]
         self.assertEqual(rejected["reasons"],["implausible_displacement"])
 
+    def test_partial_smoothing_window_cannot_set_reported_peak(self):
+        engine=TelemetryEngine()
+        for i in range(31):
+            engine.update(frame(i/10,x=0 if i==0 else 1))
+        row=engine.finish()["fragments"][0]
+        self.assertLessEqual(row["top_speed_kmh"],7.2+1e-8)
+
     def test_short_sprints_cannot_join_across_missing_observations(self):
         cfg=AppConfig(analytics=replace(AnalyticsConfig(),min_track_duration_s=.2,smoothing_window_s=.05))
         engine=TelemetryEngine(cfg)

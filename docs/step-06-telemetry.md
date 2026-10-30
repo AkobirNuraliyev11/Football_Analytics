@@ -1,5 +1,10 @@
 # Step 6 — physical telemetry engine
 
+Follow-up: [real-video measurement review](real-video-measurements.md) adds a separate
+experimental mode. The strict behavior described below remains the default. Reported
+peak speed now excludes partial smoothing windows at startup, and a fragment must
+span both the minimum track duration and a complete smoothing window.
+
 The engine calculates speed, observed distance, and sustained sprint bursts from
 eligible ground-plane observations. It is integrated into `analyze-video` and can
 also replay existing tracks without running a detector. This step does not implement

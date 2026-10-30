@@ -29,8 +29,9 @@ class Fragment:
 
 
 class TelemetryEngine:
-    def __init__(self, config=None):
+    def __init__(self, config=None, *, experimental=False):
         self.config = config or AppConfig()
+        self.experimental = experimental
         self.active = {}
         self.fragments = []
         self.rejections = Counter()
@@ -51,15 +52,23 @@ class TelemetryEngine:
             reasons.append("uncertain_association")
         if item.get("classification_conflict") is not False or item.get("team_changed") is not False:
             reasons.append("classification_discontinuity")
-        if frame.get("calibration_status") != "validated":
+        if not self.experimental and frame.get("calibration_status") != "validated":
             reasons.append("calibration_unvalidated")
         for name in ("calibration_id", "coordinate_reference_id"):
             if not isinstance(item.get(name), str) or not item[name].strip():
                 reasons.append("missing_" + name)
-        if item.get("ground_contact_reliable") is not True:
+        if not self.experimental and item.get("ground_contact_reliable") is not True:
             reasons.append("ground_contact_unverified")
-        if item.get("projection_state") != "validated_ground_position":
+        if not self.experimental and item.get("projection_state") != "validated_ground_position":
             reasons.append("projection_unvalidated")
+        if self.experimental:
+            evidence = item.get("measurement_evidence", {})
+            if evidence.get("status") != "line_checked_estimate":
+                reasons.append("paint_check_unavailable")
+            if evidence.get("ground_evidence") != "visible_feet_candidate":
+                reasons.append("feet_evidence_unavailable")
+            if evidence.get("camera_stable") is not True:
+                reasons.append("camera_stability_unverified")
         raw = item.get("pitch_position_candidate")
         point = None
         if raw is None:
@@ -83,7 +92,8 @@ class TelemetryEngine:
             state.sprint_peak = 0.0
 
     def _mature(self, state):
-        return state.last - state.start + 1e-9 >= self.config.analytics.min_track_duration_s
+        return state.last - state.start + 1e-9 >= max(self.config.analytics.min_track_duration_s,
+                                                     self.config.analytics.smoothing_window_s)
 
     def _finish(self, key, reason):
         state = self.active.pop(key, None)
@@ -136,6 +146,7 @@ class TelemetryEngine:
             key = match, shot, item["track_id"]
             reasons, point = self._reasons(frame, item)
             result = {"track_id": key[2], "fragment_id": None, "status": "withheld",
+                "quality": "experimental_estimate" if self.experimental else "input_validated",
                 "reasons": reasons, "speed_kmh": None, "observed_distance_m": None,
                 "observed_duration_s": None, "sprint_count": None, "sprinting": None}
             if item.get("kind") == "person":
@@ -197,7 +208,9 @@ class TelemetryEngine:
             else:
                 self._end_sprint(state, "below_threshold")
             state.distance += speed/3.6*dt
-            state.top_speed = max(state.top_speed, speed)
+            # A partial startup window must not set a fragment's reported peak.
+            if duration+1e-9 >= cfg.smoothing_window_s:
+                state.top_speed = max(state.top_speed, speed)
             state.last, state.position = t, point
             mature = self._mature(state)
             result.update(fragment_id=state.fragment_id, status="measured" if mature else "warming_up",
@@ -217,7 +230,8 @@ class TelemetryEngine:
         for key in list(self.active):
             self._finish(key, "end_of_input")
         self.closed = True
-        return {"schema_version": 1, "status": "available" if self.fragments else "unavailable",
+        return {"schema_version": 1, "status": ("estimates_available" if self.experimental else "available") if self.fragments else "unavailable",
+            "measurement_quality": "experimental_estimate" if self.experimental else "input_validated",
             "config": self.config.to_dict(), "processed_frames": self.frames,
             "person_observations": self.observations, "measured_observations": self.measured,
             "measured_observation_fraction": self.measured/self.observations if self.observations else None,

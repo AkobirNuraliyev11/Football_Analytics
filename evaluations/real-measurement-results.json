@@ -1,0 +1,270 @@
+{
+  "scope": "Real-video development trial; all numeric movement outputs are experimental estimates, not independently validated athlete measurements",
+  "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+  "reference": {
+    "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+    "reference_method": "Assistant visual annotations on native 1920x1080 frames; approximate to 3 pixels. Development footage, not surveyed ground truth. Paint intersections were not provided to the automatic fitter. Endpoint foot points mark the lowest visible shoe of red-shirt track 23. Crops at ten-frame intervals were reviewed for identity only. A shoe point and a box-bottom midpoint are different gait-dependent position proxies.",
+    "landmark_checks": [
+      {
+        "frame_index": 0,
+        "pixel": [
+          1068,
+          447
+        ],
+        "pitch": [
+          52.5,
+          24.85
+        ],
+        "before_error_m": 0.6894896737310631,
+        "after_error_m": 0.11086475073058163
+      },
+      {
+        "frame_index": 0,
+        "pixel": [
+          1041,
+          586
+        ],
+        "pitch": [
+          52.5,
+          43.15
+        ],
+        "before_error_m": 0.6802955115271064,
+        "after_error_m": 0.08292468074228507
+      },
+      {
+        "frame_index": 50,
+        "pixel": [
+          1089,
+          447
+        ],
+        "pitch": [
+          52.5,
+          24.85
+        ],
+        "before_error_m": 1.090478166564601,
+        "after_error_m": 0.11791000010184902
+      },
+      {
+        "frame_index": 50,
+        "pixel": [
+          1060,
+          583
+        ],
+        "pitch": [
+          52.5,
+          43.15
+        ],
+        "before_error_m": 0.8600645937121671,
+        "after_error_m": 0.21495717361916752
+      },
+      {
+        "frame_index": 100,
+        "pixel": [
+          1150,
+          435
+        ],
+        "pitch": [
+          52.5,
+          24.85
+        ],
+        "before_error_m": 1.43232495844659,
+        "after_error_m": 0.10994575923786773
+      },
+      {
+        "frame_index": 100,
+        "pixel": [
+          1119,
+          564
+        ],
+        "pitch": [
+          52.5,
+          43.15
+        ],
+        "before_error_m": 1.477362326035581,
+        "after_error_m": 0.17042513308620294
+      }
+    ],
+    "rmse_before_m": 1.087903638446849,
+    "rmse_after_m": 0.14166253692429534,
+    "foot_endpoints": [
+      {
+        "frame_index": 25,
+        "track_id": 23,
+        "pixel": [
+          827,
+          495
+        ],
+        "timestamp_s": 1.0,
+        "pitch_position": [
+          46.208938837662465,
+          32.64713432320992
+        ],
+        "automatic_anchor_pitch": [
+          46.25263519498941,
+          33.12879606177587
+        ],
+        "anchor_difference_m": 0.4836397440678562,
+        "three_pixel_sensitivity_m": 0.4240169112795893
+      },
+      {
+        "frame_index": 75,
+        "track_id": 23,
+        "pixel": [
+          858,
+          532
+        ],
+        "timestamp_s": 3.0,
+        "pitch_position": [
+          44.6839679042227,
+          37.89962664590825
+        ],
+        "automatic_anchor_pitch": [
+          45.04341328827889,
+          37.96200370008622
+        ],
+        "anchor_difference_m": 0.3648175996401852,
+        "three_pixel_sensitivity_m": 0.3738415887531966
+      }
+    ],
+    "interval_s": 2.0,
+    "net_displacement_estimate_m": 5.469388626514033,
+    "mean_net_speed_estimate_kmh": 9.844899527725259,
+    "automatic_anchor_mean_net_speed_kmh": 8.967923303128545,
+    "three_pixel_speed_sensitivity_kmh": 1.4361453000590148,
+    "limits": "Net endpoint displacement, not distance traveled or instantaneous speed. Pixel sensitivity is not a confidence interval and excludes calibration/scale/ground-contact error. Same development clip; no independent athlete-speed ground truth."
+  },
+  "automatic": {
+    "schema_version": 1,
+    "status": "estimates_available",
+    "measurement_quality": "experimental_estimate",
+    "config": {
+      "schema_version": 1,
+      "pitch": {
+        "length_m": 105.0,
+        "width_m": 68.0
+      },
+      "analytics": {
+        "sprint_threshold_kmh": 18.0,
+        "max_speed_kmh": 36.0,
+        "smoothing_window_s": 0.5,
+        "min_track_duration_s": 2.0,
+        "min_sprint_duration_s": 1.0,
+        "duel_distance_m": 1.3,
+        "min_duel_duration_s": 0.5,
+        "highlight_padding_s": 1.5,
+        "max_observation_gap_s": 0.25
+      }
+    },
+    "processed_frames": 750,
+    "person_observations": 17460,
+    "measured_observations": 83,
+    "measured_observation_fraction": 0.004753722794959908,
+    "rejection_counts": {
+      "role_unknown": 257,
+      "unconfirmed_track": 83,
+      "uncertain_association": 282,
+      "missing_calibration_id": 9941,
+      "missing_coordinate_reference_id": 15995,
+      "paint_check_unavailable": 15995,
+      "feet_evidence_unavailable": 15995,
+      "camera_stability_unverified": 16048,
+      "position_unavailable": 15995,
+      "identity_or_reference_change": 1,
+      "implausible_displacement": 23,
+      "classification_discontinuity": 62
+    },
+    "discarded_short_fragments": 91,
+    "fragments": [
+      {
+        "fragment_id": 14,
+        "match_id": "full-preview",
+        "shot_id": 0,
+        "track_id": 23,
+        "continuity_segment": 1,
+        "team": "A",
+        "role": "outfield",
+        "coordinate_reference_id": "midfield-estimate-shot-0",
+        "start_s": 1.0,
+        "end_s": 3.32,
+        "observed_duration_s": 2.32,
+        "observed_distance_m": 6.315388600847398,
+        "top_speed_kmh": 11.599174184792012,
+        "sprint_count": 0,
+        "sprints": [],
+        "end_reason": "missing_coordinate_reference_id"
+      },
+      {
+        "fragment_id": 69,
+        "match_id": "full-preview",
+        "shot_id": 0,
+        "track_id": 7,
+        "continuity_segment": 0,
+        "team": "B",
+        "role": "outfield",
+        "coordinate_reference_id": "midfield-estimate-shot-0",
+        "start_s": 21.68,
+        "end_s": 25.24,
+        "observed_duration_s": 3.5599999999999987,
+        "observed_distance_m": 4.881156423019031,
+        "top_speed_kmh": 6.759753639830007,
+        "sprint_count": 0,
+        "sprints": [],
+        "end_reason": "missing_coordinate_reference_id"
+      },
+      {
+        "fragment_id": 70,
+        "match_id": "full-preview",
+        "shot_id": 0,
+        "track_id": 11,
+        "continuity_segment": 0,
+        "team": "A",
+        "role": "outfield",
+        "coordinate_reference_id": "midfield-estimate-shot-0",
+        "start_s": 22.12,
+        "end_s": 25.24,
+        "observed_duration_s": 3.1199999999999974,
+        "observed_distance_m": 4.10247024796743,
+        "top_speed_kmh": 7.529628341722478,
+        "sprint_count": 0,
+        "sprints": [],
+        "end_reason": "missing_calibration_id"
+      },
+      {
+        "fragment_id": 87,
+        "match_id": "full-preview",
+        "shot_id": 0,
+        "track_id": 32,
+        "continuity_segment": 5,
+        "team": "unknown",
+        "role": "official",
+        "coordinate_reference_id": "midfield-estimate-shot-0",
+        "start_s": 27.56,
+        "end_s": 29.72,
+        "observed_duration_s": 2.16,
+        "observed_distance_m": 3.558884945435625,
+        "top_speed_kmh": 7.691389775221387,
+        "sprint_count": 0,
+        "sprints": [],
+        "end_reason": "missing_calibration_id"
+      }
+    ],
+    "scope": "Observed continuous fragments, not verified athletes or full-match totals",
+    "quality": "Input quality flags are required assertions, not independently verified here",
+    "smoothing": "Causal time-weighted mean velocity; distance integrates its magnitude"
+  },
+  "geometry": {
+    "frames_checked": 750,
+    "frames_with_paint_fit": 529,
+    "frames_with_camera_check": 508,
+    "rejections": {
+      "Camera transport drifted away from visible paint": 4,
+      "Center-circle coverage is too narrow": 174,
+      "Held-out paint residual exceeds threshold": 13,
+      "Unstable paint refinement": 5,
+      "Need visible center circle, halfway line and near touchline": 20,
+      "Unstable camera motion": 5
+    }
+  },
+  "quality_records_sha256": "e32d6ad0d726e4e50c1ffe96c9aab5d37012feaa6d71ea6ffb9875741ee271df",
+  "test_count": 81
+}

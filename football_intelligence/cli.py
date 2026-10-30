@@ -41,9 +41,18 @@ def main(argv: list[str] | None = None) -> int:
     telemetry.add_argument("path", type=Path)
     telemetry.add_argument("--output", type=Path, required=True)
     telemetry.add_argument("--config", type=Path)
+    review = commands.add_parser("review-measurements", help="Experimental midfield estimates with visible-paint and camera checks")
+    review.add_argument("path",type=Path)
+    review.add_argument("--analysis",type=Path,required=True)
+    review.add_argument("--tracks",type=Path)
+    review.add_argument("--output",type=Path,required=True)
+    review.add_argument("--max-frames",type=int)
     args = parser.parse_args(argv)
     try:
-        if args.command == "compute-telemetry":
+        if args.command == "review-measurements":
+            from .real_measurements import estimate_video
+            result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames)
+        elif args.command == "compute-telemetry":
             from .telemetry_io import compute_telemetry
             result = compute_telemetry(args.path,args.output,
                                       config=AppConfig.load(args.config) if args.config else AppConfig())
