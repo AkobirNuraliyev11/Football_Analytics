@@ -1,0 +1,120 @@
+You are an expert in Computer Vision, Sports Analytics, and Full-Stack Software Engineer.
+
+I need you to build a complete, production-ready, end-to-end Football (Soccer) Tactical Intelligence & Automated Highlight Video Analytics Platform from scratch.
+
+The system takes single-camera 2D match video footage (broadcast or tactical sideline camera) as input and converts it into a full tactical performance dashboard with 2D radar mini-maps, physical player telemetry (speed, distance, sprints), 2D tactical density heatmaps, and automated event highlight video clips (tackles and sprints).
+
+Here is the exact, comprehensive functional and architectural specification of what you must build:
+
+
+---
+
+### ⚠️ IMPORTANT WORKING INSTRUCTIONS (STEP-BY-STEP REVIEW PROTOCOL)
+
+1. **DO NOT generate the entire project all at once.**
+2. First, present a clear, numbered architectural roadmap of all the modular steps required to build this system from scratch.
+3. Then, start **ONLY with Step 1**.
+4. For each step:
+   - Explain the core engineering concepts and mathematics in plain English.
+   - Provide the complete, clean, modular code/implementation for that specific module.
+   - Provide a quick explanation of how to run or test that module.
+   - **STOP and wait for my review and explicit approval ("looks good", "continue", or feedback) before proceeding to the next step.**
+5. Only move to Step 2 after I review and approve Step 1, and so on for every subsequent step.
+
+---
+
+### 1. SYSTEM OBJECTIVES & HIGH-LEVEL OVERVIEW
+
+The platform must operate as an automated pipeline that ingests single-camera match video (broadcast or tactical sideline view), executes computer vision tracking and geometry mapping, computes physical sports analytics, extracts highlight clips, and presents everything in an interactive, modern dark-mode web application.
+
+The platform consists of four core layers:
+1. Computer Vision & Planar Geometric Calibration Engine
+2. Physical Kinematics & Tactical Intelligence Engine
+3. Backend API & Multimedia Streaming Service
+4. Modern Web Dashboard & Data Visualization Interface
+
+---
+
+### 2. DETAILED FUNCTIONAL SPECIFICATIONS (WHAT THE SYSTEM MUST DO)
+
+#### A. Planar Coordinate Transformation & Pitch Geometry
+- Map 2D pixel coordinates (x, y) from the video camera's perspective onto a standard 2D flat FIFA pitch coordinate system (105 meters long by 68 meters wide).
+- Calculate projective transformation matrices using known ground-truth pitch landmarks (goal lines, penalty boxes, 6-yard boxes, penalty spots, center circle).
+- Support camera perspective shifts across different sections of the pitch (e.g., left half, midfield, right half) so that tracking coordinates remain accurate regardless of which part of the pitch is in view.
+- Ensure the coordinate system aligns with the camera view so that the team attacking to the right appears on the right side of any 2D pitch visualizer.
+- Ignore any detected player outside the official 105m x 68m boundary lines to prevent bench personnel, coaches, or spectators from polluting the data.
+
+#### B. Object Detection, Tracking & Re-Identification
+- Detect all human athletes, referees, and the match ball in every frame.
+- Assign and maintain continuous, unique identification numbers (Track IDs) for each individual on the pitch across consecutive frames.
+- Resolve occlusions and crossings when two or more players run past each other or collide.
+- Use the ground contact point (the bottom-center of the bounding box at feet level) as the tracking anchor point for every player to avoid geometric perspective distortion.
+
+#### C. Kit Color, Role & Team Separation
+- Automatically group all detected outfield players into two opposing teams based on the dominant visual color of their upper jersey/torso.
+- Explicitly identify and isolate the match officials (referees and linesmen) so their movement is tracked separately from outfield players.
+- Identify goalkeepers based on a combination of their unique kit color and their spatial location inside the penalty/6-yard area.
+- Ensure resilience to stadium lighting conditions, preventing players running through heavy roof shadows from abruptly switching team classifications.
+
+#### D. Physical Kinematics & Telemetry Computation
+- Calculate the following metrics for every tracked athlete:
+  1. Instantaneous Speed: Converted to kilometers per hour (km/h).
+  2. Accumulated Distance Covered: Converted to meters.
+  3. Sprint Bursts Count: Tracking instances where an athlete exceeds high-intensity sprint thresholds (e.g., speed > 18.0 km/h).
+- Physical Bound Constraints & Smoothing:
+  - Smooth velocities across consecutive frames using a moving average or filter to remove single-frame pixel jitter.
+  - Enforce human physical displacement limits (e.g., maximum allowable displacement per frame equivalent to ~36 km/h) to eliminate false velocity spikes caused by tracker teleportation or camera cuts.
+  - Prevent vertical elevation during aerial headers from being miscalculated as forward planar displacement.
+  - Filter out short-lived "ghost" tracks (tracks appearing for only a few frames) from the final analytics leaderboard.
+
+#### E. 2D Tactical Pitch Radar Mini-Map
+- Generate a top-down 2D pitch mini-map ("radar") synchronized with the match video.
+- Display each athlete as a color-coded dot on the 2D pitch representing their real-time (X, Y) meter position:
+  - Team A outfield players (e.g., Red)
+  - Team B outfield players (e.g., White)
+  - Goalkeeper (e.g., Yellow/Gold)
+  - Referee (e.g., Cyan/Teal)
+- Include official pitch markings (lawn stripes, penalty boxes, center circle, penalty spots).
+- Support rendering the radar as an overlay inside the video stream or as an interactive synchronized UI element.
+
+#### F. 2D Gaussian Density Tactical Heatmaps
+- Aggregate historical (X, Y) pitch coordinates for every athlete and team over time.
+- Calculate spatial probability density distributions using 2D Gaussian smoothing over a discretized pitch grid.
+- Render and export high-resolution tactical heatmaps showing:
+  1. Team A Territorial Dominance / Pitch Control Footprint
+  2. Team B Territorial Dominance / Pitch Control Footprint
+  3. Individual Athlete Spatial Movement Patterns (e.g., Wingers hugging touchlines, Central Defenders holding lines)
+- Use a standard thermal colormap (Blue -> Cyan -> Green -> Yellow -> Red) overlaid cleanly onto a pitch diagram.
+
+#### G. Automated Highlight Spotter & Video Slicing Engine
+- Automatically monitor match kinematics and slice standalone highlight video clips whenever specific tactical events occur:
+  1. Defensive Duels / Tackles: Triggered when two opposing players come within close physical proximity (< 1.3 meters) for a minimum sustained duration.
+  2. High-Speed Sprints / Counter-Attacks: Triggered when an athlete sustains high-intensity acceleration exceeding sprint speed thresholds (> 18.0 km/h).
+- Include a padding window (e.g., 1.0 to 1.5 seconds before and after the event) and export each clip as a standalone MP4 file.
+- Overlay a visual title bar on highlight clips displaying the event type, players involved, top speed, or duel proximity.
+
+#### H. Backend API & Media Delivery
+- Build a backend server to serve:
+  1. Telemetry Data: JSON endpoints returning sortable athlete statistics (Track ID, Team, Distance, Top Speed, Sprints).
+  2. Highlight Metadata & Video Streaming: Endpoints returning the list of generated highlight clips and streaming the MP4 files.
+  3. Tactical Heatmaps: Endpoints listing and delivering generated heatmap images.
+  4. Full Processed Match Video: Streaming endpoint with HTTP partial content / byte-range support so users can smoothly scrub and seek through the video on modern browsers without buffering lockups.
+- Enable CORS support to allow seamless connection to frontend web dashboards.
+
+#### I. Web Application & Tactical Dashboard
+- Build a responsive, dark-mode tactical command center with the following sections:
+  1. Top KPI Summary Strip: Cards displaying total tracked athletes, match peak velocity, number of auto-extracted highlights, and calibration accuracy.
+  2. Video Player Stage: A 16:9 video player displaying the match footage with bounding boxes, player tags, and the 2D radar mini-map.
+  3. Physical Telemetry Leaderboard: A sortable table showing athlete track IDs, team badges, distance covered, top speed, and sprint counts.
+  4. Top Speed Comparison Chart: An interactive horizontal bar chart ranking the fastest players in the match.
+  5. 2D Tactical Heatmap Viewer: An interactive dropdown allowing analysts to switch between team density footprints and individual player heatmaps.
+  6. Highlight Reel Showcase: A categorized playlist of all auto-clipped tackles and sprints, where clicking a clip immediately plays the video.
+  7. Export Options: One-click buttons to download telemetry data as a CSV spreadsheet or export a technical match report.
+- Resilience: The web application must function gracefully both when connected to the live backend API and in a standalone demonstration mode with cached telemetry.
+
+---
+
+### STARTING POINT:
+Please output the **Numbered Architectural Step-by-Step Roadmap** first, and then present **Step 1 ONLY**. 
+
+Wait for my review and explicit approval before you write Step 2.
