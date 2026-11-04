@@ -1,0 +1,56 @@
+{
+  "development_source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+  "held_out_source_sha256": "07886454cec2e859edb69b1bef5a3013fed54b887d9b8c5d563619bb511c1766",
+  "development": {
+    "frames": 150,
+    "mapped_frames": 33,
+    "observed_person_anchors_in_support": 23
+  },
+  "development_rejections": {
+    "Need two visible markings in each pitch direction": 85,
+    "Unstable local correction": 31,
+    "Local paint check failed": 1
+  },
+  "held_out": {
+    "0": {
+      "references": [
+        {
+          "name": "outer_far",
+          "seed_error_m": 1.3211548512434084,
+          "local_error_m": null
+        },
+        {
+          "name": "outer_near",
+          "seed_error_m": 4.794322849032634,
+          "local_error_m": null
+        },
+        {
+          "name": "goal_area_far",
+          "seed_error_m": 3.953710983186419,
+          "local_error_m": null
+        },
+        {
+          "name": "goal_area_near",
+          "seed_error_m": 5.722565876145335,
+          "local_error_m": null
+        },
+        {
+          "name": "penalty_spot",
+          "seed_error_m": 4.038617604515138,
+          "local_error_m": null
+        }
+      ],
+      "status": "withheld",
+      "reason": "Need two visible markings in each pitch direction"
+    },
+    "375": {
+      "status": "withheld",
+      "reason": "Need two visible markings in each pitch direction"
+    },
+    "700": {
+      "status": "withheld",
+      "reason": "Need two visible markings in each pitch direction"
+    }
+  },
+  "scope": "Local field geometry only. Person anchor counts precede contact, identity and motion checks."
+}

@@ -1,0 +1,13 @@
+{
+  "source_sha256": "07886454cec2e859edb69b1bef5a3013fed54b887d9b8c5d563619bb511c1766",
+  "source": "Roboflow soccer sample 08fd33_0.mp4, Google Drive ID 1OG8K6wqUw9t7lp9ms1M48DxRhwTYciK-",
+  "method": "Assistant visually marked native frame 0 before running the mapping on this clip. Approximate pixel readings, configured regulation dimensions, no survey. The penalty spot is a feature excluded from the paint fit.",
+  "frame_index": 0, "side": "right",
+  "points": [
+    ["outer_far",[1454,397],[88.5,13.84]],
+    ["outer_near",[1806,587],[88.5,54.16]],
+    ["goal_area_far",[1695,432],[99.5,24.84]],
+    ["goal_area_near",[1888,513],[99.5,43.16]],
+    ["penalty_spot",[1683,468],[94,34]]
+  ]
+}
