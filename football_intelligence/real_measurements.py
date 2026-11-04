@@ -1,5 +1,5 @@
 """Review-only real-video estimates; strict validated telemetry is never overwritten."""
-from contextlib import closing
+from contextlib import closing, nullcontext
 from fractions import Fraction
 import json
 from pathlib import Path
@@ -15,7 +15,7 @@ from .validation import integer
 from .video import iter_frames, probe_video
 
 
-def estimate_video(source, analysis, output, *, tracks=None, max_frames=None):
+def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True):
     import cv2
     source,analysis,output=Path(source),Path(analysis),Path(output)
     if max_frames is not None: integer("max_frames",max_frames,minimum=1)
@@ -38,15 +38,15 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None):
     job={"status":"running","source_sha256":source_hash,"tracks_sha256":sha256(tracks),
          "calibrations_sha256":sha256(analysis/"calibrations.jsonl"),"processed_frames":0,
          "measurement_quality":"experimental_estimate","config":config.to_dict(),
-         "ground_contact_verified":False,"max_frames":max_frames}
+         "ground_contact_verified":False,"max_frames":max_frames,"write_preview":write_preview}
     write_manifest(output/"manifest.json",job)
     previous=previous_items=previous_fit=previous_shot=None
     try:
         with tracks.open() as cached, closing(iter_frames(source)) as frames, \
              (output/"estimates.partial.jsonl").open("x") as values, \
              (output/"quality.partial.jsonl").open("x") as quality, \
-             closing(PreviewWriter(output/"preview.partial.mp4",meta.width,meta.height,
-                                   Fraction(meta.average_rate or "25"))) as writer:
+             (closing(PreviewWriter(output/"preview.partial.mp4",meta.width,meta.height,
+                                   Fraction(meta.average_rate or "25"))) if write_preview else nullcontext()) as writer:
             for line,frame in zip(cached,frames):
                 old=json.loads(line)
                 if old["frame_index"]!=frame.frame_index or abs(old["timestamp_s"]-frame.timestamp_s)>1e-6:
@@ -107,13 +107,14 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None):
                 quality.write(json.dumps({"frame_index":frame.frame_index,"timestamp_s":frame.timestamp_s,
                     "geometry":fit.evidence if fit else None,"geometry_rejection":reason,
                     "matrix":fit.matrix.tolist() if fit else None,"detections":prepared},allow_nan=False)+"\n")
-                preview=annotate(frame.rgb,prepared,None,frame.frame_index,old["shot_id"])
-                cv2.rectangle(preview,(0,0),(meta.width,56),(20,27,40),-1)
-                cv2.putText(preview,"EXPERIMENTAL ESTIMATES | center-circle area only | ground contact not verified",
-                            (15,23),cv2.FONT_HERSHEY_SIMPLEX,.65,(255,205,100),2)
-                cv2.putText(preview,f"Frame {frame.frame_index} | " + ("paint checked" if fit else "geometry unavailable"),
-                            (15,46),cv2.FONT_HERSHEY_SIMPLEX,.5,(240,240,240),1)
-                writer.write(preview,frame.timestamp_s)
+                if writer is not None:
+                    preview=annotate(frame.rgb,prepared,None,frame.frame_index,old["shot_id"])
+                    cv2.rectangle(preview,(0,0),(meta.width,56),(20,27,40),-1)
+                    cv2.putText(preview,"EXPERIMENTAL ESTIMATES | center-circle area only | ground contact not verified",
+                                (15,23),cv2.FONT_HERSHEY_SIMPLEX,.65,(255,205,100),2)
+                    cv2.putText(preview,f"Frame {frame.frame_index} | " + ("paint checked" if fit else "geometry unavailable"),
+                                (15,46),cv2.FONT_HERSHEY_SIMPLEX,.5,(240,240,240),1)
+                    writer.write(preview,frame.timestamp_s)
                 previous,previous_items,previous_fit,previous_shot=frame,items,fit,old["shot_id"]
                 job["processed_frames"]+=1
                 if max_frames and job["processed_frames"]>=max_frames: break
@@ -125,7 +126,9 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None):
                 raise ValueError("Review input changed during processing")
         summary=engine.finish()
         write_manifest(output/"summary.partial.json",summary)
-        artifacts=["estimates.jsonl","quality.jsonl","summary.json","preview.mp4"]
+        artifacts=["estimates.jsonl","quality.jsonl","summary.json"]
+        if write_preview:
+            artifacts.append("preview.mp4")
         for name in artifacts:
             stem,suffix=name.rsplit(".",1)
             (output/f"{stem}.partial.{suffix}").replace(output/name)

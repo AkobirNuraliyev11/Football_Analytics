@@ -111,7 +111,9 @@ class MeasurementQualityTests(unittest.TestCase):
                 f["detections"][0]["bbox"]={"x_min":10,"y_min":10,"x_max":30,"y_max":40}
                 records.append(f)
             (analysis/"tracks.jsonl").write_text("\n".join(map(json.dumps,records))+"\n")
-            result=estimate_video(source,analysis,root/"review")
+            result=estimate_video(source,analysis,root/"review",write_preview=False)
+            self.assertFalse(list((root/"review").glob("*.mp4")))
+            self.assertNotIn("preview.mp4",result["artifacts"])
             self.assertEqual(result["status"],"completed")
             summary=json.loads((root/"review/summary.json").read_text())
             self.assertEqual(summary["status"],"unavailable")

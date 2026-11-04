@@ -24,17 +24,25 @@ Choose one working copy when editing; use GitHub to synchronize changes.
 Recovery verification: `python3 -m unittest discover -s tests -v` ran all 109 tests
 successfully on November 2, 2026, with no skips in the current system Python environment.
 
-## What was not recovered
+## Data recovery update
 
 Source videos, model weights, generated previews, detailed per-frame analysis, and the
-old Python virtual environment were excluded from Git. They are not present in this
-restored copy. macOS denied access to the Trash, including the recovery attempt with
-elevated tool permission. Their absence here does not establish that they are permanently
-deleted; check the Trash or a separate backup manually if needed.
+old Python virtual environment were excluded from Git. The original download commands
+were recovered from chat history. Both sample videos have now been downloaded again and
+match their original SHA-256 hashes. The player and pitch models were also restored and
+verified. macOS Trash access was not needed for this download-based recovery.
 
-Models can be downloaded again with the existing CLI. Generated artifacts can be
-recomputed once source videos and dependencies are available. Recorded evaluation
-summaries are historical evidence, not fresh real-video runs after restoration.
+To restore the public sample videos in any new clone:
+
+```sh
+.venv/bin/python scripts/restore_samples.py
+.venv/bin/python -m football_intelligence download-models
+```
+
+The downloader requires `gdown` from the detection extras. Source IDs and hashes are
+committed in the script; downloaded media remain ignored by Git. Rebuilt analysis lives
+under `data/continuity-review/`. Older evaluation summaries describe historical runs;
+new comparisons identify their exact regenerated input hashes.
 
 ## Current status
 

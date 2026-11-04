@@ -9,8 +9,21 @@ Repository: https://github.com/AkobirNuraliyev11/Football_Analytics
 Latest implementation at the time of this handoff:
 `8af5f5943d1a5028e39b76e3dbb14baeadc0c1f9` — gated tactical radar and occupancy heatmaps.
 Check for newer commits and preserve existing changes. The original local project
-was deleted and restored from GitHub on November 2, 2026. Read `START_HERE.md` for
-recovery limitations; do not assume ignored videos or analysis artifacts still exist.
+was deleted and restored from GitHub on November 2, 2026. The exact original videos
+and pinned player/pitch models were subsequently restored from their public sources.
+Use `scripts/restore_samples.py` to recover videos in a new clone. Read `START_HERE.md`
+and check `data/continuity-review/` for regenerated analysis and newer comparisons.
+
+## Latest completed comparison
+
+Both original sources were recovered and verified. On identical saved positions,
+separating identity maturity from the measurement window increased experimental
+coverage from 83 to 367 samples on the 30-second clip and from zero to 87 on the
+six-second clip. The 83 shared speed and distance readings agreed exactly.
+See `evaluations/identity-maturity-real.json` for denominators and rejection counts.
+The next measurement milestone is to validate an additional pitch region using a
+held-out camera view and independent reference positions. Keep future investigations
+data-only unless the user asks for a clip.
 
 ## Objective and implemented scope
 

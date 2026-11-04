@@ -1,5 +1,14 @@
 # External models and runtime
 
+## Recoverable development video sources
+
+The two development videos were obtained from the public sample downloads in
+[Roboflow's soccer setup script](https://github.com/roboflow/sports/blob/main/examples/soccer/setup.sh):
+`0bfacc_0.mp4` and `2e57b9_0.mp4`. Run `scripts/restore_samples.py` to download them
+and verify the original SHA-256 hashes. That script records both Drive IDs so the
+inputs can be recovered after local deletion. Sample media remain excluded from Git;
+the software license does not by itself establish redistribution rights to match footage.
+
 The optional Step 4 adapter uses Ultralytics and football model weights distributed
 through Roboflow's public sports example. Weights and sample footage are downloaded
 into ignored `data/` directories and are not redistributed in this Git repository.

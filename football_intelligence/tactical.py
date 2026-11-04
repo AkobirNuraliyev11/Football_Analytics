@@ -27,13 +27,15 @@ class TacticalEngine:
     Only mature telemetry samples enter radar. Occupancy weights the endpoints
     of each eligible consecutive interval equally (trapezoidal integration).
     """
-    def __init__(self, config=None, *, experimental=False, cell_m=1.0, sigma_m=2.0):
+    def __init__(self, config=None, *, experimental=False, cell_m=1.0, sigma_m=2.0,
+                 separate_identity_maturity=False):
         import numpy as np
         self.config = config or AppConfig()
         finite("cell_m", cell_m, minimum=.5)
         finite("sigma_m", sigma_m, minimum=.1)
         self.cell_m, self.sigma_m = cell_m, sigma_m
-        self.telemetry = TelemetryEngine(self.config, experimental=experimental)
+        self.telemetry = TelemetryEngine(self.config, experimental=experimental,
+                                        separate_identity_maturity=separate_identity_maturity)
         self.grade = "experimental_estimate" if experimental else "input_validated"
         self.shape = (math.ceil(self.config.pitch.width_m/cell_m),
                       math.ceil(self.config.pitch.length_m/cell_m))

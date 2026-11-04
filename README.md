@@ -32,6 +32,19 @@ video overlays, observed-occupancy grids, and Gaussian heatmap PNGs for teams an
 tracks. It preserves strict/experimental quality labels and unavailable states. It
 does not resolve the real-video measurement limitations or implement pitch control.
 
+The latest continuity trial separates the age of a reliably tracked identity from the
+duration of its current measurement segment. With a two-second identity history and
+a fresh half-second of eligible positions, the experimental policy published 367 of
+17,460 observations on the first development clip and 87 of 3,606 on the second.
+Independent athlete-position and speed validation is still pending.
+[See the measured comparison](evaluations/identity-maturity-real.json).
+
+To compare the policies on existing records, run
+`python3 scripts/compare_maturity.py TRACKS.jsonl REVIEW_DIR --output comparison.json`.
+For a data-only geometry review, add `--no-preview` to `review-measurements`.
+The optional tactical replay flag is `--separate-identity-maturity` together with
+`--review`. Missing position frames stay empty under either policy.
+
 ## Architectural roadmap and review gates
 
 Each numbered module requires user review and explicit approval before the next.

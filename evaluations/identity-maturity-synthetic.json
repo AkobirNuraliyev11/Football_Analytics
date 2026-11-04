@@ -1,0 +1,26 @@
+{
+  "source": "Analytic constant velocity, 25 Hz, six seconds, 5 cm sinusoidal jitter (sin(frame*1.7)), missing positions at frames 60/95/130. NOT real-video accuracy.",
+  "cases": [
+    {
+      "true_speed_kmh": 0.0,
+      "baseline_samples": 10,
+      "candidate_samples": 59,
+      "baseline_speed_rmse_kmh": 0.3782212614491289,
+      "candidate_speed_rmse_kmh": 0.3848416480097411
+    },
+    {
+      "true_speed_kmh": 10.8,
+      "baseline_samples": 10,
+      "candidate_samples": 59,
+      "baseline_speed_rmse_kmh": 0.37822126144912,
+      "candidate_speed_rmse_kmh": 0.3848416480097399
+    },
+    {
+      "true_speed_kmh": 21.6,
+      "baseline_samples": 10,
+      "candidate_samples": 59,
+      "baseline_speed_rmse_kmh": 0.37822126144912,
+      "candidate_speed_rmse_kmh": 0.3848416480097391
+    }
+  ]
+}

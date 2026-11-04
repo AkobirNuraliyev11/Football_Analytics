@@ -47,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     review.add_argument("--tracks",type=Path)
     review.add_argument("--output",type=Path,required=True)
     review.add_argument("--max-frames",type=int)
+    review.add_argument("--no-preview",action="store_true",help="Write only measurement data")
     pose_download=commands.add_parser("download-pose-model",help="Download the pinned optional ankle model")
     pose_download.add_argument("--model-dir",type=Path,default=Path("data/models"))
     feet=commands.add_parser("review-feet",help="Compare experimental pose-guided feet with saved box-anchor estimates")
@@ -69,6 +70,8 @@ def main(argv: list[str] | None = None) -> int:
     tactics.add_argument("--rotate",action="store_true",help="Rotate display 180 degrees; stored coordinates unchanged")
     tactics.add_argument("--preview-start-s",type=float,default=0.)
     tactics.add_argument("--preview-seconds",type=float,default=12.)
+    tactics.add_argument("--separate-identity-maturity",action="store_true",
+                        help="Experimental: mature identity separately from each measurement window (requires --review)")
     args = parser.parse_args(argv)
     try:
         if args.command == "build-tactics":
@@ -76,7 +79,8 @@ def main(argv: list[str] | None = None) -> int:
             result=build_tactics(args.path,args.output,review=args.review,
                 config=AppConfig.load(args.config) if args.config else None,video=args.video,
                 cell_m=args.cell_m,sigma_m=args.sigma_m,rotate=args.rotate,
-                preview_start_s=args.preview_start_s,preview_seconds=args.preview_seconds)
+                preview_start_s=args.preview_start_s,preview_seconds=args.preview_seconds,
+                separate_identity_maturity=args.separate_identity_maturity)
         elif args.command == "download-pose-model":
             from .feet import download_pose_model
             result=download_pose_model(args.model_dir)
@@ -86,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
                                start_s=args.start_s,max_frames=args.max_frames,allow_ankle_proxy=args.allow_ankle_proxy)
         elif args.command == "review-measurements":
             from .real_measurements import estimate_video
-            result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames)
+            result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames,write_preview=not args.no_preview)
         elif args.command == "compute-telemetry":
             from .telemetry_io import compute_telemetry
             result = compute_telemetry(args.path,args.output,

@@ -20,6 +20,7 @@ class Fragment:
     start: float
     last: float
     position: PitchPoint
+    identity_start: float | None = None
     velocities: deque = field(default_factory=deque)
     distance: float = 0.0
     top_speed: float = 0.0
@@ -29,9 +30,13 @@ class Fragment:
 
 
 class TelemetryEngine:
-    def __init__(self, config=None, *, experimental=False):
+    def __init__(self, config=None, *, experimental=False, separate_identity_maturity=False):
         self.config = config or AppConfig()
         self.experimental = experimental
+        if separate_identity_maturity and not experimental:
+            raise ValueError("Separate identity maturity is currently experimental only")
+        self.separate_identity_maturity = separate_identity_maturity
+        self.identity_history = {}
         self.active = {}
         self.fragments = []
         self.rejections = Counter()
@@ -92,8 +97,33 @@ class TelemetryEngine:
             state.sprint_peak = 0.0
 
     def _mature(self, state):
+        if self.separate_identity_maturity:
+            return (state.identity_start is not None and
+                state.last-state.identity_start+1e-9 >= self.config.analytics.min_track_duration_s and
+                state.last-state.start+1e-9 >= self.config.analytics.smoothing_window_s)
         return state.last - state.start + 1e-9 >= max(self.config.analytics.min_track_duration_s,
                                                      self.config.analytics.smoothing_window_s)
+
+    def _identity_history(self, frame):
+        """Track identity age separately from geometry availability; never bridge absence."""
+        if not self.separate_identity_maturity:
+            return
+        current = {}
+        t = frame["timestamp_s"]
+        for item in frame["detections"]:
+            if (item.get("kind") != "person" or item.get("role") not in {"outfield","goalkeeper","official"}
+                or item.get("confirmed") is not True or item.get("continuity_safe") is not True
+                or item.get("measurement_link_eligible") is not True
+                or item.get("classification_conflict") is not False or item.get("team_changed") is not False):
+                continue
+            integer("continuity_segment",item.get("continuity_segment"))
+            key = (frame["match_id"],frame["shot_id"],item["track_id"])
+            identity = (item["continuity_segment"],item.get("team","unknown"),item["role"])
+            old = self.identity_history.get(key)
+            start = (old[1] if old and old[0] == identity and
+                     t-old[2] <= self.config.analytics.max_observation_gap_s+1e-9 else t)
+            current[key] = (identity,start,t)
+        self.identity_history = current
 
     def _finish(self, key, reason):
         state = self.active.pop(key, None)
@@ -108,6 +138,7 @@ class TelemetryEngine:
             "match_id": key[0], "shot_id": key[1], "track_id": key[2],
             "continuity_segment": continuity, "team": team, "role": role,
             "coordinate_reference_id": reference, "start_s": state.start, "end_s": state.last,
+            "identity_start_s": state.identity_start if self.separate_identity_maturity else None,
             "observed_duration_s": state.last-state.start, "observed_distance_m": state.distance,
             "top_speed_kmh": state.top_speed, "sprint_count": len(state.sprints),
             "sprints": state.sprints, "end_reason": reason})
@@ -139,6 +170,7 @@ class TelemetryEngine:
             elif key[2] not in seen:
                 self._finish(key, "missing_observation")
         self.last_time, self.last_frame, self.last_shot, self.match_id = t, index, shot, match
+        self._identity_history(frame)
         self.frames += 1
         output = []
         cfg = self.config.analytics
@@ -176,11 +208,14 @@ class TelemetryEngine:
                     state = None
                     # Do not seed from a suspected teleport: the next good sample must restart.
                     if boundary == "implausible_displacement":
+                        self.identity_history.pop(key,None)
                         result["reasons"] = [boundary]
                         output.append(result)
                         continue
             if state is None:
                 state = Fragment(self.next_fragment, key, identity, t, t, point)
+                if self.separate_identity_maturity:
+                    state.identity_start = self.identity_history[key][1]
                 self.next_fragment += 1
                 self.active[key] = state
                 result.update(fragment_id=state.fragment_id, status="warming_up",
@@ -232,6 +267,7 @@ class TelemetryEngine:
         self.closed = True
         return {"schema_version": 1, "status": ("estimates_available" if self.experimental else "available") if self.fragments else "unavailable",
             "measurement_quality": "experimental_estimate" if self.experimental else "input_validated",
+            "maturity_policy": "stable_identity_then_measurement_window" if self.separate_identity_maturity else "continuous_measurement_fragment",
             "config": self.config.to_dict(), "processed_frames": self.frames,
             "person_observations": self.observations, "measured_observations": self.measured,
             "measured_observation_fraction": self.measured/self.observations if self.observations else None,

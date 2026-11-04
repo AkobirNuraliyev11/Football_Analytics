@@ -34,7 +34,8 @@ def input_frames(tracks, review=None):
 
 
 def build_tactics(tracks, output, *, review=None, config=None, video=None,
-                  cell_m=1., sigma_m=2., rotate=False, preview_start_s=0., preview_seconds=12.):
+                  cell_m=1., sigma_m=2., rotate=False, preview_start_s=0., preview_seconds=12.,
+                  separate_identity_maturity=False):
     from .analysis import PreviewWriter
     from .tactical_render import radar_image, export_heatmaps
     import cv2
@@ -56,7 +57,8 @@ def build_tactics(tracks, output, *, review=None, config=None, video=None,
         config = reviewed_config
         paths += [review/"quality.jsonl", review/"manifest.json"]
     config = config or AppConfig()
-    engine = TacticalEngine(config, experimental=review is not None, cell_m=cell_m, sigma_m=sigma_m)
+    engine = TacticalEngine(config, experimental=review is not None, cell_m=cell_m, sigma_m=sigma_m,
+                            separate_identity_maturity=separate_identity_maturity)
     pitch = config.to_dict()["pitch"]
     if video:
         from .video import iter_frames
@@ -74,6 +76,7 @@ def build_tactics(tracks, output, *, review=None, config=None, video=None,
     staging = output/"partial"
     staging.mkdir()
     manifest = {"schema_version":1,"status":"running","quality":engine.grade,
+        "separate_identity_maturity":separate_identity_maturity,
         "processed_frames":0,"config":config.to_dict(),
         "input_hashes":{p:values[2] for p,values in snapshots.items()},
         "display_rotation_degrees":180 if rotate else 0,

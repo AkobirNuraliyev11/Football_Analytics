@@ -1,0 +1,80 @@
+{
+  "first": {
+    "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+    "tracks_sha256": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c",
+    "quality_sha256": "c2ed79532646d1b164a1f37badc7406e48b8e7bdd0fcd1d89553634d86172779",
+    "shared_measurements_unchanged": 83,
+    "additional_measurements": 284,
+    "baseline": {
+      "frames": 750,
+      "person_samples": 17460,
+      "published": 83,
+      "usable_fragments": 4,
+      "coverage_percent": 0.475
+    },
+    "candidate": {
+      "frames": 750,
+      "person_samples": 17460,
+      "published": 367,
+      "usable_fragments": 24,
+      "coverage_percent": 2.102
+    },
+    "measurement_rejections": {
+      "outside_checked_midfield": 8871,
+      "feet_occluded": 1409,
+      "body_height_discontinuity": 1,
+      "no_visible_ground": 264,
+      "small_or_clipped_player": 106,
+      "Camera transport drifted away from visible paint": 93,
+      "Center-circle coverage is too narrow": 4161,
+      "Held-out paint residual exceeds threshold": 303,
+      "Unstable paint refinement": 122,
+      "Need visible center circle, halfway line and near touchline": 460,
+      "excessive_pixel_sensitivity": 90,
+      "Unstable camera motion": 115
+    },
+    "run_end_reasons": {
+      "uncertain_association": 3,
+      "missing_coordinate_reference_id": 36,
+      "implausible_displacement": 23,
+      "missing_calibration_id": 30,
+      "end_of_input": 2
+    }
+  },
+  "second": {
+    "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+    "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a",
+    "quality_sha256": "8b5d37e1477457bb12ddd6ee720411bf7822659bb475d2b20a7af9c4061f076a",
+    "shared_measurements_unchanged": 0,
+    "additional_measurements": 87,
+    "baseline": {
+      "frames": 150,
+      "person_samples": 3606,
+      "published": 0,
+      "usable_fragments": 0,
+      "coverage_percent": 0.0
+    },
+    "candidate": {
+      "frames": 150,
+      "person_samples": 3606,
+      "published": 87,
+      "usable_fragments": 5,
+      "coverage_percent": 2.413
+    },
+    "measurement_rejections": {
+      "Held-out paint residual exceeds threshold": 385,
+      "outside_checked_midfield": 2069,
+      "feet_occluded": 232,
+      "small_or_clipped_player": 355,
+      "Unstable camera motion": 24,
+      "no_visible_ground": 85,
+      "excessive_pixel_sensitivity": 9
+    },
+    "run_end_reasons": {
+      "missing_coordinate_reference_id": 9,
+      "missing_calibration_id": 6,
+      "implausible_displacement": 9,
+      "end_of_input": 5
+    }
+  }
+}
