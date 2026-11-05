@@ -1,7 +1,7 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–7 — ingestion, calibration, detection, tracking, classification, gated telemetry, and tactical visualization.**
+**Status: Steps 1–7 implemented. Step 8 event-candidate foundation started.**
 The backend and dashboard are not implemented yet. Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings
 remain unavailable until geometry and ground contact are validated; automatic pitch
@@ -50,8 +50,9 @@ The optional tactical replay flag is `--separate-identity-maturity` together wit
 Each numbered module requires user review and explicit approval before the next.
 After completing and validating each step, commit and push its implementation,
 tests, and documentation to GitHub before stopping for that review.
-The user authorized continuing through Step 7 together and withholding video previews
-until it is finished. The next review gate is before Step 8.
+The user requested fixes and progression toward Step 8. Its data-only event foundation
+has started. Real-video measurement validation remains a release blocker. No user
+preview clips should be generated without a new request.
 
 1. **Foundation (implemented):** Python package, strict configuration, coordinate and athlete observation contracts, CLI, tests.
 2. **Video ingestion (implemented):** Probe metadata, decode timestamped frames, handle variable frame rates, flag candidate camera cuts, define job manifests.
@@ -60,7 +61,7 @@ until it is finished. The next review gate is before Step 8.
 5. **Team and role classification (implemented):** Automatic torso-color clustering, temporal team assignments, official separation, and goalkeeper color/position checks with uncertainty.
 6. **Telemetry (engine implemented):** Time-based smoothing, displacement and observation-gap gates, ground-contact uncertainty, track maturation, speed, distance, and sprint state machines. Automatic evidence needed to enable trusted real-video measurements remains unresolved.
 7. **Tactical visualization (implemented):** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports. Real-video output remains limited to eligible observations.
-8. **Events and clips:** Candidate duels, sustained sprints, deduplication, padded MP4 extraction, and annotation overlays.
+8. **Events and clips (started):** Strict sprint and duel candidates with continuous-encounter deduplication are implemented. Padded MP4 extraction and annotation overlays remain pending. See [Step 8](docs/step-08-events.md).
 9. **Backend:** FastAPI, durable job records, worker integration, telemetry and artifact endpoints, HTTP range streaming, CORS, and exports.
 10. **Dashboard:** React and TypeScript, synchronized video and radar, KPI cards, sortable telemetry, charts, heatmaps, clips, and clearly labeled cached demo data.
 11. **Deployment and validation:** End-to-end fixtures, labeled-video evaluation, resource limits, access control, storage lifecycle, packaging, observability, and deployment documentation.
@@ -219,4 +220,8 @@ when evidence is insufficient; goalkeeper team membership is not inferred from p
 
 See the [Step 5 guide](docs/step-05-team-classification.md) for behavior and test coverage.
 
-**Current review gate:** Steps 6 and 7 are implemented. Step 8 begins only after explicit user approval.
+**Current status:** Step 8 data-only event candidates have started. Real-video metric validation and clip extraction remain pending. No preview clips are authorized.
+
+The [penalty-area junction trial](docs/penalty-area-trial.md) improves local geometry
+coverage, with original and audited annotations preserved. It is not yet used for
+player telemetry.

@@ -6,8 +6,9 @@ and push completed milestones to GitHub. Do not merely propose work you can perf
 
 Repository: https://github.com/AkobirNuraliyev11/Football_Analytics
 
-Latest implementation at the time of this handoff:
+Original Step 7 implementation:
 `8af5f5943d1a5028e39b76e3dbb14baeadc0c1f9` — gated tactical radar and occupancy heatmaps.
+Current work adds penalty-area junction recovery and the Step 8 data-only event foundation.
 Check for newer commits and preserve existing changes. The original local project
 was deleted and restored from GitHub on November 2, 2026. The exact original videos
 and pinned player/pitch models were subsequently restored from their public sources.
@@ -36,8 +37,8 @@ resolution or pixel coordinates. Pitch dimensions currently use an explicit conf
 105 × 68 m assumption, not a measurement inferred from footage.
 
 Steps 1–7 are implemented: foundation, timestamp-aware ingestion, calibration, detection
-and tracking, classification, gated telemetry, and tactical visualization. Backend,
-dashboard, and event/highlight extraction are not implemented. The user has requested progression toward Step 8 after addressing Step 7 problems.
+and tracking, classification, gated telemetry, and tactical visualization. Step 8 now includes strict data-only sprint and duel candidate records. Read
+`docs/step-08-events.md`. Backend, dashboard, and highlight extraction are not implemented. The user has requested progression toward Step 8 after addressing Step 7 problems.
 Keep event engineering isolated from unvalidated real-video geometry. Implementation does not mean real-video physical
 measurement accuracy has been demonstrated.
 

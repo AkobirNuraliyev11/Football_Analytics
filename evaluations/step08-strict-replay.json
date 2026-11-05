@@ -1,0 +1,16 @@
+{
+  "first": {
+    "tracks_sha256": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c",
+    "status": "unavailable",
+    "processed_frames": 750,
+    "measured_observations": 0,
+    "events": 0
+  },
+  "second": {
+    "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a",
+    "status": "unavailable",
+    "processed_frames": 150,
+    "measured_observations": 0,
+    "events": 0
+  }
+}

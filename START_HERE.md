@@ -47,7 +47,9 @@ new comparisons identify their exact regenerated input hashes.
 ## Current status
 
 Steps 1–7 are implemented: ingestion, calibration, detection/tracking, team and role
-classification, gated telemetry, and tactical radar/heatmaps. Step 8 has not begun.
+classification, gated telemetry, and tactical radar/heatmaps. Step 8 now has a
+data-only candidate-event engine. See `docs/step-08-events.md`. Clip extraction
+and overlays remain pending.
 
 Real-video measurement continuity remains unresolved. Strict real-video outputs remain
 unavailable; experimental estimates are sparse. Improving continuity and validating
