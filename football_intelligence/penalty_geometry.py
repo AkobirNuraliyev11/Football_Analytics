@@ -15,11 +15,17 @@ class PenaltyMap:
     residual_m: float
     supported_lines: int
 
+    alternatives: tuple = ()
+
     def project(self, pixel):
         xy = transform(self.matrix, [pixel])[0]
         inside = cv2.pointPolygonTest(self.hull, tuple(map(float, xy)), False)
         if inside < 0:
             raise CalibrationError("Outside observed penalty-area markings")
+        if self.alternatives:
+            predictions = np.vstack([xy]+[other.project(pixel) for other in self.alternatives])
+            if np.linalg.norm(predictions[:,None]-predictions[None,:],axis=2).max()>.6:
+                raise CalibrationError("Competing box alignments disagree at this point")
         return xy
 
 
@@ -38,7 +44,7 @@ def markings(pitch, side):
     return lines
 
 
-def check_penalty_area(rgb, seed, side, detections=(), pitch=None):
+def _check_paint(rgb, seed, side, detections=(), pitch=None, *, adaptive=False):
     """Check a seed against local stripe centers, reserving alternating 2 m strips."""
     pitch = pitch or PitchConfig()
     h, w = rgb.shape[:2]
@@ -52,6 +58,14 @@ def check_penalty_area(rgb, seed, side, detections=(), pitch=None):
         world[:,:,axis] = level + offsets
         world[:,:,1-axis] = along[:,None]
         pixels = transform(inverse, world.reshape(-1,2)).reshape(*shape,2)
+        if adaptive:
+            # Perspective can send a ground-axis probe almost along the painted stripe.
+            # Sample across its image normal with grass on both sides of the paint.
+            centers = pixels[:,len(offsets)//2]
+            tangent = centers[-1]-centers[0]
+            normal = np.array([-tangent[1],tangent[0]]) / np.linalg.norm(tangent)
+            pixels = centers[:,None,:] + np.linspace(-6,6,len(offsets))[None,:,None]*normal
+            sampled_world = transform(seed,pixels.reshape(-1,2)).reshape(*shape,2)
         px, py = pixels[:,:,0], pixels[:,:,1]
         good = ((px>=1)&(px<w-2)&(py>=1)&(py<h-2)).all(axis=1)
         for item in detections:
@@ -68,12 +82,24 @@ def check_penalty_area(rgb, seed, side, detections=(), pitch=None):
                 continue
             light = profile.min(axis=1)
             background = max(np.median(light[:4]), np.median(light[-4:]))
-            hot = np.flatnonzero(light > background+18)
-            if not len(hot) or hot[0]<4 or hot[-1]>44 or hot[-1]-hot[0]>9 or np.any(np.diff(hot)>1):
+            contrast = 18
+            if adaptive:
+                noise = max(np.std(light[:4]),np.std(light[-4:]))
+                contrast = max(8.,4*noise)
+            hot = np.flatnonzero(light > background+contrast)
+            if not len(hot) or hot[0]<4 or hot[-1]>44 or np.any(np.diff(hot)>1):
                 continue
-            center = np.average(offsets[hot],weights=light[hot]-background)
-            point = [0.,0.]
-            point[axis], point[1-axis] = level+center, along[i]
+            if hot[-1]-hot[0] > (16 if adaptive else 9):
+                continue
+            weights = light[hot]-background
+            if adaptive:
+                point = np.average(sampled_world[i,hot],axis=0,weights=weights)
+                if abs(point[axis]-level)>1.2:
+                    continue
+            else:
+                center = np.average(offsets[hot],weights=weights)
+                point = [0.,0.]
+                point[axis], point[1-axis] = level+center, along[i]
             points.append(point)
             blocks.append(int((along[i]-low)//2))
         if len(points)<7 or len(set(blocks))<3:
@@ -106,3 +132,46 @@ def check_penalty_area(rgb, seed, side, detections=(), pitch=None):
     if cv2.contourArea(hull)<35:
         raise CalibrationError("Insufficient enclosed paint support")
     return PenaltyMap(correction@seed,hull,float(error),len(supported))
+
+
+def check_penalty_area(rgb, seed, side, detections=(), pitch=None):
+    """Keep the original paint check and recover displaced seeds using observed junctions."""
+    from .box_alignment import box_seeds
+    pitch = pitch or PitchConfig()
+    try:
+        return _check_paint(rgb, seed, side, detections, pitch)
+    except CalibrationError:
+        pass
+    accepted = []
+    for improved in box_seeds(rgb, seed, side, pitch, detections):
+        try:
+            accepted.append(_check_paint(rgb, improved, side, detections, pitch, adaptive=True))
+        except CalibrationError:
+            continue
+    if not accepted:
+        raise CalibrationError("No junction alignment passed the reserved paint check")
+    accepted.sort(key=lambda candidate:candidate.residual_m)
+    best = accepted[0]
+    if len(accepted)==1:
+        return best
+    # A difference in an extrapolated corner need not invalidate the interior.
+    # Require shared, independently checked support at each returned position.
+    vertices=best.hull.reshape(-1,2)
+    low=np.ceil(vertices.min(0)).astype(int)
+    high=np.floor(vertices.max(0)).astype(int)
+    grid=np.array([[x,y] for x in range(low[0],high[0]+1) for y in range(low[1],high[1]+1)])
+    if len(grid)<35:
+        raise CalibrationError("Insufficient common support")
+    pixels=transform(np.linalg.inv(best.matrix),grid)
+    valid=np.ones(len(grid),bool)
+    predictions=[]
+    for candidate in accepted:
+        points=transform(candidate.matrix,pixels)
+        valid &= np.array([cv2.pointPolygonTest(candidate.hull,tuple(p),False)>=0 for p in points])
+        for previous in predictions:
+            valid &= np.linalg.norm(points-previous,axis=1)<=.6
+        predictions.append(points)
+    if valid.sum()<35:
+        raise CalibrationError("Insufficient area of alignment agreement")
+    best.alternatives=tuple(accepted[1:])
+    return best

@@ -1,0 +1,107 @@
+{
+  "source_sha256": "ed1038048d56e86c2eac93394344aadcd45df26a01e158c5dd55cd6409104685",
+  "frames": {
+    "0": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": null,
+          "goal_area_near": null,
+          "arc_far": null,
+          "arc_near": null
+        },
+        "reason": "Unstable local correction"
+      },
+      "junction": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": null,
+          "goal_area_near": 0.1445018328784247,
+          "arc_far": null,
+          "arc_near": null
+        },
+        "paint_p90_m": 0.1581722834965655
+      }
+    },
+    "25": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": null,
+          "goal_area_near": null,
+          "arc_far": null,
+          "arc_near": null
+        },
+        "reason": "Local paint check failed"
+      },
+      "junction": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": 0.122306761416377,
+          "goal_area_near": 0.15858941578467087,
+          "arc_far": null,
+          "arc_near": null
+        },
+        "paint_p90_m": 0.14608494064725264
+      }
+    },
+    "50": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": null,
+          "goal_area_near": null,
+          "arc_far": null,
+          "arc_near": null
+        },
+        "reason": "Unstable local correction"
+      },
+      "junction": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": 0.17196102657387927,
+          "goal_area_near": 0.08595330490986396,
+          "arc_far": 0.4782079253027378,
+          "arc_near": null
+        },
+        "paint_p90_m": 0.11482561003674621
+      }
+    },
+    "375": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {},
+        "reason": "Need two visible markings in each pitch direction"
+      },
+      "junction": {
+        "mapped": false,
+        "reference_errors_m": {},
+        "reason": "Fewer than three supported box junctions"
+      }
+    },
+    "700": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {},
+        "reason": "Need two visible markings in each pitch direction"
+      },
+      "junction": {
+        "mapped": false,
+        "reference_errors_m": {},
+        "reason": "Fewer than three supported box junctions"
+      }
+    }
+  }
+}

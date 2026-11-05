@@ -1,0 +1,87 @@
+{
+  "source_sha256": "4f3ef60e27f925f2462b725c85fc30e983e27345ce52dad158148e265011f842",
+  "frames": {
+    "0": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": null,
+          "goal_area_near": null,
+          "arc_far": null,
+          "arc_near": null,
+          "penalty_spot": null
+        },
+        "reason": "Unstable local correction"
+      },
+      "junction": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": 0.06791270795874839,
+          "goal_area_near": null,
+          "arc_far": 0.17958003828058713,
+          "arc_near": 0.10399235593786488,
+          "penalty_spot": 0.13849089020533117
+        },
+        "paint_p90_m": 0.23554168745686574
+      }
+    },
+    "375": {
+      "previous": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": 2.0985765226492368,
+          "goal_area_far": 0.11045128118513983,
+          "goal_area_near": 0.12796905222796456,
+          "arc_far": 0.041045889752862594,
+          "arc_near": 0.04683574920372486,
+          "penalty_spot": 0.23810736809905958
+        },
+        "paint_p90_m": 0.08045232222426756
+      },
+      "junction": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": 2.0985765226492368,
+          "goal_area_far": 0.11045128118513983,
+          "goal_area_near": 0.12796905222796456,
+          "arc_far": 0.041045889752862594,
+          "arc_near": 0.04683574920372486,
+          "penalty_spot": 0.23810736809905958
+        },
+        "paint_p90_m": 0.08045232222426756
+      }
+    },
+    "700": {
+      "previous": {
+        "mapped": false,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": null,
+          "goal_area_near": null,
+          "arc_far": null,
+          "arc_near": null
+        },
+        "reason": "Need two visible markings in each pitch direction"
+      },
+      "junction": {
+        "mapped": true,
+        "reference_errors_m": {
+          "box_far": null,
+          "box_near": null,
+          "goal_area_far": 0.21980571454815273,
+          "goal_area_near": 0.13904816413288226,
+          "arc_far": 0.20972378557026986,
+          "arc_near": 0.12966764774333142
+        },
+        "paint_p90_m": 0.08405437201093771
+      }
+    }
+  }
+}

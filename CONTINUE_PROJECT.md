@@ -21,8 +21,9 @@ separating identity maturity from the measurement window increased experimental
 coverage from 83 to 367 samples on the 30-second clip and from zero to 87 on the
 six-second clip. The 83 shared speed and distance readings agreed exactly.
 See `evaluations/identity-maturity-real.json` for denominators and rejection counts.
-The next measurement milestone is to validate an additional pitch region using a
-held-out camera view and independent reference positions. Keep future investigations
+The penalty-area junction experiment now has a small separate-clip landmark check.
+Read `docs/penalty-area-trial.md` for the annotation audit, coverage, and limitations.
+Temporal camera stability and athlete ground contact remain unvalidated in that region. Keep future investigations
 data-only unless the user asks for a clip.
 
 ## Objective and implemented scope
@@ -36,8 +37,8 @@ resolution or pixel coordinates. Pitch dimensions currently use an explicit conf
 
 Steps 1–7 are implemented: foundation, timestamp-aware ingestion, calibration, detection
 and tracking, classification, gated telemetry, and tactical visualization. Backend,
-dashboard, and event/highlight extraction are not implemented. Do not begin Step 8
-without explicit user approval. Implementation does not mean real-video physical
+dashboard, and event/highlight extraction are not implemented. The user has requested progression toward Step 8 after addressing Step 7 problems.
+Keep event engineering isolated from unvalidated real-video geometry. Implementation does not mean real-video physical
 measurement accuracy has been demonstrated.
 
 ## Immediate task: real-video measurement continuity
@@ -151,7 +152,7 @@ not be compared as if it were the identical old test. Models can be downloaded a
 
 Use normal judgment and proceed autonomously. Commit and push completed milestones.
 Keep updates brief. Do not show intermediate generated videos; any final review preview
-should be 12–15 seconds. Stop before Step 8. If your environment cannot run/edit/push,
+should be 12–15 seconds. Do not generate clips without a new request. If your environment cannot run/edit/push,
 say so clearly instead of implying those operations occurred.
 
 Begin by checking the restored repository and data availability, then investigate the
