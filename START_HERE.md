@@ -55,7 +55,9 @@ Real-video measurement continuity remains unresolved. Strict real-video outputs 
 unavailable; experimental estimates are sparse. Improving continuity and validating
 accuracy is the next task. Do not describe the platform as production-ready.
 
-Read `CONTINUE_PROJECT.md` before continuing development.
+Read `CONTINUE_PROJECT.md` before continuing development. The active next task is
+independent sensor/video alignment and measurement validation, described in
+`docs/measurement-sensitivity.md`.
 
 ## Start and test
 

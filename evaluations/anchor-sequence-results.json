@@ -1,0 +1,1382 @@
+{
+  "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+  "input_sha256": {
+    "data/continuity-review/first-analysis/tracks.jsonl": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c",
+    "evaluations/anchor-sequence-reference.json": "c7fe1d686f7d3848a3eebc5366f2bd4d916434087b8b9646b6d9d7e9934477ae",
+    "data/continuity-review/first-geometry/manifest.json": "34736979c2320227f83c27873699dfa362379e2582c45bffadc923df690688dd",
+    "data/continuity-review/first-geometry/quality.jsonl": "c2ed79532646d1b164a1f37badc7406e48b8e7bdd0fcd1d89553634d86172779"
+  },
+  "samples": [
+    {
+      "frame_index": 25,
+      "track_id": 23,
+      "pixel": [
+        829,
+        498
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 1.0,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "first_eligible_sample"
+      ],
+      "box_anchor_px": [
+        826.5089416503906,
+        498.46282958984375
+      ],
+      "anchor_difference_px": 2.5336895884053194,
+      "anchor_difference_m": 0.09882452872527797
+    },
+    {
+      "frame_index": 30,
+      "track_id": 23,
+      "pixel": [
+        832,
+        503
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 1.2,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        829.5536499023438,
+        503.9820556640625
+      ],
+      "anchor_difference_px": 2.636107381655759,
+      "anchor_difference_m": 0.1522836520840407
+    },
+    {
+      "frame_index": 35,
+      "track_id": 23,
+      "pixel": [
+        829,
+        506
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 1.4,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        830.0147094726562,
+        505.45953369140625
+      ],
+      "anchor_difference_px": 1.1496691457211852,
+      "anchor_difference_m": 0.07900490669588384
+    },
+    {
+      "frame_index": 40,
+      "track_id": 23,
+      "pixel": [
+        834,
+        511
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 1.6,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        835.1690979003906,
+        510.2377624511719
+      ],
+      "anchor_difference_px": 1.395634616058686,
+      "anchor_difference_m": 0.10734047402031385
+    },
+    {
+      "frame_index": 45,
+      "track_id": 23,
+      "pixel": [
+        845,
+        513
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 1.8,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        842.7108764648438,
+        512.169921875
+      ],
+      "anchor_difference_px": 2.434977669879082,
+      "anchor_difference_m": 0.13214243058257238
+    },
+    {
+      "frame_index": 50,
+      "track_id": 23,
+      "pixel": [
+        849,
+        518
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 2.0,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        849.9862060546875,
+        517.4300537109375
+      ],
+      "anchor_difference_px": 1.1390527444848193,
+      "anchor_difference_m": 0.08023061304888733
+    },
+    {
+      "frame_index": 55,
+      "track_id": 23,
+      "pixel": [
+        853,
+        521
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 2.2,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        855.7505493164062,
+        520.2897338867188
+      ],
+      "anchor_difference_px": 2.8407744531480397,
+      "anchor_difference_m": 0.12276077283583811
+    },
+    {
+      "frame_index": 60,
+      "track_id": 23,
+      "pixel": [
+        863,
+        525
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 2.4,
+      "shot_id": 0,
+      "telemetry_status": "warming_up",
+      "telemetry_reasons": [
+        "short_track"
+      ],
+      "box_anchor_px": [
+        863.3475952148438,
+        524.405517578125
+      ],
+      "anchor_difference_px": 0.6886448891124062,
+      "anchor_difference_m": 0.07685539176606508
+    },
+    {
+      "frame_index": 65,
+      "track_id": 23,
+      "pixel": [
+        868,
+        529
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 2.6,
+      "shot_id": 0,
+      "telemetry_status": "measured",
+      "telemetry_reasons": [],
+      "box_anchor_px": [
+        866.6114501953125,
+        527.5909423828125
+      ],
+      "anchor_difference_px": 1.978260328837388,
+      "anchor_difference_m": 0.18451027005429124
+    },
+    {
+      "frame_index": 70,
+      "track_id": 23,
+      "pixel": [
+        873,
+        533
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 2.8,
+      "shot_id": 0,
+      "telemetry_status": "measured",
+      "telemetry_reasons": [],
+      "box_anchor_px": [
+        870.0582275390625,
+        531.5634765625
+      ],
+      "anchor_difference_px": 3.273778367332934,
+      "anchor_difference_m": 0.20152596546585685
+    },
+    {
+      "frame_index": 75,
+      "track_id": 23,
+      "pixel": [
+        860,
+        534
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 3.0,
+      "shot_id": 0,
+      "telemetry_status": "measured",
+      "telemetry_reasons": [],
+      "box_anchor_px": [
+        869.8963623046875,
+        532.8513793945312
+      ],
+      "anchor_difference_px": 9.962796603411467,
+      "anchor_difference_m": 0.32053947881568534
+    },
+    {
+      "frame_index": 80,
+      "track_id": 23,
+      "pixel": [
+        862,
+        536
+      ],
+      "available": true,
+      "reason": null,
+      "timestamp_s": 3.2,
+      "shot_id": 0,
+      "telemetry_status": "measured",
+      "telemetry_reasons": [],
+      "box_anchor_px": [
+        859.6761169433594,
+        534.085693359375
+      ],
+      "anchor_difference_px": 3.0108142379234137,
+      "anchor_difference_m": 0.24978804481999006
+    }
+  ],
+  "intervals": [
+    {
+      "start_frame": 25,
+      "end_frame": 30,
+      "track_id": 23,
+      "duration_s": 0.19999999999999996,
+      "automatic": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 14.269528989885771,
+        "pixel_only_speed_radius_kmh": 15.511056242588323,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          29.780585232474095
+        ],
+        "endpoint_radii_m": [
+          0.4350400916911246,
+          0.4266852551193376
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 13.002739753048365,
+        "pixel_only_speed_radius_kmh": 15.5426890057881,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          28.545428758836465
+        ],
+        "endpoint_radii_m": [
+          0.43558599563849276,
+          0.4278967269052903
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 1.2667892368374059
+    },
+    {
+      "start_frame": 25,
+      "end_frame": 35,
+      "track_id": 23,
+      "duration_s": 0.3999999999999999,
+      "automatic": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.26277923685024,
+        "pixel_only_speed_radius_kmh": 7.731803410013739,
+        "pixel_only_speed_range_kmh": [
+          1.5309758268365021,
+          16.99458264686398
+        ],
+        "endpoint_radii_m": [
+          0.4350400916911246,
+          0.42404917608817944
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 10.584613980073836,
+        "pixel_only_speed_radius_kmh": 7.730774531571297,
+        "pixel_only_speed_range_kmh": [
+          2.85383944850254,
+          18.315388511645132
+        ],
+        "endpoint_radii_m": [
+          0.43558599563849276,
+          0.4233889523138733
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 1.3218347432235955
+    },
+    {
+      "start_frame": 25,
+      "end_frame": 50,
+      "track_id": 23,
+      "duration_s": 1.0,
+      "automatic": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 9.814080087201576,
+        "pixel_only_speed_radius_kmh": 3.0391023972838562,
+        "pixel_only_speed_range_kmh": [
+          6.77497768991772,
+          12.853182484485433
+        ],
+        "endpoint_radii_m": [
+          0.4350400916911246,
+          0.4091550186655022
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 10.38246864848503,
+        "pixel_only_speed_radius_kmh": 3.038784953519213,
+        "pixel_only_speed_range_kmh": [
+          7.343683694965817,
+          13.421253602004244
+        ],
+        "endpoint_radii_m": [
+          0.43558599563849276,
+          0.40852093589462185
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.568388561283454
+    },
+    {
+      "start_frame": 25,
+      "end_frame": 75,
+      "track_id": 23,
+      "duration_s": 2.0,
+      "automatic": {
+        "duration_s": 2.0,
+        "nominal_net_speed_kmh": 8.983306371016203,
+        "pixel_only_speed_radius_kmh": 1.4854161069824663,
+        "pixel_only_speed_range_kmh": [
+          7.497890264033737,
+          10.46872247799867
+        ],
+        "endpoint_radii_m": [
+          0.4350400916911246,
+          0.39019107885468995
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 2.0,
+        "nominal_net_speed_kmh": 9.569371519904227,
+        "pixel_only_speed_radius_kmh": 1.4846670257210925,
+        "pixel_only_speed_range_kmh": [
+          8.084704494183134,
+          11.05403854562532
+        ],
+        "endpoint_radii_m": [
+          0.43558599563849276,
+          0.3892290186510031
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.5860651488880233
+    },
+    {
+      "start_frame": 30,
+      "end_frame": 35,
+      "track_id": 23,
+      "duration_s": 0.19999999999999996,
+      "automatic": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 4.924028450559168,
+        "pixel_only_speed_radius_kmh": 15.313219761735311,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          20.237248212294478
+        ],
+        "endpoint_radii_m": [
+          0.4266852551193376,
+          0.42404917608817944
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 9.077324167284814,
+        "pixel_only_speed_radius_kmh": 15.323142225944949,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          24.400466393229763
+        ],
+        "endpoint_radii_m": [
+          0.4278967269052903,
+          0.4233889523138733
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 4.153295716725647
+    },
+    {
+      "start_frame": 30,
+      "end_frame": 40,
+      "track_id": 23,
+      "duration_s": 0.40000000000000013,
+      "automatic": {
+        "duration_s": 0.40000000000000013,
+        "nominal_net_speed_kmh": 8.459753425498374,
+        "pixel_only_speed_radius_kmh": 7.59471107752183,
+        "pixel_only_speed_range_kmh": [
+          0.8650423479765434,
+          16.054464503020203
+        ],
+        "endpoint_radii_m": [
+          0.4266852551193376,
+          0.41717153127197704
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.40000000000000013,
+        "nominal_net_speed_kmh": 10.765592664025343,
+        "pixel_only_speed_radius_kmh": 7.597526821975813,
+        "pixel_only_speed_range_kmh": [
+          3.16806584204953,
+          18.363119486001157
+        ],
+        "endpoint_radii_m": [
+          0.4278967269052903,
+          0.41627291998091137
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 2.3058392385269695
+    },
+    {
+      "start_frame": 30,
+      "end_frame": 55,
+      "track_id": 23,
+      "duration_s": 1.0000000000000002,
+      "automatic": {
+        "duration_s": 1.0000000000000002,
+        "nominal_net_speed_kmh": 8.654361359278608,
+        "pixel_only_speed_radius_kmh": 2.9969618754096428,
+        "pixel_only_speed_range_kmh": [
+          5.657399483868966,
+          11.65132323468825
+        ],
+        "endpoint_radii_m": [
+          0.4266852551193376,
+          0.4058041547166744
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 1.0000000000000002,
+        "nominal_net_speed_kmh": 9.614138004641719,
+        "pixel_only_speed_radius_kmh": 2.9986965086926287,
+        "pixel_only_speed_range_kmh": [
+          6.61544149594909,
+          12.612834513334347
+        ],
+        "endpoint_radii_m": [
+          0.4278967269052903,
+          0.40507452550932904
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.9597766453631102
+    },
+    {
+      "start_frame": 30,
+      "end_frame": 80,
+      "track_id": 23,
+      "duration_s": 2.0,
+      "automatic": {
+        "duration_s": 2.0,
+        "nominal_net_speed_kmh": 8.32824152322064,
+        "pixel_only_speed_radius_kmh": 1.4689253611046684,
+        "pixel_only_speed_range_kmh": [
+          6.859316162115972,
+          9.797166884325309
+        ],
+        "endpoint_radii_m": [
+          0.4266852551193376,
+          0.3893843899388114
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 2.0,
+        "nominal_net_speed_kmh": 8.918782542427579,
+        "pixel_only_speed_radius_kmh": 1.4665242051846992,
+        "pixel_only_speed_range_kmh": [
+          7.4522583372428794,
+          10.385306747612278
+        ],
+        "endpoint_radii_m": [
+          0.4278967269052903,
+          0.38683894264176477
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.5905410192069382
+    },
+    {
+      "start_frame": 35,
+      "end_frame": 40,
+      "track_id": 23,
+      "duration_s": 0.20000000000000018,
+      "automatic": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 12.205685629210775,
+        "pixel_only_speed_radius_kmh": 15.141972732482804,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          27.34765836169358
+        ],
+        "endpoint_radii_m": [
+          0.42404917608817944,
+          0.41717153127197704
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 12.727124995227275,
+        "pixel_only_speed_radius_kmh": 15.11391370130611,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          27.841038696533385
+        ],
+        "endpoint_radii_m": [
+          0.4233889523138733,
+          0.41627291998091137
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.5214393660164998
+    },
+    {
+      "start_frame": 35,
+      "end_frame": 45,
+      "track_id": 23,
+      "duration_s": 0.40000000000000013,
+      "automatic": {
+        "duration_s": 0.40000000000000013,
+        "nominal_net_speed_kmh": 9.043096404906757,
+        "pixel_only_speed_radius_kmh": 7.555981054056772,
+        "pixel_only_speed_range_kmh": [
+          1.4871153508499857,
+          16.599077458963528
+        ],
+        "endpoint_radii_m": [
+          0.42404917608817944,
+          0.4155042743625732
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.40000000000000013,
+        "nominal_net_speed_kmh": 9.113353002603787,
+        "pixel_only_speed_radius_kmh": 7.539840571764859,
+        "pixel_only_speed_range_kmh": [
+          1.5735124308389281,
+          16.653193574368647
+        ],
+        "endpoint_radii_m": [
+          0.4233889523138733,
+          0.41437111121555587
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.07025659769703019
+    },
+    {
+      "start_frame": 35,
+      "end_frame": 60,
+      "track_id": 23,
+      "duration_s": 1.0,
+      "automatic": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 9.702718288116273,
+        "pixel_only_speed_radius_kmh": 2.9662808128909073,
+        "pixel_only_speed_range_kmh": [
+          6.736437475225365,
+          12.66899910100718
+        ],
+        "endpoint_radii_m": [
+          0.42404917608817944,
+          0.399917716381517
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 9.687860928127458,
+        "pixel_only_speed_radius_kmh": 2.9613268780032227,
+        "pixel_only_speed_range_kmh": [
+          6.726534050124235,
+          12.64918780613068
+        ],
+        "endpoint_radii_m": [
+          0.4233889523138733,
+          0.39920184713146634
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.014857359988814878
+    },
+    {
+      "start_frame": 40,
+      "end_frame": 45,
+      "track_id": 23,
+      "duration_s": 0.19999999999999996,
+      "automatic": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 6.383646560854449,
+        "pixel_only_speed_radius_kmh": 14.988164501421908,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          21.371811062276358
+        ],
+        "endpoint_radii_m": [
+          0.41717153127197704,
+          0.4155042743625732
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 5.57960319675962,
+        "pixel_only_speed_radius_kmh": 14.951592561536415,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          20.531195758296036
+        ],
+        "endpoint_radii_m": [
+          0.41627291998091137,
+          0.41437111121555587
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.804043364094829
+    },
+    {
+      "start_frame": 40,
+      "end_frame": 50,
+      "track_id": 23,
+      "duration_s": 0.3999999999999999,
+      "automatic": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.40171669162438,
+        "pixel_only_speed_radius_kmh": 7.436938949437315,
+        "pixel_only_speed_range_kmh": [
+          1.9647777421870645,
+          16.838655641061695
+        ],
+        "endpoint_radii_m": [
+          0.41717153127197704,
+          0.4091550186655022
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.159211171658749,
+        "pixel_only_speed_radius_kmh": 7.423144702879801,
+        "pixel_only_speed_range_kmh": [
+          1.7360664687789473,
+          16.58235587453855
+        ],
+        "endpoint_radii_m": [
+          0.41627291998091137,
+          0.40852093589462185
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.24250551996563097
+    },
+    {
+      "start_frame": 40,
+      "end_frame": 65,
+      "track_id": 23,
+      "duration_s": 1.0,
+      "automatic": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 9.0512493892455,
+        "pixel_only_speed_radius_kmh": 2.9273924225703962,
+        "pixel_only_speed_range_kmh": [
+          6.123856966675104,
+          11.978641811815896
+        ],
+        "endpoint_radii_m": [
+          0.41717153127197704,
+          0.3959930305531329
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 9.190265193450008,
+        "pixel_only_speed_radius_kmh": 2.9176234958844622,
+        "pixel_only_speed_range_kmh": [
+          6.272641697565546,
+          12.10788868933447
+        ],
+        "endpoint_radii_m": [
+          0.41627291998091137,
+          0.394178051098106
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.139015804204508
+    },
+    {
+      "start_frame": 45,
+      "end_frame": 50,
+      "track_id": 23,
+      "duration_s": 0.19999999999999996,
+      "automatic": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 12.812621471081428,
+        "pixel_only_speed_radius_kmh": 14.84386727450536,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          27.65648874558679
+        ],
+        "endpoint_radii_m": [
+          0.4155042743625732,
+          0.4091550186655022
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.19999999999999996,
+        "nominal_net_speed_kmh": 12.73895588188617,
+        "pixel_only_speed_radius_kmh": 14.812056847983202,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          27.55101272986937
+        ],
+        "endpoint_radii_m": [
+          0.41437111121555587,
+          0.40852093589462185
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.07366558919525801
+    },
+    {
+      "start_frame": 45,
+      "end_frame": 55,
+      "track_id": 23,
+      "duration_s": 0.40000000000000013,
+      "automatic": {
+        "duration_s": 0.40000000000000013,
+        "nominal_net_speed_kmh": 10.168674011888823,
+        "pixel_only_speed_radius_kmh": 7.391775861713226,
+        "pixel_only_speed_range_kmh": [
+          2.7768981501755974,
+          17.56044987360205
+        ],
+        "endpoint_radii_m": [
+          0.4155042743625732,
+          0.4058041547166744
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.40000000000000013,
+        "nominal_net_speed_kmh": 10.540683991778623,
+        "pixel_only_speed_radius_kmh": 7.375010730523963,
+        "pixel_only_speed_range_kmh": [
+          3.1656732612546605,
+          17.915694722302586
+        ],
+        "endpoint_radii_m": [
+          0.41437111121555587,
+          0.40507452550932904
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.3720099798897998
+    },
+    {
+      "start_frame": 45,
+      "end_frame": 70,
+      "track_id": 23,
+      "duration_s": 0.9999999999999998,
+      "automatic": {
+        "duration_s": 0.9999999999999998,
+        "nominal_net_speed_kmh": 9.922401792575634,
+        "pixel_only_speed_radius_kmh": 2.9032630797235104,
+        "pixel_only_speed_range_kmh": [
+          7.019138712852124,
+          12.825664872299145
+        ],
+        "endpoint_radii_m": [
+          0.4155042743625732,
+          0.39095769222729065
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.9999999999999998,
+        "nominal_net_speed_kmh": 10.116564783709416,
+        "pixel_only_speed_radius_kmh": 2.8921423893904477,
+        "pixel_only_speed_range_kmh": [
+          7.224422394318968,
+          13.008707173099864
+        ],
+        "endpoint_radii_m": [
+          0.41437111121555587,
+          0.389001774726235
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.19416299113378166
+    },
+    {
+      "start_frame": 50,
+      "end_frame": 55,
+      "track_id": 23,
+      "duration_s": 0.20000000000000018,
+      "automatic": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 7.677776763958151,
+        "pixel_only_speed_radius_kmh": 14.669265120879166,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          22.347041884837317
+        ],
+        "endpoint_radii_m": [
+          0.4091550186655022,
+          0.4058041547166744
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 8.42771695774648,
+        "pixel_only_speed_radius_kmh": 14.644718305271104,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          23.07243526301758
+        ],
+        "endpoint_radii_m": [
+          0.40852093589462185,
+          0.40507452550932904
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.749940193788329
+    },
+    {
+      "start_frame": 50,
+      "end_frame": 60,
+      "track_id": 23,
+      "duration_s": 0.3999999999999999,
+      "automatic": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 8.87029533960613,
+        "pixel_only_speed_radius_kmh": 7.281654615423175,
+        "pixel_only_speed_range_kmh": [
+          1.5886407241829552,
+          16.151949955029306
+        ],
+        "endpoint_radii_m": [
+          0.4091550186655022,
+          0.399917716381517
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 8.808991700797005,
+        "pixel_only_speed_radius_kmh": 7.269505047234796,
+        "pixel_only_speed_range_kmh": [
+          1.539486653562209,
+          16.078496748031803
+        ],
+        "endpoint_radii_m": [
+          0.40852093589462185,
+          0.39920184713146634
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.06130363880912526
+    },
+    {
+      "start_frame": 50,
+      "end_frame": 75,
+      "track_id": 23,
+      "duration_s": 1.0,
+      "automatic": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 8.326309773215929,
+        "pixel_only_speed_radius_kmh": 2.877645951072692,
+        "pixel_only_speed_range_kmh": [
+          5.448663822143237,
+          11.20395572428862
+        ],
+        "endpoint_radii_m": [
+          0.4091550186655022,
+          0.39019107885468995
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 9.017409027798275,
+        "pixel_only_speed_radius_kmh": 2.8718998363642503,
+        "pixel_only_speed_range_kmh": [
+          6.145509191434025,
+          11.889308864162524
+        ],
+        "endpoint_radii_m": [
+          0.40852093589462185,
+          0.3892290186510031
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.6910992545823458
+    },
+    {
+      "start_frame": 55,
+      "end_frame": 60,
+      "track_id": 23,
+      "duration_s": 0.19999999999999973,
+      "automatic": {
+        "duration_s": 0.19999999999999973,
+        "nominal_net_speed_kmh": 10.094718262310279,
+        "pixel_only_speed_radius_kmh": 14.502993679767467,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          24.597711942077744
+        ],
+        "endpoint_radii_m": [
+          0.4058041547166744,
+          0.399917716381517
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.19999999999999973,
+        "nominal_net_speed_kmh": 9.415076728762909,
+        "pixel_only_speed_radius_kmh": 14.476974707534335,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          23.892051436297244
+        ],
+        "endpoint_radii_m": [
+          0.40507452550932904,
+          0.39920184713146634
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.67964153354737
+    },
+    {
+      "start_frame": 55,
+      "end_frame": 65,
+      "track_id": 23,
+      "duration_s": 0.3999999999999999,
+      "automatic": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.407732261942481,
+        "pixel_only_speed_radius_kmh": 7.216174667428268,
+        "pixel_only_speed_range_kmh": [
+          2.1915575945142134,
+          16.623906929370747
+        ],
+        "endpoint_radii_m": [
+          0.4058041547166744,
+          0.3959930305531329
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.70430186377196,
+        "pixel_only_speed_radius_kmh": 7.193273189466916,
+        "pixel_only_speed_range_kmh": [
+          2.5110286743050434,
+          16.897575053238874
+        ],
+        "endpoint_radii_m": [
+          0.40507452550932904,
+          0.394178051098106
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.29656960182947856
+    },
+    {
+      "start_frame": 55,
+      "end_frame": 80,
+      "track_id": 23,
+      "duration_s": 1.0,
+      "automatic": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 8.140302153497123,
+        "pixel_only_speed_radius_kmh": 2.8626787607597493,
+        "pixel_only_speed_range_kmh": [
+          5.2776233927373735,
+          11.002980914256872
+        ],
+        "endpoint_radii_m": [
+          0.4058041547166744,
+          0.3893843899388114
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 1.0,
+        "nominal_net_speed_kmh": 8.266646540568038,
+        "pixel_only_speed_radius_kmh": 2.850888485343938,
+        "pixel_only_speed_range_kmh": [
+          5.4157580552241,
+          11.117535025911977
+        ],
+        "endpoint_radii_m": [
+          0.40507452550932904,
+          0.38683894264176477
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.12634438707091533
+    },
+    {
+      "start_frame": 60,
+      "end_frame": 65,
+      "track_id": 23,
+      "duration_s": 0.20000000000000018,
+      "automatic": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 8.787556359319247,
+        "pixel_only_speed_radius_kmh": 14.326393444823685,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          23.113949804142933
+        ],
+        "endpoint_radii_m": [
+          0.399917716381517,
+          0.3959930305531329
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 10.021059472825764,
+        "pixel_only_speed_radius_kmh": 14.28083816813229,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          24.301897640958053
+        ],
+        "endpoint_radii_m": [
+          0.39920184713146634,
+          0.394178051098106
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 1.2335031135065169
+    },
+    {
+      "start_frame": 60,
+      "end_frame": 70,
+      "track_id": 23,
+      "duration_s": 0.3999999999999999,
+      "automatic": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.646566525739043,
+        "pixel_only_speed_radius_kmh": 7.11787867747927,
+        "pixel_only_speed_range_kmh": [
+          2.528687848259773,
+          16.764445203218315
+        ],
+        "endpoint_radii_m": [
+          0.399917716381517,
+          0.39095769222729065
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 10.117753252714444,
+        "pixel_only_speed_radius_kmh": 7.093832596719313,
+        "pixel_only_speed_range_kmh": [
+          3.0239206559951306,
+          17.211585849433757
+        ],
+        "endpoint_radii_m": [
+          0.39920184713146634,
+          0.389001774726235
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.4711867269754002
+    },
+    {
+      "start_frame": 65,
+      "end_frame": 70,
+      "track_id": 23,
+      "duration_s": 0.19999999999999973,
+      "automatic": {
+        "duration_s": 0.19999999999999973,
+        "nominal_net_speed_kmh": 10.532622742345751,
+        "pixel_only_speed_radius_kmh": 14.165113010047643,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          24.697735752393392
+        ],
+        "endpoint_radii_m": [
+          0.3959930305531329,
+          0.39095769222729065
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.19999999999999973,
+        "nominal_net_speed_kmh": 10.21445147930495,
+        "pixel_only_speed_radius_kmh": 14.097236864838157,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          24.311688344143107
+        ],
+        "endpoint_radii_m": [
+          0.394178051098106,
+          0.389001774726235
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.3181712630408011
+    },
+    {
+      "start_frame": 65,
+      "end_frame": 75,
+      "track_id": 23,
+      "duration_s": 0.3999999999999999,
+      "automatic": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 7.588788281240988,
+        "pixel_only_speed_radius_kmh": 7.075656984670407,
+        "pixel_only_speed_range_kmh": [
+          0.513131296570581,
+          14.664445265911395
+        ],
+        "endpoint_radii_m": [
+          0.3959930305531329,
+          0.39019107885468995
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.3999999999999999,
+        "nominal_net_speed_kmh": 9.292953325523374,
+        "pixel_only_speed_radius_kmh": 7.050663627741984,
+        "pixel_only_speed_range_kmh": [
+          2.2422896977813904,
+          16.343616953265357
+        ],
+        "endpoint_radii_m": [
+          0.394178051098106,
+          0.3892290186510031
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 1.7041650442823864
+    },
+    {
+      "start_frame": 70,
+      "end_frame": 75,
+      "track_id": 23,
+      "duration_s": 0.20000000000000018,
+      "automatic": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 4.858629687295582,
+        "pixel_only_speed_radius_kmh": 14.06067787947564,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          18.919307566771224
+        ],
+        "endpoint_radii_m": [
+          0.39095769222729065,
+          0.39019107885468995
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 10.643063073830827,
+        "pixel_only_speed_radius_kmh": 14.008154280790274,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          24.651217354621103
+        ],
+        "endpoint_radii_m": [
+          0.389001774726235,
+          0.3892290186510031
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 5.7844333865352455
+    },
+    {
+      "start_frame": 70,
+      "end_frame": 80,
+      "track_id": 23,
+      "duration_s": 0.40000000000000036,
+      "automatic": {
+        "duration_s": 0.40000000000000036,
+        "nominal_net_speed_kmh": 6.41840969088757,
+        "pixel_only_speed_radius_kmh": 7.0230787394949115,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          13.441488430382481
+        ],
+        "endpoint_radii_m": [
+          0.39095769222729065,
+          0.3893843899388114
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.40000000000000036,
+        "nominal_net_speed_kmh": 6.805126806445962,
+        "pixel_only_speed_radius_kmh": 6.982566456311991,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          13.787693262757953
+        ],
+        "endpoint_radii_m": [
+          0.389001774726235,
+          0.38683894264176477
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 0.38671711555839217
+    },
+    {
+      "start_frame": 75,
+      "end_frame": 80,
+      "track_id": 23,
+      "duration_s": 0.20000000000000018,
+      "automatic": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 8.181969072595262,
+        "pixel_only_speed_radius_kmh": 14.032358438283012,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          22.214327510878274
+        ],
+        "endpoint_radii_m": [
+          0.39019107885468995,
+          0.3893843899388114
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "visible_shoe": {
+        "duration_s": 0.20000000000000018,
+        "nominal_net_speed_kmh": 4.985201958754391,
+        "pixel_only_speed_radius_kmh": 13.969223303269809,
+        "pixel_only_speed_range_kmh": [
+          0.0,
+          18.954425262024202
+        ],
+        "endpoint_radii_m": [
+          0.3892290186510031,
+          0.38683894264176477
+        ],
+        "radius_px": 3,
+        "scope": "Net endpoint displacement per time. Geometry held fixed. Excludes calibration, camera, scale, identity and ground contact. Not a confidence interval or instantaneous-speed validation."
+      },
+      "proxy_speed_difference_kmh": 3.1967671138408704
+    }
+  ],
+  "labeled_samples": 12,
+  "available_samples": 12,
+  "scope": "Same-geometry comparison of different position proxies on development footage. Visible shoes do not establish contact. No independent metric-speed truth. Intervals require one continuous eligible experimental fragment, including warmup."
+}

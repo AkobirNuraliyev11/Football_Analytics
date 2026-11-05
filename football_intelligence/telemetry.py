@@ -27,6 +27,7 @@ class Fragment:
     sprint_start: float | None = None
     sprint_peak: float = 0.0
     sprints: list = field(default_factory=list)
+    position_radius_m: float | None = None
 
 
 class TelemetryEngine:
@@ -181,6 +182,7 @@ class TelemetryEngine:
                 "quality": "experimental_estimate" if self.experimental else "input_validated",
                 "reasons": reasons, "speed_kmh": None, "observed_distance_m": None,
                 "observed_duration_s": None, "sprint_count": None, "sprinting": None}
+            result.update(speed_pixel_sensitivity_kmh=None, speed_pixel_range_kmh=None)
             if item.get("kind") == "person":
                 self.observations += 1
             if reasons:
@@ -190,6 +192,9 @@ class TelemetryEngine:
                 output.append(result)
                 continue
             integer("continuity_segment", item.get("continuity_segment"))
+            radius = item.get("measurement_evidence", {}).get("pixel_localization_radius_m")
+            if radius is not None:
+                finite("pixel_localization_radius_m", radius, minimum=0)
             identity = (item["continuity_segment"], item.get("team", "unknown"), item["role"],
                         item["coordinate_reference_id"])
             state = self.active.get(key)
@@ -214,6 +219,7 @@ class TelemetryEngine:
                         continue
             if state is None:
                 state = Fragment(self.next_fragment, key, identity, t, t, point)
+                state.position_radius_m = radius
                 if self.separate_identity_maturity:
                     state.identity_start = self.identity_history[key][1]
                 self.next_fragment += 1
@@ -224,18 +230,26 @@ class TelemetryEngine:
                 continue
             dt = t-state.last
             vx, vy = (point.x_m-state.position.x_m)/dt, (point.y_m-state.position.y_m)/dt
-            state.velocities.append((state.last, t, vx, vy))
+            state.velocities.append((state.last, t, vx, vy, state.position_radius_m, radius))
             cutoff = t-cfg.smoothing_window_s
             while state.velocities and state.velocities[0][1] <= cutoff:
                 state.velocities.popleft()
             # Integrate each interval's overlap with the time window, not its frame count.
             wx = wy = duration = 0.0
-            for start, end, x, y in state.velocities:
+            for start, end, x, y, _, _ in state.velocities:
                 weight = end-max(start, cutoff)
                 wx += x*weight
                 wy += y*weight
                 duration += weight
             speed = math.hypot(wx/duration, wy/duration)*3.6
+            # The time-weighted vector mean telescopes to two endpoints. Interpolate
+            # the first endpoint at the window cutoff exactly as the velocity window does.
+            start, end, _, _, ra, rb = state.velocities[0]
+            pixel_sensitivity = None
+            if radius is not None and ra is not None and rb is not None:
+                alpha = (max(start, cutoff)-start)/(end-start)
+                first_radius = (1-alpha)*ra + alpha*rb
+                pixel_sensitivity = (first_radius+radius)/duration*3.6
             if speed > cfg.sprint_threshold_kmh + 1e-9:
                 if state.sprint_start is None:
                     state.sprint_start = state.last
@@ -247,6 +261,7 @@ class TelemetryEngine:
             if duration+1e-9 >= cfg.smoothing_window_s:
                 state.top_speed = max(state.top_speed, speed)
             state.last, state.position = t, point
+            state.position_radius_m = radius
             mature = self._mature(state)
             result.update(fragment_id=state.fragment_id, status="measured" if mature else "warming_up",
                           reasons=[] if mature else ["short_track"])
@@ -256,6 +271,9 @@ class TelemetryEngine:
                 result.update(speed_kmh=speed, observed_distance_m=state.distance,
                     observed_duration_s=t-state.start, sprint_count=len(state.sprints)+int(sprinting),
                     sprinting=sprinting)
+                if pixel_sensitivity is not None:
+                    result.update(speed_pixel_sensitivity_kmh=pixel_sensitivity,
+                        speed_pixel_range_kmh=[max(0., speed-pixel_sensitivity), speed+pixel_sensitivity])
                 self.measured += 1
             output.append(result)
         return {"match_id": match, "shot_id": shot, "frame_index": index, "timestamp_s": t,
@@ -275,4 +293,7 @@ class TelemetryEngine:
             "fragments": self.fragments,
             "scope": "Observed continuous fragments, not verified athletes or full-match totals",
             "quality": "Input quality flags are required assertions, not independently verified here",
+            "pixel_speed_sensitivity": "Conditional endpoint-localization bound with geometry held fixed. "
+                "Excludes calibration, camera, scale, identity and ground-contact errors. Not a confidence interval. "
+                "Unavailable if endpoint radii are absent. Does not validate speed or change sprint eligibility.",
             "smoothing": "Causal time-weighted mean velocity; distance integrates its magnitude"}

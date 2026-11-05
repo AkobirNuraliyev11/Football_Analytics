@@ -68,3 +68,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+## SoccerTrack measurement-reference sample
+
+A local validation sample was acquired from the author's Kaggle dataset, version 6:
+https://www.kaggle.com/datasets/atomscott/soccertrack
+
+Paper: Atom Scott et al., “SoccerTrack: A Dataset and Tracking Algorithm for Soccer
+With Fish-Eye and Drone Videos,” CVPR Workshops 2022, pp. 3569–3579.
+https://openaccess.thecvf.com/content/CVPR2022W/CVSports/html/Scott_SoccerTrack_A_Dataset_and_Tracking_Algorithm_for_Soccer_With_Fish-Eye_CVPRW_2022_paper.html
+
+The retrieved Kaggle metadata labels its license “GNU Lesser General Public License
+3.0.” Raw sensor, annotation, keypoint and video data remain in ignored local storage
+and are not redistributed in this repository. The manifest in
+`evaluations/soccertrack-sample.json` records file URLs and SHA-256 values. Acquisition
+is not validation: sensor timestamp conflicts and video alignment need resolution.

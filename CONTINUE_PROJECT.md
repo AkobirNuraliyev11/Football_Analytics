@@ -42,7 +42,15 @@ and tracking, classification, gated telemetry, and tactical visualization. Step 
 Keep event engineering isolated from unvalidated real-video geometry. Implementation does not mean real-video physical
 measurement accuracy has been demonstrated.
 
-## Immediate task: real-video measurement continuity
+## Immediate task: independent sensor comparison
+
+Read `docs/measurement-sensitivity.md` first. Pixel-speed sensitivity is implemented
+and tested. SoccerTrack version 6 reference files are under
+`data/soccertrack-reference/`, with a committed acquisition manifest. Resolve its
+duplicate timestamps and GNSS/video alignment before reporting any speed errors.
+Do not silently turn sensor conflicts into ground truth. No generated clips.
+
+## Real-video measurement continuity background
 
 Too few consecutive observations pass geometry, tracking, visible-feet, camera-motion,
 displacement, and maturity checks. Diagnose the actual bottlenecks and improve useful

@@ -1,0 +1,73 @@
+{
+  "dataset": "SoccerTrack",
+  "version": 6,
+  "source": "https://www.kaggle.com/datasets/atomscott/soccertrack",
+  "license_label": "GNU Lesser General Public License 3.0 (Kaggle metadata)",
+  "files": [
+    {
+      "file": "GNSS/G_20200220_1_0000_0030.csv",
+      "bytes": 170750,
+      "sha256": "9e02896f1a7066415bb68795c69bba2f3c1729de0471ba71e36c639c4cb7ff59",
+      "url": "https://www.kaggle.com/api/v1/datasets/download/atomscott/soccertrack/GNSS%2FG_20200220_1_0000_0030.csv?datasetVersionNumber=6"
+    },
+    {
+      "file": "top_view/annotations/D_20220220_1_0000_0030.csv",
+      "bytes": 500902,
+      "sha256": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+      "url": "https://www.kaggle.com/api/v1/datasets/download/atomscott/soccertrack/top_view%2Fannotations%2FD_20220220_1_0000_0030.csv?datasetVersionNumber=6"
+    },
+    {
+      "file": "drone_keypoints.json",
+      "bytes": 3885,
+      "sha256": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+      "url": "https://www.kaggle.com/api/v1/datasets/download/atomscott/soccertrack/drone_keypoints.json?datasetVersionNumber=6"
+    },
+    {
+      "file": "gnss_keypoints.json",
+      "bytes": 5099,
+      "sha256": "48b9c70c49156ff5b336de4b6b857bab082685706db8eb8da5046ad7ea8a51a3",
+      "url": "https://www.kaggle.com/api/v1/datasets/download/atomscott/soccertrack/gnss_keypoints.json?datasetVersionNumber=6"
+    },
+    {
+      "file": "top_view/videos/D_20220220_1_0000_0030.mp4",
+      "bytes": 35238930,
+      "sha256": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+      "url": "https://www.kaggle.com/api/v1/datasets/download/atomscott/soccertrack/top_view%2Fvideos%2FD_20220220_1_0000_0030.mp4?datasetVersionNumber=6"
+    }
+  ],
+  "video": {
+    "decoded_frames": 900,
+    "size": [
+      3840,
+      2160
+    ],
+    "nominal_rate": "2997/100",
+    "first_timestamp_s": 0.0,
+    "last_timestamp_s": 29.996663329996665,
+    "timestamps_strictly_increasing": true
+  },
+  "gnss": {
+    "rows": 307,
+    "unique_timestamps": 298,
+    "first_timestamp": "13:40:18.100000",
+    "last_timestamp": "13:40:48",
+    "duplicate_timestamps": {
+      "13:40:18.700000": 3,
+      "13:40:19.900000": 3,
+      "13:40:23.900000": 6
+    },
+    "duplicate_rows_are_conflicting": true,
+    "step_counts": {
+      "0.1": 295,
+      "0.0": 9,
+      "0.2": 2
+    }
+  },
+  "status": "downloaded_and_structurally_inspected_not_aligned_or_scored",
+  "remaining": [
+    "Verify video/GNSS clock offset and differing year strings in filenames",
+    "Handle conflicting timestamps explicitly",
+    "Verify pitch orientation and independent reference uncertainty",
+    "Reserve separate evaluation sequence"
+  ]
+}

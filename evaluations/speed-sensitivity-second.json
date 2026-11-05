@@ -1,0 +1,15 @@
+{
+  "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+  "input_sha256": {
+    "data/continuity-review/second-analysis/tracks.jsonl": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a",
+    "data/continuity-review/second-geometry/manifest.json": "a414cf658ed9d768126ffb595ddc398a74bd27e73188a422382edad18d669cda",
+    "data/continuity-review/second-geometry/quality.jsonl": "8b5d37e1477457bb12ddd6ee720411bf7822659bb475d2b20a7af9c4061f076a"
+  },
+  "measured_observations": 87,
+  "observations_with_pixel_bounds": 87,
+  "median_pixel_speed_radius_kmh": 6.83783247093507,
+  "p90_pixel_speed_radius_kmh": 7.46064392076828,
+  "intervals_straddling_sprint_threshold": 36,
+  "maximum_nominal_speed_change_kmh": 0.0,
+  "scope": "Conditional +/-3-pixel-square sensitivity at velocity-window endpoints. Fixed geometry, unverified contact. Not real-speed accuracy or confidence intervals. Sprint-threshold overlap is diagnostic and does not create sprint events."
+}

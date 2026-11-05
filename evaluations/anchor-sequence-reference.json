@@ -1,0 +1,104 @@
+{
+  "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+  "uncertainty_px": 3,
+  "method": "Assistant visual readings on native-pixel crops enlarged with nearest-neighbor display. Lowest visible shoe boundary. Approximate three-pixel uncertainty per coordinate. Sampled every five frames before computing comparison metrics. Same red-shirt track visually reviewed. Development sequence, not independent ground truth.",
+  "ground_contact": "unknown for all samples: low-resolution running poses do not establish contact",
+  "samples": [
+    {
+      "frame_index": 25,
+      "track_id": 23,
+      "pixel": [
+        829,
+        498
+      ]
+    },
+    {
+      "frame_index": 30,
+      "track_id": 23,
+      "pixel": [
+        832,
+        503
+      ]
+    },
+    {
+      "frame_index": 35,
+      "track_id": 23,
+      "pixel": [
+        829,
+        506
+      ]
+    },
+    {
+      "frame_index": 40,
+      "track_id": 23,
+      "pixel": [
+        834,
+        511
+      ]
+    },
+    {
+      "frame_index": 45,
+      "track_id": 23,
+      "pixel": [
+        845,
+        513
+      ]
+    },
+    {
+      "frame_index": 50,
+      "track_id": 23,
+      "pixel": [
+        849,
+        518
+      ]
+    },
+    {
+      "frame_index": 55,
+      "track_id": 23,
+      "pixel": [
+        853,
+        521
+      ]
+    },
+    {
+      "frame_index": 60,
+      "track_id": 23,
+      "pixel": [
+        863,
+        525
+      ]
+    },
+    {
+      "frame_index": 65,
+      "track_id": 23,
+      "pixel": [
+        868,
+        529
+      ]
+    },
+    {
+      "frame_index": 70,
+      "track_id": 23,
+      "pixel": [
+        873,
+        533
+      ]
+    },
+    {
+      "frame_index": 75,
+      "track_id": 23,
+      "pixel": [
+        860,
+        534
+      ]
+    },
+    {
+      "frame_index": 80,
+      "track_id": 23,
+      "pixel": [
+        862,
+        536
+      ]
+    }
+  ]
+}

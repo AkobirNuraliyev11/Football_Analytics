@@ -225,3 +225,7 @@ See the [Step 5 guide](docs/step-05-team-classification.md) for behavior and tes
 The [penalty-area junction trial](docs/penalty-area-trial.md) improves local geometry
 coverage, with original and audited annotations preserved. It is not yet used for
 player telemetry.
+
+The [player-anchor sensitivity audit](docs/measurement-sensitivity.md) now exposes
+conditional pixel-localization speed ranges. Independent GNSS benchmark preparation
+is the active measurement priority. This does not certify real-player speed or contact.

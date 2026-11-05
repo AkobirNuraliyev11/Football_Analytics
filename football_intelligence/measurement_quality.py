@@ -187,6 +187,10 @@ def foot_candidate(rgb,item,others,fit,pitch=None,*,anchor_px=None):
     sensitivity=float(np.linalg.norm(transform(fit.matrix,offsets)-xy,axis=1).max())
     if sensitivity>.5:
         return None,"excessive_pixel_sensitivity"
+    from .position_sensitivity import pixel_square_radius
+    _, square_radius = pixel_square_radius(fit.matrix, anchor, 3.)
     return {"position":{"x_m":float(xy[0]),"y_m":float(xy[1])},
             "anchor_px":anchor,"three_pixel_sensitivity_m":sensitivity,
+            "pixel_localization_radius_m":square_radius,
+            "pixel_localization_assumption":"Within +/-3 pixels on each axis, mapping held fixed",
             "ground_evidence":"visible_feet_candidate","ground_contact_verified":False},None
