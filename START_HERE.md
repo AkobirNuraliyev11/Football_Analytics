@@ -57,7 +57,7 @@ accuracy is the next task. Do not describe the platform as production-ready.
 
 Read `CONTINUE_PROJECT.md` before continuing development. The active next task is
 independent sensor/video alignment and measurement validation, described in
-`docs/measurement-sensitivity.md`.
+`docs/sensor-comparison.md`. Step 8 expansion is paused pending measurement validation.
 
 ## Start and test
 

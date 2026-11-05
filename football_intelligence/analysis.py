@@ -105,6 +105,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 "created_at":datetime.now(timezone.utc).isoformat(),"video":metadata.to_dict(),
                 "pitch":asdict(pitch),"pitch_dimensions_assumed":True,"max_frames":max_frames,
                 "pitch_every":pitch_every,"device":device,"processed_frames":0,
+                "detection_policy":getattr(detector,"inference_policy","external_detector"),
                 "frames_with_pitch_fit":0,"preview_audio":False,"model_hashes":detector.fingerprints,
                 "metric_telemetry_enabled":True,"metric_measurements_available":False,
                 "analytics":asdict(config.analytics),

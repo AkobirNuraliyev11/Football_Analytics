@@ -229,3 +229,8 @@ player telemetry.
 The [player-anchor sensitivity audit](docs/measurement-sensitivity.md) now exposes
 conditional pixel-localization speed ranges. Independent GNSS benchmark preparation
 is the active measurement priority. This does not certify real-player speed or contact.
+
+[Independent sensor comparison and high-resolution fix](docs/sensor-comparison.md):
+large inputs now preserve small players using overlapping crops. Step 8 expansion
+is paused. The sensor benchmark remains diagnostic because timing and position
+reference disagreements are unresolved.

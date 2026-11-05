@@ -42,7 +42,18 @@ and tracking, classification, gated telemetry, and tactical visualization. Step 
 Keep event engineering isolated from unvalidated real-video geometry. Implementation does not mean real-video physical
 measurement accuracy has been demonstrated.
 
-## Immediate task: independent sensor comparison
+## Immediate task: resolve reference disagreement before more Step 8 work
+
+Read `docs/sensor-comparison.md` first. A same-frame tiled-detection comparison
+improved matching from 16/198 to 121/198 observations. All 142 tests passed.
+The sensor benchmark is implemented but diagnostic: reference video annotations
+and aligned GNSS already disagree by about 2.95 m median. The 0.85-second clock
+offset is inferred on setup data, not independently verified. Do not tune our model
+to this unexplained mismatch or claim validated speed from the 24 usable intervals.
+Step 8 expansion is paused. No previews. Keep runs bounded and reuse cached
+detections to avoid unnecessary cost.
+
+## Prior measurement-sensitivity work
 
 Read `docs/measurement-sensitivity.md` first. Pixel-speed sensitivity is implemented
 and tested. SoccerTrack version 6 reference files are under

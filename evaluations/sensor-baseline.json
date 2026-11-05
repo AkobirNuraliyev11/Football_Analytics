@@ -1,0 +1,323 @@
+{
+  "input_sha256": {
+    "data/soccertrack-reference/G_20200220_1_0000_0030.csv": "9e02896f1a7066415bb68795c69bba2f3c1729de0471ba71e36c639c4cb7ff59",
+    "data/soccertrack-reference/gnss_keypoints.json": "48b9c70c49156ff5b336de4b6b857bab082685706db8eb8da5046ad7ea8a51a3",
+    "data/soccertrack-reference/drone_keypoints.json": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+    "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+    "data/soccertrack-reference/detections-step3.jsonl": "6c46df7cf56666be77d770d7032d8123aaee7d77e7e1e9068ea7d7e115aaea38"
+  },
+  "setup_seconds": [
+    2,
+    5
+  ],
+  "evaluation_seconds": [
+    10,
+    28
+  ],
+  "frames": 36,
+  "alignment": {
+    "video_to_gnss_relative_offset_s": 0.85,
+    "setup_median_velocity_difference_mps": 0.6080823855702397,
+    "setup_pairs": 546,
+    "leading_offset_candidates": [
+      [
+        0.6080823855702397,
+        0.85,
+        546
+      ],
+      [
+        0.611260836352998,
+        0.9,
+        524
+      ],
+      [
+        0.6182338086629449,
+        0.8,
+        546
+      ],
+      [
+        0.6311613378005445,
+        0.95,
+        524
+      ],
+      [
+        0.6420395760277442,
+        0.75,
+        550
+      ]
+    ],
+    "identity_pairs": [
+      {
+        "sensor": [
+          "0",
+          "0"
+        ],
+        "video": [
+          "0",
+          "2"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "1"
+        ],
+        "video": [
+          "0",
+          "3"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "10"
+        ],
+        "video": [
+          "0",
+          "1"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "2"
+        ],
+        "video": [
+          "0",
+          "4"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "3"
+        ],
+        "video": [
+          "0",
+          "5"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "4"
+        ],
+        "video": [
+          "0",
+          "6"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "5"
+        ],
+        "video": [
+          "0",
+          "7"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "6"
+        ],
+        "video": [
+          "0",
+          "8"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "7"
+        ],
+        "video": [
+          "0",
+          "9"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "8"
+        ],
+        "video": [
+          "0",
+          "10"
+        ]
+      },
+      {
+        "sensor": [
+          "0",
+          "9"
+        ],
+        "video": [
+          "0",
+          "0"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "0"
+        ],
+        "video": [
+          "1",
+          "2"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "1"
+        ],
+        "video": [
+          "1",
+          "3"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "10"
+        ],
+        "video": [
+          "1",
+          "1"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "2"
+        ],
+        "video": [
+          "1",
+          "4"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "3"
+        ],
+        "video": [
+          "1",
+          "5"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "4"
+        ],
+        "video": [
+          "1",
+          "6"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "5"
+        ],
+        "video": [
+          "1",
+          "7"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "6"
+        ],
+        "video": [
+          "1",
+          "8"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "7"
+        ],
+        "video": [
+          "1",
+          "9"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "8"
+        ],
+        "video": [
+          "1",
+          "10"
+        ]
+      },
+      {
+        "sensor": [
+          "1",
+          "9"
+        ],
+        "video": [
+          "1",
+          "0"
+        ]
+      }
+    ],
+    "status": "provisional_not_independently_clock_verified"
+  },
+  "reference_fits": {
+    "gnss": {
+      "points": 65,
+      "inliers": 64,
+      "median_fit_error_m": 0.08359837305214649,
+      "maximum_fit_error_m": 0.5540333732440189
+    },
+    "drone": {
+      "points": 65,
+      "inliers": 64,
+      "median_fit_error_m": 0.041589072706484584,
+      "maximum_fit_error_m": 3.7189701250734934
+    }
+  },
+  "coverage": {
+    "reference_observations": 792,
+    "sensor_available": 792,
+    "detector_matched": 61
+  },
+  "position_error_m": {
+    "bottom": {
+      "count": 61,
+      "median": 2.4092031527665476,
+      "mean": 3.025916112101374,
+      "p90": 6.4373771056960125
+    },
+    "center": {
+      "count": 61,
+      "median": 2.506439978016929,
+      "mean": 3.123578581422493,
+      "p90": 6.013111183175958
+    }
+  },
+  "interval_speed_absolute_error_kmh": {
+    "bottom": {
+      "count": 4,
+      "median": 0.4866826374890598,
+      "mean": 0.4825383269510404,
+      "p90": 0.6974015658187072
+    },
+    "center": {
+      "count": 4,
+      "median": 0.6928767207661499,
+      "mean": 0.6956334462010307,
+      "p90": 0.7881351128528427
+    }
+  },
+  "scope": "Conditional diagnostic using provided reference geometry and annotation-associated identities. Clock inferred only on setup segment. GNSS-derived box annotations used for alignment and identity only. Predicted positions come from detector boxes. Sensor error, clock error, camera drift and wearable/foot offsets remain. Not an end-to-end accuracy certification or validated ground-contact result.",
+  "validation_status": "diagnostic_only_low_coverage",
+  "can_certify_real_speed": false
+}

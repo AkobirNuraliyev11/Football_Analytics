@@ -59,6 +59,8 @@ def landmarks_from_keypoints(xyc, width, height, pitch, threshold=0.5):
 
 
 class FootballDetector:
+    inference_policy = "1280-pixel overlapping tiles above 2560-pixel inputs; full-frame otherwise"
+
     def __init__(self, model_dir: Path, *, device="cpu"):
         from .model_assets import MODELS, EXPECTED_SHA256, sha256
         import os
@@ -89,7 +91,34 @@ class FootballDetector:
         if set(self.players.names.values()) != supported:
             raise ValueError(f"Unexpected player model labels: {self.players.names}")
 
-    def detect(self, rgb):
+    def detect(self, rgb, *, tile_size=None):
+        """Preserve small athletes in high-resolution inputs with overlapping crops.
+
+        None selects 1280-pixel tiles above 2560 pixels. Zero reproduces the
+        original full-frame path for comparisons. No user pixel input is needed.
+        """
+        height, width = rgb.shape[:2]
+        if tile_size is None:
+            tile_size = 1280 if max(height, width) > 2560 else 0
+        if type(tile_size) is not int or tile_size < 0 or 0 < tile_size < 320:
+            raise ValueError("tile_size must be zero or an integer of at least 320")
+        if not tile_size or max(height, width) <= tile_size:
+            return self._detect_region(rgb)
+        candidates = []
+        for x, y, right, bottom in detection_tiles(width, height, tile_size):
+            for d in self._detect_region(rgb[y:bottom, x:right]):
+                b = d.bbox
+                # Cropping a person at an internal seam corrupts its foot anchor.
+                # Overlap lets another tile observe the complete box.
+                if ((x > 0 and b.x_min <= 2) or (y > 0 and b.y_min <= 2) or
+                    (right < width and b.x_max >= right-x-2) or
+                    (bottom < height and b.y_max >= bottom-y-2)):
+                    continue
+                candidates.append(Detection(BoundingBox(b.x_min+x,b.y_min+y,b.x_max+x,b.y_max+y),
+                                            d.confidence,d.kind,d.role))
+        return merge_tile_detections(candidates)
+
+    def _detect_region(self, rgb):
         import numpy as np
         height, width = rgb.shape[:2]
         # Ultralytics NumPy inputs are BGR, while our decoder contract is RGB.
@@ -126,3 +155,35 @@ class FootballDetector:
         if len(calibration.inlier_names) < 6:
             raise CalibrationError("Automatic calibration needs at least six consistent landmarks")
         return calibration
+
+
+def detection_tiles(width, height, size):
+    """Evenly cover the image with at least 160 pixels of overlap where possible."""
+    from math import ceil
+    def origins(length):
+        if length <= size:
+            return [0]
+        count = ceil((length-size)/(size-160))+1
+        return [round(i*(length-size)/(count-1)) for i in range(count)]
+    return [(x,y,min(x+size,width),min(y+size,height))
+            for y in origins(height) for x in origins(width)]
+
+
+def merge_tile_detections(items):
+    """Confidence-first, kind-specific overlap suppression across crop boundaries."""
+    kept = []
+    for item in sorted(items,key=lambda d:d.confidence,reverse=True):
+        a = item.bbox
+        duplicate = False
+        for old in kept:
+            if old.kind != item.kind:
+                continue
+            b = old.bbox
+            intersection = max(0,min(a.x_max,b.x_max)-max(a.x_min,b.x_min))*max(0,min(a.y_max,b.y_max)-max(a.y_min,b.y_min))
+            union = (a.x_max-a.x_min)*(a.y_max-a.y_min)+(b.x_max-b.x_min)*(b.y_max-b.y_min)-intersection
+            if intersection/union > .5:
+                duplicate = True
+                break
+        if not duplicate:
+            kept.append(item)
+    return kept

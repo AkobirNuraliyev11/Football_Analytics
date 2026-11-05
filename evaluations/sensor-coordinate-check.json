@@ -1,0 +1,24 @@
+{
+  "setup_seconds": [
+    2,
+    5
+  ],
+  "evaluation_seconds": [
+    10,
+    28
+  ],
+  "samples": 1980,
+  "median_before_m": 2.9845944349136735,
+  "median_after_setup_affine_m": 2.3887980420194084,
+  "p90_after_m": 5.137003146912819,
+  "decision": "Diagnostic global-coordinate check only; no production correction applied.",
+  "input_sha256": {
+    "data/soccertrack-reference/G_20200220_1_0000_0030.csv": "9e02896f1a7066415bb68795c69bba2f3c1729de0471ba71e36c639c4cb7ff59",
+    "data/soccertrack-reference/gnss_keypoints.json": "48b9c70c49156ff5b336de4b6b857bab082685706db8eb8da5046ad7ea8a51a3",
+    "data/soccertrack-reference/drone_keypoints.json": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+    "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+    "data/soccertrack-reference/detections-tiled.jsonl": "6a02f1b41a11ae062ef696c1b8dc082b7bfdd46b1423dc6121826893c394887a",
+    "data/soccertrack-reference/detections-tiled.manifest.json": "b20595e88dc292412c99d71c43ba26301265eb92b18e1bbf5ef1d09f680d85d8"
+  },
+  "method": "Same provisional identity pairs and 0.85 s offset as sensor-tiled-nine. Sample video-annotation and GNSS positions every 0.2 s. Fit a single six-parameter least-squares affine mapping from annotation-derived pitch positions to GNSS pitch positions on seconds [2,5). Evaluate on [10,28). No corrected predictions are used elsewhere."
+}
