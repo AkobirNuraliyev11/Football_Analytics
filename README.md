@@ -227,10 +227,12 @@ coverage, with original and audited annotations preserved. It is not yet used fo
 player telemetry.
 
 The [player-anchor sensitivity audit](docs/measurement-sensitivity.md) now exposes
-conditional pixel-localization speed ranges. Independent GNSS benchmark preparation
-is the active measurement priority. This does not certify real-player speed or contact.
+conditional pixel-localization speed ranges. The later reference-methodology review uses video annotations for component checks.
+This does not certify real-player speed or contact.
 
 [Independent sensor comparison and high-resolution fix](docs/sensor-comparison.md):
 large inputs now preserve small players using overlapping crops. Step 8 expansion
-is paused. The sensor benchmark remains diagnostic because timing and position
-reference disagreements are unresolved.
+is paused. The GNSS benchmark is a secondary source comparison. See the
+[reference-methodology correction](docs/reference-methodology-correction.md): video
+annotations now provide the component reference, while end-to-end physical accuracy
+remains unverified.

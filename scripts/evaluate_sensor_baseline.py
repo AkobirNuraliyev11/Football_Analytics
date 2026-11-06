@@ -151,13 +151,13 @@ def evaluate(root,cache):
                             speed[kind].append(abs(actual-expected))
             old.append(entry)
     if any(sha256(Path(p))!=digest for p,digest in hashes.items()):raise ValueError('Input changed')
-    return dict(validation_status='diagnostic_only',can_certify_real_speed=False,input_sha256=hashes,setup_seconds=[2,5],evaluation_seconds=[10,28],frames=len(records),
+    return dict(reference_kind='secondary_gnss_comparison',comparison_is_accuracy_test=False,validation_status='diagnostic_only',can_certify_real_speed=False,input_sha256=hashes,setup_seconds=[2,5],evaluation_seconds=[10,28],frames=len(records),
         alignment=dict(video_to_gnss_relative_offset_s=offset,setup_median_velocity_difference_mps=best[0],setup_pairs=best[2],
                        leading_offset_candidates=alternatives,identity_pairs=[dict(sensor=g,video=b) for g,b in pairing],status='provisional_not_independently_clock_verified'),
         reference_fits=dict(gnss=gfit,drone=bfit),coverage=counts,
         paired_reference_disagreement_m=stats(annotation_sensor),
         paired_detector_center_to_annotation_m=stats(detector_annotation),
-        position_error_m={k:stats(v) for k,v in positions.items()},interval_speed_absolute_error_kmh={k:stats(v) for k,v in speed.items()},
+        position_discrepancy_m={k:stats(v) for k,v in positions.items()},interval_speed_discrepancy_kmh={k:stats(v) for k,v in speed.items()},
         scope='Conditional diagnostic using provided reference geometry and annotation-associated identities. '
               'Clock inferred only on setup segment. GNSS-derived box annotations used for alignment and identity only. '
               'Predicted positions come from detector boxes. Sensor error, clock error, camera drift and wearable/foot offsets remain. '
@@ -169,4 +169,4 @@ if __name__=='__main__':
     for name in ('root','detections','output'):p.add_argument(name,type=Path)
     a=p.parse_args();result=evaluate(a.root,a.detections)
     with a.output.open('x') as f:json.dump(result,f,indent=2,allow_nan=False)
-    print(json.dumps({k:result[k] for k in ['frames','coverage','position_error_m','interval_speed_absolute_error_kmh']},indent=2))
+    print(json.dumps({k:result[k] for k in ['frames','coverage','position_discrepancy_m','interval_speed_discrepancy_kmh']},indent=2))

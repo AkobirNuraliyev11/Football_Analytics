@@ -42,16 +42,21 @@ and tracking, classification, gated telemetry, and tactical visualization. Step 
 Keep event engineering isolated from unvalidated real-video geometry. Implementation does not mean real-video physical
 measurement accuracy has been demonstrated.
 
-## Immediate task: resolve reference disagreement before more Step 8 work
+## Immediate task: automatic calibration/tracking validation
 
-Read `docs/sensor-comparison.md` first. A same-frame tiled-detection comparison
-improved matching from 16/198 to 121/198 observations. All 142 tests passed.
-The sensor benchmark is implemented but diagnostic: reference video annotations
-and aligned GNSS already disagree by about 2.95 m median. The 0.85-second clock
-offset is inferred on setup data, not independently verified. Do not tune our model
-to this unexplained mismatch or claim validated speed from the 24 usable intervals.
-Step 8 expansion is paused. No previews. Keep runs bounded and reuse cached
-detections to avoid unnecessary cost.
+Read `docs/reference-methodology-correction.md` first. The prior instruction to
+eliminate GNSS/video mismatch was based on the wrong reference assumption. The
+paper itself treats drone annotations as reference and reports substantial GNSS
+position error. Do not keep fitting offsets to force raw GNSS into agreement.
+
+A same-frame video-reference scorer is implemented. The tiled run matches 121/198
+observations and scores 24/66 reference intervals. Median center discrepancy is
+0.230 m and mean center-based interval-speed discrepancy is 0.488 km/h. These are
+component-level results using reference geometry and reference-associated identities.
+They do not certify automatic calibration, tracker identity, physical speed or contact.
+All 147 tests passed. Next evaluate the automatic calibration/tracking path against
+video annotations on a separate sequence, without feeding reference positions into
+predictions. Step 8 expansion remains paused. No previews. Reuse caches and bound runs.
 
 ## Prior measurement-sensitivity work
 

@@ -1,5 +1,9 @@
 # Sensor comparison and high-resolution detection fix
 
+**November 6 correction:** The GNSS reference-role assumption below is superseded by
+[the methodology correction](reference-methodology-correction.md). Historical numbers
+are preserved. Raw GNSS disagreement is not a detector-accuracy acceptance gate.
+
 November 5, 2026. Step 8 expansion is paused while physical measurement validation
 is unresolved. This work produced a detection fix and a conditional sensor comparison.
 It did not complete real-speed or ground-contact validation.
