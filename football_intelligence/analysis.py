@@ -1,5 +1,5 @@
 """Step 4 orchestration: automatic boxes, IDs, pitch candidates, and review video."""
-from contextlib import closing
+from contextlib import closing, nullcontext
 from dataclasses import asdict
 from datetime import datetime, timezone
 from fractions import Fraction
@@ -87,7 +87,8 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
 
 def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("data/models"),
                   device="cpu", max_frames=None, pitch_every=10, detector=None,
-                  pitch: PitchConfig | None = None, config: AppConfig | None = None):
+                  pitch: PitchConfig | None = None, config: AppConfig | None = None,
+                  write_preview=True):
     """Pipeline has injectable detector for deterministic integration tests."""
     identifier("match_id",match_id)
     integer("pitch_every",pitch_every,minimum=1)
@@ -106,7 +107,8 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 "pitch":asdict(pitch),"pitch_dimensions_assumed":True,"max_frames":max_frames,
                 "pitch_every":pitch_every,"device":device,"processed_frames":0,
                 "detection_policy":getattr(detector,"inference_policy","external_detector"),
-                "frames_with_pitch_fit":0,"preview_audio":False,"model_hashes":detector.fingerprints,
+                "frames_with_pitch_fit":0,"preview_audio":False,"preview_enabled":write_preview,
+                "model_hashes":detector.fingerprints,
                 "metric_telemetry_enabled":True,"metric_measurements_available":False,
                 "analytics":asdict(config.analytics),
                 "orientation":"model-canonical; cross-shot physical-end identity unverified"}
@@ -119,8 +121,8 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
         telemetry = TelemetryEngine(config)
         calibration, previous = None, None
         preview = PreviewWriter(output/"preview.partial.mp4", metadata.width,metadata.height,
-                                Fraction(metadata.average_rate) if metadata.average_rate else Fraction(25))
-        with closing(preview), closing(iter_frames(source)) as frames, \
+                                Fraction(metadata.average_rate) if metadata.average_rate else Fraction(25)) if write_preview else None
+        with (closing(preview) if preview else nullcontext()), closing(iter_frames(source)) as frames, \
              (output/"tracks.partial.jsonl").open("x") as track_file, \
              (output/"telemetry.partial.jsonl").open("x") as telemetry_file, \
              (output/"calibrations.partial.jsonl").open("x") as calibration_file:
@@ -184,7 +186,8 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 for item, values in zip(records,measurement["observations"]):
                     item["telemetry"] = values
                 track_file.write(json.dumps(record,allow_nan=False)+"\n")
-                preview.write(annotate(frame.rgb,records,calibration,frame.frame_index,shot["shot_id"]),frame.timestamp_s)
+                if preview:
+                    preview.write(annotate(frame.rgb,records,calibration,frame.frame_index,shot["shot_id"]),frame.timestamp_s)
                 manifest["processed_frames"] += 1
                 previous = frame
                 if max_frames is not None and manifest["processed_frames"] >= max_frames:
@@ -194,7 +197,9 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
             raise ValueError("Source changed during analysis")
         summary = telemetry.finish()
         write_manifest(output/"telemetry-summary.partial.json",summary)
-        artifacts = ["tracks.jsonl","calibrations.jsonl","preview.mp4","telemetry.jsonl","telemetry-summary.json"]
+        artifacts = ["tracks.jsonl","calibrations.jsonl","telemetry.jsonl","telemetry-summary.json"]
+        if write_preview:
+            artifacts.append("preview.mp4")
         for name in artifacts:
             stem,suffix = name.rsplit(".",1)
             (output/f"{stem}.partial.{suffix}").replace(output/name)

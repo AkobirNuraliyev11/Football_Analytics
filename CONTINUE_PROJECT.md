@@ -44,6 +44,15 @@ measurement accuracy has been demonstrated.
 
 ## Immediate task: automatic calibration/tracking validation
 
+November 8 update: read `docs/automatic-calibration-audit.md` first. Three automatic
+aerial pitch fits pass internal RMSE checks but disagree strongly with publisher
+landmarks, including after orientation symmetries. Pair-distance discrepancies
+remain 10–20 m. Correct image-supported calibration validation is now the first
+blocker; avoid expensive dense player inference until geometry is useful. No
+reference coordinates were supplied to prediction. These are same-match diagnostics,
+not held-out validation. Tracking continuity and physical speed/contact remain open.
+`analyze-video --no-preview` now supports JSON-only full-pipeline runs.
+
 Read `docs/reference-methodology-correction.md` first. The prior instruction to
 eliminate GNSS/video mismatch was based on the wrong reference assumption. The
 paper itself treats drone annotations as reference and reports substantial GNSS

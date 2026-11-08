@@ -1,0 +1,502 @@
+{
+  "schema_version": 1,
+  "status": "completed",
+  "requested_frames": [
+    360,
+    390,
+    420
+  ],
+  "source_sha256": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+  "reference_sha256": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+  "models": {
+    "players": "75b09c377fbf9d0791d23f6cfb689f5aed6eaa43a6818bd1fb884cf7507fffaf",
+    "pitch": "28f68f7c4056d6d9b137efd2e7ab5f3c494039380c63831649126ced25628b36"
+  },
+  "elapsed_seconds": 13.056887458005804,
+  "frames_with_fit": 3,
+  "can_certify_real_speed": false,
+  "reference_supplied_to_predictions": false,
+  "limits": "Same-match aerial diagnostic, not an independent match. Static publisher landmarks; camera motion and physical accuracy unverified. Canonical orientation is not aligned using reference data. No player tracking or speed evaluation.",
+  "frames": [
+    {
+      "frame_index": 360,
+      "timestamp_s": 12.012012012012011,
+      "reason": null,
+      "calibration": {
+        "schema_version": 1,
+        "calibration_id": "52eef9bb-1b24-40ea-bf63-7fc15c706ee4",
+        "match_id": "soccertrack-calibration-audit",
+        "shot_id": 0,
+        "frame_index": 360,
+        "width": 3840,
+        "height": 2160,
+        "pitch": {
+          "length_m": 105.0,
+          "width_m": 68.0
+        },
+        "matrix": [
+          [
+            0.02068360532789902,
+            0.06530292027938363,
+            27.71577741725106
+          ],
+          [
+            0.0016690104614447189,
+            0.12497177674790316,
+            -18.1317560630589
+          ],
+          [
+            -1.5477159549280703e-05,
+            0.001219008079405777,
+            1.0
+          ]
+        ],
+        "landmarks": [
+          {
+            "name": "pitch-14",
+            "pixel": {
+              "x": 1152.5335693359375,
+              "y": 129.83779907226562
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 0
+            }
+          },
+          {
+            "name": "pitch-15",
+            "pixel": {
+              "x": 1106.4393310546875,
+              "y": 429.4313049316406
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 24.85
+            }
+          },
+          {
+            "name": "pitch-16",
+            "pixel": {
+              "x": 1073.737060546875,
+              "y": 838.9282836914062
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 43.15
+            }
+          },
+          {
+            "name": "pitch-17",
+            "pixel": {
+              "x": 1038.396240234375,
+              "y": 1977.451171875
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 68.0
+            }
+          },
+          {
+            "name": "pitch-18",
+            "pixel": {
+              "x": 3239.43408203125,
+              "y": 242.36105346679688
+            },
+            "pitch": {
+              "x_m": 88.5,
+              "y_m": 13.84
+            }
+          },
+          {
+            "name": "pitch-25",
+            "pixel": {
+              "x": 3719.26171875,
+              "y": 93.826171875
+            },
+            "pitch": {
+              "x_m": 105.0,
+              "y_m": 0
+            }
+          },
+          {
+            "name": "pitch-31",
+            "pixel": {
+              "x": 376.591552734375,
+              "y": 613.6409912109375
+            },
+            "pitch": {
+              "x_m": 43.35,
+              "y_m": 34.0
+            }
+          },
+          {
+            "name": "pitch-32",
+            "pixel": {
+              "x": 1803.053466796875,
+              "y": 618.4242553710938
+            },
+            "pitch": {
+              "x_m": 61.65,
+              "y_m": 34.0
+            }
+          }
+        ],
+        "inlier_names": [
+          "pitch-14",
+          "pitch-15",
+          "pitch-17",
+          "pitch-18",
+          "pitch-25",
+          "pitch-31"
+        ],
+        "fit_rmse_m": 0.23158910040159275,
+        "validation_count": 0,
+        "validation_rmse_m": null,
+        "method": "landmark_ransac",
+        "parent_id": null,
+        "inlier_count": 6,
+        "rejected_names": [
+          "pitch-16",
+          "pitch-32"
+        ],
+        "coordinate_space": "native_unrotated_raster",
+        "scope": "exact_frame_and_inlier_convex_hull",
+        "accuracy_note": "Fit residual is not independent measurement accuracy"
+      },
+      "reference_points": 65,
+      "projected_points": 23,
+      "rejections": {
+        "Pixel is outside the inlier landmark support region": 42
+      },
+      "median_landmark_discrepancy_m": 68.3702132536041,
+      "p90_landmark_discrepancy_m": 100.66094305707125,
+      "symmetry_median_discrepancy_m": {
+        "identity": 68.3702132536041,
+        "reverse_length": 64.5197155699319,
+        "reverse_width": 37.979686122591815,
+        "rotate_180": 16.438414035110135
+      },
+      "median_pair_distance_discrepancy_m": 12.857841496308355
+    },
+    {
+      "frame_index": 390,
+      "timestamp_s": 13.013013013013014,
+      "reason": null,
+      "calibration": {
+        "schema_version": 1,
+        "calibration_id": "a8ec414c-1f71-47bf-b4f7-659faaddbd1a",
+        "match_id": "soccertrack-calibration-audit",
+        "shot_id": 0,
+        "frame_index": 390,
+        "width": 3840,
+        "height": 2160,
+        "pitch": {
+          "length_m": 105.0,
+          "width_m": 68.0
+        },
+        "matrix": [
+          [
+            0.020575461938175034,
+            0.050262918644485226,
+            29.946526389678926
+          ],
+          [
+            0.001374282532390637,
+            0.10210611756361701,
+            -8.880282262629335
+          ],
+          [
+            7.588527388710458e-06,
+            0.0009480121778591438,
+            1.0
+          ]
+        ],
+        "landmarks": [
+          {
+            "name": "pitch-14",
+            "pixel": {
+              "x": 1153.941650390625,
+              "y": 106.52755737304688
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 0
+            }
+          },
+          {
+            "name": "pitch-15",
+            "pixel": {
+              "x": 1117.337646484375,
+              "y": 412.00982666015625
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 24.85
+            }
+          },
+          {
+            "name": "pitch-16",
+            "pixel": {
+              "x": 1089.5423583984375,
+              "y": 819.74267578125
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 43.15
+            }
+          },
+          {
+            "name": "pitch-17",
+            "pixel": {
+              "x": 1072.068603515625,
+              "y": 2020.1632080078125
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 68.0
+            }
+          },
+          {
+            "name": "pitch-18",
+            "pixel": {
+              "x": 3287.993408203125,
+              "y": 207.00576782226562
+            },
+            "pitch": {
+              "x_m": 88.5,
+              "y_m": 13.84
+            }
+          },
+          {
+            "name": "pitch-25",
+            "pixel": {
+              "x": 3769.1044921875,
+              "y": 66.49090576171875
+            },
+            "pitch": {
+              "x_m": 105.0,
+              "y_m": 0
+            }
+          },
+          {
+            "name": "pitch-31",
+            "pixel": {
+              "x": 377.02532958984375,
+              "y": 608.9306030273438
+            },
+            "pitch": {
+              "x_m": 43.35,
+              "y_m": 34.0
+            }
+          },
+          {
+            "name": "pitch-32",
+            "pixel": {
+              "x": 1827.1953125,
+              "y": 594.7547607421875
+            },
+            "pitch": {
+              "x_m": 61.65,
+              "y_m": 34.0
+            }
+          }
+        ],
+        "inlier_names": [
+          "pitch-15",
+          "pitch-16",
+          "pitch-17",
+          "pitch-18",
+          "pitch-31",
+          "pitch-32"
+        ],
+        "fit_rmse_m": 0.2719099398517039,
+        "validation_count": 0,
+        "validation_rmse_m": null,
+        "method": "landmark_ransac",
+        "parent_id": null,
+        "inlier_count": 6,
+        "rejected_names": [
+          "pitch-14",
+          "pitch-25"
+        ],
+        "coordinate_space": "native_unrotated_raster",
+        "scope": "exact_frame_and_inlier_convex_hull",
+        "accuracy_note": "Fit residual is not independent measurement accuracy"
+      },
+      "reference_points": 65,
+      "projected_points": 7,
+      "rejections": {
+        "Pixel is outside the inlier landmark support region": 58
+      },
+      "median_landmark_discrepancy_m": 52.39055756959319,
+      "p90_landmark_discrepancy_m": 66.2989762925129,
+      "symmetry_median_discrepancy_m": {
+        "identity": 52.39055756959319,
+        "reverse_length": 41.62988379711169,
+        "reverse_width": 38.09609365684823,
+        "rotate_180": 35.618313857235826
+      },
+      "median_pair_distance_discrepancy_m": 19.608368554524667
+    },
+    {
+      "frame_index": 420,
+      "timestamp_s": 14.014014014014014,
+      "reason": null,
+      "calibration": {
+        "schema_version": 1,
+        "calibration_id": "d0c05fef-83b3-48e0-8a76-fef1178383dd",
+        "match_id": "soccertrack-calibration-audit",
+        "shot_id": 0,
+        "frame_index": 420,
+        "width": 3840,
+        "height": 2160,
+        "pitch": {
+          "length_m": 105.0,
+          "width_m": 68.0
+        },
+        "matrix": [
+          [
+            0.028644233524623506,
+            0.0854965261551852,
+            21.73031024510308
+          ],
+          [
+            0.0020711362290118237,
+            0.14270879323754723,
+            -20.9735012907549
+          ],
+          [
+            3.878575496862922e-05,
+            0.0015669776335517718,
+            1.0
+          ]
+        ],
+        "landmarks": [
+          {
+            "name": "pitch-14",
+            "pixel": {
+              "x": 1146.20556640625,
+              "y": 130.74517822265625
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 0
+            }
+          },
+          {
+            "name": "pitch-15",
+            "pixel": {
+              "x": 1101.9052734375,
+              "y": 427.4122009277344
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 24.85
+            }
+          },
+          {
+            "name": "pitch-16",
+            "pixel": {
+              "x": 1069.635498046875,
+              "y": 834.3955078125
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 43.15
+            }
+          },
+          {
+            "name": "pitch-17",
+            "pixel": {
+              "x": 1037.0526123046875,
+              "y": 1980.6265869140625
+            },
+            "pitch": {
+              "x_m": 52.5,
+              "y_m": 68.0
+            }
+          },
+          {
+            "name": "pitch-18",
+            "pixel": {
+              "x": 3209.432373046875,
+              "y": 239.28131103515625
+            },
+            "pitch": {
+              "x_m": 88.5,
+              "y_m": 13.84
+            }
+          },
+          {
+            "name": "pitch-25",
+            "pixel": {
+              "x": 3683.0595703125,
+              "y": 92.5382080078125
+            },
+            "pitch": {
+              "x_m": 105.0,
+              "y_m": 0
+            }
+          },
+          {
+            "name": "pitch-31",
+            "pixel": {
+              "x": 383.4041748046875,
+              "y": 611.8008422851562
+            },
+            "pitch": {
+              "x_m": 43.35,
+              "y_m": 34.0
+            }
+          },
+          {
+            "name": "pitch-32",
+            "pixel": {
+              "x": 1787.4722900390625,
+              "y": 614.1026000976562
+            },
+            "pitch": {
+              "x_m": 61.65,
+              "y_m": 34.0
+            }
+          }
+        ],
+        "inlier_names": [
+          "pitch-14",
+          "pitch-15",
+          "pitch-16",
+          "pitch-25",
+          "pitch-31",
+          "pitch-32"
+        ],
+        "fit_rmse_m": 0.35710137954754,
+        "validation_count": 0,
+        "validation_rmse_m": null,
+        "method": "landmark_ransac",
+        "parent_id": null,
+        "inlier_count": 6,
+        "rejected_names": [
+          "pitch-17",
+          "pitch-18"
+        ],
+        "coordinate_space": "native_unrotated_raster",
+        "scope": "exact_frame_and_inlier_convex_hull",
+        "accuracy_note": "Fit residual is not independent measurement accuracy"
+      },
+      "reference_points": 65,
+      "projected_points": 15,
+      "rejections": {
+        "Pixel is outside the inlier landmark support region": 50
+      },
+      "median_landmark_discrepancy_m": 76.16774926492306,
+      "p90_landmark_discrepancy_m": 107.01410069479812,
+      "symmetry_median_discrepancy_m": {
+        "identity": 76.16774926492306,
+        "reverse_length": 65.90474522578262,
+        "reverse_width": 41.392261800753396,
+        "rotate_180": 10.600588444873123
+      },
+      "median_pair_distance_discrepancy_m": 10.139904984694196
+    }
+  ]
+}

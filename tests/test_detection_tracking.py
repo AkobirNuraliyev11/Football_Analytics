@@ -159,6 +159,16 @@ class AnalysisTests(unittest.TestCase):
             preview = list(iter_frames(output/"preview.mp4"))
             self.assertEqual(len(preview),3)
             self.assertAlmostEqual(preview[-1].timestamp_s,.14,places=5)
+            from unittest.mock import patch
+            with patch("football_intelligence.analysis.PreviewWriter", side_effect=AssertionError("No encoder allowed")), \
+                 patch("football_intelligence.analysis.annotate", side_effect=AssertionError("No rendering allowed")):
+                data_only = analyze_video(source,root/"data-only",match_id="test",detector=Detector(),
+                                          max_frames=3,write_preview=False)
+            self.assertEqual(data_only["status"],"completed")
+            self.assertFalse(data_only["preview_enabled"])
+            self.assertNotIn("preview.mp4",data_only["artifacts"])
+            self.assertFalse(list((root/"data-only").glob("*.mp4")))
+            self.assertEqual((root/"data-only/tracks.jsonl").read_text(),(output/"tracks.jsonl").read_text())
             with self.assertRaises(FileExistsError):
                 analyze_video(source,output,match_id="test",detector=Detector())
             class BrokenDetector(Detector):
