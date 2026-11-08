@@ -1,0 +1,31 @@
+{
+  "frames": 31,
+  "source_sha256": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+  "cache_sha256": "6c46df7cf56666be77d770d7032d8123aaee7d77e7e1e9068ea7d7e115aaea38",
+  "start_frame": 0,
+  "end_frame": 90,
+  "models": {
+    "players": "75b09c377fbf9d0791d23f6cfb689f5aed6eaa43a6818bd1fb884cf7507fffaf",
+    "pitch": "28f68f7c4056d6d9b137efd2e7ab5f3c494039380c63831649126ced25628b36"
+  },
+  "detector_mode": "original",
+  "reference_sha256": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+  "reference_observations": 682,
+  "matched_observations": 31,
+  "emitted_person_observations": 220,
+  "unmatched_emitted_observations": 189,
+  "reference_adjacent_links": 660,
+  "matched_adjacent_links": 14,
+  "same_id_adjacent_links": 14,
+  "eligible_same_id_links": 6,
+  "adjacent_id_changes": 0,
+  "tracks_associated_with_multiple_references": 1,
+  "longest_eligible_continuity_s": 0.3003003003003002,
+  "reference_players_with_two_second_continuity": 0,
+  "observation_coverage": 0.045454545454545456,
+  "eligible_link_coverage": 0.00909090909090909,
+  "can_certify_real_speed": false,
+  "reference_supplied_to_tracker": false,
+  "limits": "Cached detector observations at about 10 Hz, one aerial shot, same-match development diagnostic. Not full-frame-rate performance. Ambiguous image-space reference associations excluded. Adjacent ID changes exclude gaps; unmatched emitted observations may include officials/nonparticipants, not just false detections. No calibration, contact, team classification or physical speed validation.",
+  "predictions_sha256": "8cd1f91b027343e3354c72b005099d9d5b43bfbaaa83343c51879c8a0cbd3f52"
+}

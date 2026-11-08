@@ -14,9 +14,13 @@ from football_intelligence.tracking import MultiObjectTracker
 from football_intelligence.video import iter_frames
 
 
-def run(root, cache, output):
+def run(root, cache, output, *, start_frame=0, end_frame=234, tracks_output=None):
     if output.exists():
         raise FileExistsError(output)
+    if tracks_output is not None and tracks_output.exists():
+        raise FileExistsError(tracks_output)
+    if start_frame < 0 or end_frame <= start_frame or (end_frame-start_frame)%3:
+        raise ValueError('Need an increasing frame range with three-frame spacing')
     spec = json.loads((Path(__file__).resolve().parents[1]/'evaluations/soccertrack-sample.json').read_text())
     pinned = {Path(v['file']).name:v['sha256'] for v in spec['files']}
     source = root/'D_20220220_1_0000_0030.mp4'; label = root/'D_20220220_1_0000_0030.csv'
@@ -29,9 +33,9 @@ def run(root, cache, output):
     if [r['frame_index'] for r in records] != proof['requested_frames']:
         raise ValueError('Incomplete cache')
     # Fixed contiguous dense segment, not the later half-second-spaced frames.
-    cached = {r['frame_index']:r for r in records if r['frame_index'] <= 234}
-    if sorted(cached) != list(range(0, 235, 3)):
-        raise ValueError('Expected dense 79-frame segment')
+    cached = {r['frame_index']:r for r in records if start_frame <= r['frame_index'] <= end_frame}
+    if sorted(cached) != list(range(start_frame, end_frame+1, 3)):
+        raise ValueError('Expected a complete dense three-frame-spaced segment')
     tracker = MultiObjectTracker(); predictions = []
     for frame in iter_frames(source):
         if frame.frame_index not in cached:
@@ -66,14 +70,20 @@ def run(root, cache, output):
             h, x, y, w = map(float, row[col:col+4])
             references[index][(rows[0][col], rows[1][col])] = [x+w/2,y+h/2]
     report = dict(frames=len(predictions), source_sha256=pinned[source.name], cache_sha256=sha256(cache),
+        start_frame=start_frame,end_frame=end_frame,
         models=proof['models'], detector_mode=proof['mode'],
         reference_sha256=pinned[label.name], **score_tracking(predictions,references),
         can_certify_real_speed=False, reference_supplied_to_tracker=False,
-        limits='79 cached original full-frame detector observations at about 10 Hz, one aerial shot, '
-               'same-match development diagnostic. Not tiled-detector or full-frame-rate performance. '
+        limits='Cached detector observations at about 10 Hz, one aerial shot, '
+               'same-match development diagnostic. Not full-frame-rate performance. '
                'Ambiguous image-space reference associations excluded. Adjacent ID changes exclude gaps; '
                'unmatched emitted observations may include officials/nonparticipants, not just false detections. '
                'No calibration, contact, team classification or physical speed validation.')
+    if tracks_output is not None:
+        with tracks_output.open('x') as stream:
+            for row in predictions:
+                stream.write(json.dumps(row,allow_nan=False)+'\n')
+        report['predictions_sha256']=sha256(tracks_output)
     with output.open('x') as stream:
         json.dump(report, stream, indent=2, allow_nan=False)
     print(json.dumps(report,indent=2))
@@ -83,4 +93,8 @@ if __name__ == '__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     for key in ('root','cache','output'):
         parser.add_argument(key,type=Path)
-    a=parser.parse_args();run(a.root,a.cache,a.output)
+    parser.add_argument('--start-frame',type=int,default=0)
+    parser.add_argument('--end-frame',type=int,default=234)
+    parser.add_argument('--tracks-output',type=Path)
+    a=parser.parse_args();run(a.root,a.cache,a.output,start_frame=a.start_frame,
+                             end_frame=a.end_frame,tracks_output=a.tracks_output)

@@ -25,6 +25,26 @@ def marking_samples(pitch):
     return paths
 
 
+def paint_mask(rgb):
+    """Narrow bright ridges with grass nearby; no geometry or reference input."""
+    import cv2
+    import numpy as np
+    width = rgb.shape[1]
+    colors = rgb.astype(np.float32)
+    grass = ((colors[:, :, 1] > 1.1*colors[:, :, 0]) &
+             (colors[:, :, 1] > 1.1*colors[:, :, 2])).astype(np.uint8)
+    # Paint must have grass nearby, reducing stands, advertising and sky support.
+    radius = max(3, round(width/320))
+    nearby = cv2.dilate(grass, np.ones((2*radius+1, 2*radius+1), np.uint8)) > 0
+    # Narrow bright ridges distinguish faded white paint from pale green turf.
+    gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
+    local = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT,
+                           cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2*radius+1, 2*radius+1)))
+    white = ((colors.min(2) > 100) & (colors.max(2)-colors.min(2) < .22*colors.max(2))
+             & (local > 15) & nearby)
+    return white
+
+
 def paint_evidence(rgb, matrix, support_pixels, pitch):
     """Image-only check of projected regulation markings within calibrated support.
 
@@ -38,18 +58,7 @@ def paint_evidence(rgb, matrix, support_pixels, pitch):
         inverse = np.linalg.inv(matrix)
     except np.linalg.LinAlgError as exc:
         raise CalibrationError('Singular pitch hypothesis') from exc
-    colors = rgb.astype(np.float32)
-    grass = ((colors[:, :, 1] > 1.1*colors[:, :, 0]) &
-             (colors[:, :, 1] > 1.1*colors[:, :, 2])).astype(np.uint8)
-    # Paint must have grass nearby, reducing stands, advertising and sky support.
-    radius = max(3, round(width/320))
-    nearby = cv2.dilate(grass, np.ones((2*radius+1, 2*radius+1), np.uint8)) > 0
-    # Narrow bright ridges distinguish faded white paint from pale green turf.
-    gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
-    local = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT,
-                           cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2*radius+1, 2*radius+1)))
-    white = ((colors.min(2) > 100) & (colors.max(2)-colors.min(2) < .4*colors.max(2))
-             & (local > 15) & nearby)
+    white = paint_mask(rgb)
     distance = cv2.distanceTransform((~white).astype(np.uint8), cv2.DIST_L2, 3)
     hull = cv2.convexHull(np.asarray(support_pixels, dtype=np.float32))
     tolerance = max(3., width/640.)

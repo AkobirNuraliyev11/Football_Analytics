@@ -8,7 +8,13 @@ remain unavailable until geometry and ground contact are validated; automatic pi
 fits alone do not satisfy those requirements.
 This foundation is not a production-ready analytics platform.
 
-The tracking/classification reliability pass is complete: ambiguous associations now
+**Current validation status:** [Step 7 closure assessment](docs/step07-closure.md).
+Automatic full-pitch overhead geometry now uses visible boundaries and native
+paint-line refinement. Dense tracking improved, but usable coverage and physical
+speed/contact validation remain blockers. Step 8 expansion remains paused.
+Use `analyze-video --no-preview` for data-only analysis.
+
+Tracking/classification reliability guards are implemented: ambiguous associations now
 carry continuity warnings, conflicting kits can remain unknown, and kit tolerances
 adapt to the observed groups. See [the measured comparison and limits](docs/tracking-reliability-review.md).
 

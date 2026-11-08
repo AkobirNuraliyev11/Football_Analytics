@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "reference_kind": "publisher_video_annotation",
+  "evaluation_scope": "detection_anchor_agreement",
+  "can_certify_real_speed": false,
+  "frames": 9,
+  "selected_frame_indices": [
+    300,
+    315,
+    330,
+    600,
+    615,
+    630,
+    780,
+    795,
+    810
+  ],
+  "tile_size": null,
+  "input_sha256": {
+    "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+    "data/soccertrack-reference/drone_keypoints.json": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+    "data/soccertrack-reference/detections-tiled.manifest.json": "b20595e88dc292412c99d71c43ba26301265eb92b18e1bbf5ef1d09f680d85d8",
+    "data/soccertrack-reference/detections-tiled.jsonl": "6a02f1b41a11ae062ef696c1b8dc082b7bfdd46b1423dc6121826893c394887a"
+  },
+  "reference_mapping_fit": {
+    "points": 65,
+    "inliers": 64,
+    "median_fit_error_m": 0.041589072706484584,
+    "maximum_fit_error_m": 3.7189701250734934
+  },
+  "reference_observations": 198,
+  "matched_observations": 138,
+  "unmatched_observations": 60,
+  "matched_fraction": 0.696969696969697,
+  "center_discrepancy_px": {
+    "count": 138,
+    "mean": 6.7078620440209615,
+    "median": 6.455508808641323,
+    "p90": 10.106846783721204
+  },
+  "position_discrepancy_m": {
+    "center": {
+      "count": 138,
+      "mean": 0.2400988936582624,
+      "median": 0.23049601004494777,
+      "p90": 0.35891433094985375
+    },
+    "bottom": {
+      "count": 138,
+      "mean": 0.6058296394148975,
+      "median": 0.5951818789046148,
+      "p90": 0.796069020473582
+    }
+  },
+  "interval_count": 30,
+  "reference_interval_count": 66,
+  "interval_coverage": 0.45454545454545453,
+  "net_speed_discrepancy_kmh": {
+    "center": {
+      "count": 30,
+      "mean": 0.4585105903591069,
+      "median": 0.30798724293381774,
+      "p90": 1.0137875447003464
+    },
+    "bottom": {
+      "count": 30,
+      "mean": 0.4166425193223151,
+      "median": 0.30750205903564787,
+      "p90": 0.9939987699303352
+    }
+  },
+  "limits": "Uses reference-associated identities and a shared publisher homography. Excludes automatic calibration error, tracker identity accuracy, ground-contact verification and annotation uncertainty. Net interval speed only. Small same-match development comparison. Model training overlap unknown. GNSS is a secondary source comparison, not exact ground truth."
+}

@@ -139,6 +139,14 @@ class FootballDetector:
     def calibrate(self, rgb, *, match_id, shot_id, frame_index, pitch=None):
         import numpy as np
         pitch = pitch or PitchConfig()
+        from .overhead_calibration import calibrate_overhead
+        try:
+            calibration, _ = calibrate_overhead(rgb, match_id=match_id, shot_id=shot_id,
+                                              frame_index=frame_index, pitch=pitch)
+            return calibration
+        except CalibrationError:
+            # Partial and broadcast views retain the semantic-model candidate path.
+            pass
         height, width = rgb.shape[:2]
         result = self.pitch_model.predict(np.ascontiguousarray(rgb[:,:,::-1]), device=self.device,
                                           conf=0.25, imgsz=640, verbose=False)[0]

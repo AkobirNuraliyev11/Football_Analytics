@@ -1,0 +1,15 @@
+{
+  "status": "completed",
+  "processed_frames": 1,
+  "frames_with_pitch_fit": 1,
+  "metric_measurements_available": false,
+  "preview_enabled": false,
+  "pitch_paint_screen_enabled": true,
+  "source_sha256": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+  "artifacts": [
+    "tracks.jsonl",
+    "calibrations.jsonl",
+    "telemetry.jsonl",
+    "telemetry-summary.json"
+  ]
+}

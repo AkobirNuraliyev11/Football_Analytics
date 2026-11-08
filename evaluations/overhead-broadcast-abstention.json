@@ -1,0 +1,41 @@
+{
+  "frames": [
+    {
+      "frame_index": 0,
+      "status": "abstained",
+      "reason": "Overhead boundary directions unavailable",
+      "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51"
+    },
+    {
+      "frame_index": 75,
+      "status": "abstained",
+      "reason": "Overhead boundary directions unavailable",
+      "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51"
+    },
+    {
+      "frame_index": 149,
+      "status": "abstained",
+      "reason": "Overhead boundary directions unavailable",
+      "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51"
+    },
+    {
+      "frame_index": 0,
+      "status": "abstained",
+      "reason": "Overhead boundary directions unavailable",
+      "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96"
+    },
+    {
+      "frame_index": 75,
+      "status": "abstained",
+      "reason": "Overhead perimeter is incomplete or too small",
+      "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96"
+    },
+    {
+      "frame_index": 149,
+      "status": "abstained",
+      "reason": "Overhead boundary directions unavailable",
+      "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96"
+    }
+  ],
+  "scope": "Six cached broadcast frames; limited negative check, not generalization proof"
+}

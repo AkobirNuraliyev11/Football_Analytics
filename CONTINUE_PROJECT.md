@@ -44,6 +44,19 @@ measurement accuracy has been demonstrated.
 
 ## Immediate task: automatic calibration/tracking validation
 
+AUTHORITATIVE CURRENT STATUS: `docs/step07-closure.md`. Automatic overhead geometry
+now recovers 38/38 sampled frames with native paint-line refinement. Camera
+consistency checks are available on 23/30 adjacent pairs (maximum pairwise p90
+0.087 m). Six broadcast negative frames abstain. A dense paired tracker comparison
+improves observation coverage from 31/682 to 330/682 and eligible links from 6/660
+to 206/660, but no player has two seconds of eligible continuity. Smaller tiles
+were worse and were rejected. A forced-assignment bug in the detection scorer was
+fixed; corrected nine-frame counts are 26/198 original and 138/198 tiled. Use
+`*-corrected.json` reports. Physical speed/contact and generalization remain
+unvalidated; Step 7 is NOT closed and Step 8 expansion has not resumed. Stop
+repeating calibration-offset/tiling sweeps; representative detector data and an
+independent measurement reference are now needed. Earlier notes below are history.
+
 Latest November 8 milestone: `docs/paint-and-tracking-audit.md`. Experimental
 `analyze-video --check-pitch-paint --no-preview` rejects all three bad automatic
 fits, but static reference controls also fail; keep this opt-in until false

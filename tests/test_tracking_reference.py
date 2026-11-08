@@ -37,3 +37,14 @@ class TrackingReferenceTests(unittest.TestCase):
         self.assertEqual(score_tracking([record(0,[(25,1)])],refs)['matched_observations'],0)
         with self.assertRaises(ValueError):
             score_tracking([record(0,[(20,1),(100,1)])],refs)
+
+    def test_sustained_continuity_requires_all_intermediate_links(self):
+        refs={i:{'a':[20,10]} for i in range(22)}
+        rows=[record(i,[(20,1)]) for i in range(22)]
+        result=score_tracking(rows,refs)
+        self.assertAlmostEqual(result['longest_eligible_continuity_s'],2.1)
+        self.assertEqual(result['reference_players_with_two_second_continuity'],1)
+        rows[11]['detections']=[]
+        result=score_tracking(rows,refs)
+        self.assertEqual(result['reference_players_with_two_second_continuity'],0)
+        self.assertLessEqual(result['longest_eligible_continuity_s'],1.)

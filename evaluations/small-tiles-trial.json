@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "reference_kind": "publisher_video_annotation",
+  "evaluation_scope": "detection_anchor_agreement",
+  "can_certify_real_speed": false,
+  "frames": 3,
+  "selected_frame_indices": [
+    0,
+    30,
+    60
+  ],
+  "tile_size": 640,
+  "input_sha256": {
+    "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+    "data/soccertrack-reference/drone_keypoints.json": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+    "data/soccertrack-reference/detections-small-tiles-trial.manifest.json": "9cd666eaffe0d844e9753f426c3c0d6f2d4438f012d45176dc13dccd453d007c",
+    "data/soccertrack-reference/detections-small-tiles-trial.jsonl": "1a6ce51c6ed72195f8a90ee521552d736d44d3dca4a97586bebd605a14ef2a67"
+  },
+  "reference_mapping_fit": {
+    "points": 65,
+    "inliers": 64,
+    "median_fit_error_m": 0.041589072706484584,
+    "maximum_fit_error_m": 3.7189701250734934
+  },
+  "reference_observations": 66,
+  "matched_observations": 22,
+  "unmatched_observations": 44,
+  "matched_fraction": 0.3333333333333333,
+  "center_discrepancy_px": {
+    "count": 22,
+    "mean": 7.435054219517985,
+    "median": 7.308974607080177,
+    "p90": 13.882059847660331
+  },
+  "position_discrepancy_m": {
+    "center": {
+      "count": 22,
+      "mean": 0.26624309222295284,
+      "median": 0.26081063411833544,
+      "p90": 0.49521514290770957
+    },
+    "bottom": {
+      "count": 22,
+      "mean": 0.6172613628143325,
+      "median": 0.607470760182809,
+      "p90": 0.7453159974909508
+    }
+  },
+  "interval_count": 0,
+  "reference_interval_count": 0,
+  "interval_coverage": null,
+  "net_speed_discrepancy_kmh": {
+    "center": {
+      "count": 0,
+      "mean": null,
+      "median": null,
+      "p90": null
+    },
+    "bottom": {
+      "count": 0,
+      "mean": null,
+      "median": null,
+      "p90": null
+    }
+  },
+  "limits": "Uses reference-associated identities and a shared publisher homography. Excludes automatic calibration error, tracker identity accuracy, ground-contact verification and annotation uncertainty. Net interval speed only. Small same-match development comparison. Model training overlap unknown. GNSS is a secondary source comparison, not exact ground truth."
+}

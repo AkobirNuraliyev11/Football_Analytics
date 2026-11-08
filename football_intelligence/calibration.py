@@ -110,6 +110,7 @@ class Calibration:
     validation_rmse_m: float | None
     method: str
     parent_id: str | None = None
+    image_evidence: dict | None = None
 
     def project(self, point: PixelPoint, *, match_id: str, shot_id: int,
                 frame_index: int, width: int, height: int) -> PitchPoint:
@@ -210,6 +211,13 @@ def update_camera(previous_rgb, current_rgb, previous: Calibration, *, match_id:
     for frame in (previous_rgb, current_rgb):
         if frame.shape != shape or frame.dtype != np.uint8:
             raise CalibrationError("Camera update requires native-size uint8 RGB arrays")
+    if previous.method == 'overhead_boundaries_paint_checked':
+        # Re-detect visible boundaries rather than propagate a full-pitch mapping
+        # unchecked through drone motion. Failure clears the current calibration.
+        from .overhead_calibration import calibrate_overhead
+        current, _ = calibrate_overhead(current_rgb, match_id=match_id, shot_id=shot_id,
+                                       frame_index=frame_index, pitch=previous.pitch)
+        return replace(current, parent_id=previous.calibration_id)
     old = cv2.cvtColor(previous_rgb, cv2.COLOR_RGB2GRAY)
     new = cv2.cvtColor(current_rgb, cv2.COLOR_RGB2GRAY)
     anchors = [p for p in previous.landmarks if p.name in previous.inlier_names]

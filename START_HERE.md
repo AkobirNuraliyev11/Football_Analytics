@@ -56,8 +56,9 @@ unavailable; experimental estimates are sparse. Improving continuity and validat
 accuracy is the next task. Do not describe the platform as production-ready.
 
 Read `CONTINUE_PROJECT.md` before continuing development. The active next task is
-automatic calibration/tracking validation, described in
-`docs/reference-methodology-correction.md`. Step 8 expansion is paused pending measurement validation.
+described in `docs/step07-closure.md`. Overhead calibration has improved and the
+dense tracker comparison is complete; tracking coverage and independent physical
+measurement validation still prevent Step 7 closure. Step 8 expansion remains paused.
 
 ## Start and test
 

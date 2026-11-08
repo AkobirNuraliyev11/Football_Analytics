@@ -10,7 +10,7 @@ from football_intelligence.model_assets import sha256
 from scripts.evaluate_sensor_baseline import mapper
 
 
-def evaluate(root,cache):
+def evaluate(root,cache,*,start_s=10.,end_s=28.,frame_multiple=15):
     spec=Path(__file__).resolve().parents[1]/'evaluations/soccertrack-sample.json'
     published=json.loads(spec.read_text())
     pinned={Path(item['file']).name:item for item in published['files']}
@@ -24,7 +24,9 @@ def evaluate(root,cache):
     hashes={str(p):sha256(p) for p in (label,mapping,proof_path,cache)}
     records=sorted(map(json.loads,cache.read_text().splitlines()),key=lambda row:row['frame_index'])
     if [r['frame_index'] for r in records]!=sorted(proof['requested_frames']):raise ValueError('Incomplete cached frame set')
-    records=[r for r in records if 10<=r['timestamp_s']<=28 and r['frame_index']%15==0]
+    if start_s<0 or end_s<start_s or frame_multiple<1:
+        raise ValueError('Invalid evaluation interval or frame multiple')
+    records=[r for r in records if start_s<=r['timestamp_s']<=end_s and r['frame_index']%frame_multiple==0]
     if not records:raise ValueError('No evaluation frames')
     with label.open() as f:rows=list(csv.reader(f))
     refs={}
@@ -40,7 +42,8 @@ def evaluate(root,cache):
     result=score_frames(records,refs,project)
     if any(sha256(Path(p))!=digest for p,digest in hashes.items()):raise ValueError('Input changed')
     return dict(schema_version=1,reference_kind='publisher_video_annotation',evaluation_scope='detection_anchor_agreement',
-        can_certify_real_speed=False,frames=len(records),input_sha256=hashes,reference_mapping_fit=fit,**result,
+        can_certify_real_speed=False,frames=len(records),selected_frame_indices=[r['frame_index'] for r in records],
+        tile_size=proof.get('tile_size'),input_sha256=hashes,reference_mapping_fit=fit,**result,
         limits='Uses reference-associated identities and a shared publisher homography. Excludes automatic calibration error, '
                'tracker identity accuracy, ground-contact verification and annotation uncertainty. '
                'Net interval speed only. Small same-match development comparison. Model training overlap unknown. '
@@ -50,6 +53,9 @@ def evaluate(root,cache):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('root','cache','output'):p.add_argument(name,type=Path)
-    args=p.parse_args();r=evaluate(args.root,args.cache)
+    p.add_argument('--start-s',type=float,default=10.)
+    p.add_argument('--end-s',type=float,default=28.)
+    p.add_argument('--frame-multiple',type=int,default=15)
+    args=p.parse_args();r=evaluate(args.root,args.cache,start_s=args.start_s,end_s=args.end_s,frame_multiple=args.frame_multiple)
     with args.output.open('x') as f:json.dump(r,f,indent=2,allow_nan=False)
     print(json.dumps({k:r[k] for k in ['frames','matched_observations','reference_observations','position_discrepancy_m','net_speed_discrepancy_kmh']},indent=2))

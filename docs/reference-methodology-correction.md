@@ -1,5 +1,11 @@
 # Reference methodology correction — November 6, 2026
 
+Update November 8: the same-frame scorer's forced-assignment bug was fixed. The
+old counts below are historical; corrected counts are 26/198 original and 138/198
+tiled, with 1/66 and 30/66 complete reference-associated intervals respectively.
+See `docs/step07-closure.md` and the reports ending in `-corrected.json`. The
+reference-role correction and physical-accuracy caveats here still apply.
+
 The roughly three-meter GNSS/video disagreement is no longer treated as a defect
 that our detector must eliminate. Our earlier validation approach overestimated
 what this dataset's wearable coordinates could establish.

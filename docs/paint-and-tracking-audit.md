@@ -1,5 +1,10 @@
 # Paint screening and tracking continuity — November 8, 2026
 
+Historical intermediate milestone. `docs/step07-closure.md` records the newer
+native-resolution overhead recovery, stricter paint chroma mask and paired dense
+tracking comparison. The paint percentages here use the earlier mask and should
+not be presented as results from the current implementation.
+
 This milestone adds an experimental image-supported calibration rejection path
 and measures the real tracker's continuity without reference-assisted IDs. It does
 not recover accurate automatic geometry or validate physical speeds. Step 8

@@ -46,8 +46,12 @@ def score_frames(records, references, project, *, sample_gap_s=.500501, interval
         assignments={}
         if len(keys) and len(items):
             cost=np.linalg.norm(np.array([truth[k] for k in keys])[:,None]-centers[None,:],axis=2)
-            ii,jj=linear_sum_assignment(cost)
+            # Permit missing references during assignment. Assigning every row
+            # first and thresholding later lets distant clutter steal good pairs.
+            ii,jj=linear_sum_assignment(np.column_stack([cost,np.full((len(keys),len(keys)),40.001)]))
             for i,j in zip(ii,jj):
+                if j>=len(items):
+                    continue
                 rivals=np.delete(cost[:,j],i)
                 if cost[i,j]<=40 and (not len(rivals) or rivals.min()-cost[i,j]>=10):
                     assignments[keys[i]]=j

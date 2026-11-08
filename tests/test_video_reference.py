@@ -16,6 +16,12 @@ class VideoReferenceTests(unittest.TestCase):
     def run_score(self):
         return self.score(self.rows,self.refs,self.project,sample_gap_s=.5,interval_s=1.)
 
+    def test_far_false_detection_cannot_steal_valid_nearby_match(self):
+        refs={0:{('A','1'):[1100,100],('A','2'):[1200,100]}}
+        boxes=[dict(kind='person',bbox=dict(x_min=x-1,x_max=x+1,y_min=99,y_max=101)) for x in (1101,0)]
+        result=self.score([dict(frame_index=0,timestamp_s=0.,detections=boxes)],refs,self.project)
+        self.assertEqual(result['matched_observations'],1)
+
     def test_known_motion_and_pixel_meter_units(self):
         self.rows[-1]['detections'][0]['bbox']['x_min']+=2
         self.rows[-1]['detections'][0]['bbox']['x_max']+=2

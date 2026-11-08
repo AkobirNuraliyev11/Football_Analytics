@@ -5,7 +5,7 @@ if AVAILABLE:
     import numpy as np
     import cv2
 from football_intelligence.config import PitchConfig
-from football_intelligence.pitch_paint import marking_samples, paint_evidence
+from football_intelligence.pitch_paint import marking_samples, paint_evidence, paint_mask
 
 
 @unittest.skipUnless(AVAILABLE, 'Requires calibration extras')
@@ -32,3 +32,9 @@ class PitchPaintTests(unittest.TestCase):
     def test_insufficient_region_abstains(self):
         small=[[550,20],[560,20],[560,50],[550,50]]
         self.assertFalse(paint_evidence(self.rgb,self.matrix,small,self.pitch)['accepted'])
+
+    def test_bright_turf_texture_does_not_count_as_white_paint(self):
+        rng=np.random.default_rng(42)
+        texture=rng.integers(-25,26,size=(100,160,1))
+        grass=np.clip(np.array([130,155,110])+texture,0,255).astype(np.uint8)
+        self.assertEqual(int(paint_mask(grass).sum()),0)
