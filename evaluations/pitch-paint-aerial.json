@@ -1,0 +1,344 @@
+{
+  "source_sha256": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+  "baseline_sha256": "e91aacbd7f52238038a4a7264b16bd929f159f037982ce28c4b6df2419ea4e56",
+  "reference_sha256": "83556374b79285f15dccbd7500b281be369bfd88ddad401951280c96b50068bb",
+  "frames": [
+    {
+      "frame_index": 360,
+      "automatic": {
+        "accepted": false,
+        "reason": "insufficient_visible_pitch_paint_support",
+        "samples": 354,
+        "supported_fraction": 0.4745762711864407,
+        "supported_components": 3,
+        "tolerance_px": 6.0,
+        "components": {
+          "halfway": {
+            "samples": 134,
+            "supported": 44,
+            "fraction": 0.3283582089552239
+          },
+          "far_touch": {
+            "samples": 96,
+            "supported": 72,
+            "fraction": 0.75
+          },
+          "right_penalty_front": {
+            "samples": 15,
+            "supported": 8,
+            "fraction": 0.5333333333333333
+          },
+          "right_penalty_side_-1": {
+            "samples": 12,
+            "supported": 6,
+            "fraction": 0.5
+          },
+          "circle": {
+            "samples": 97,
+            "supported": 38,
+            "fraction": 0.3917525773195876
+          }
+        },
+        "scope": "Image consistency screen only; physical accuracy and orientation unverified"
+      },
+      "reference_assisted_control": {
+        "accepted": false,
+        "reason": "insufficient_visible_pitch_paint_support",
+        "samples": 1127,
+        "supported_fraction": 0.6308784383318545,
+        "supported_components": 11,
+        "tolerance_px": 6.0,
+        "components": {
+          "halfway": {
+            "samples": 137,
+            "supported": 112,
+            "fraction": 0.8175182481751825
+          },
+          "right_goal": {
+            "samples": 74,
+            "supported": 22,
+            "fraction": 0.2972972972972973
+          },
+          "far_touch": {
+            "samples": 209,
+            "supported": 111,
+            "fraction": 0.5311004784688995
+          },
+          "near_touch": {
+            "samples": 210,
+            "supported": 97,
+            "fraction": 0.46190476190476193
+          },
+          "left_penalty_front": {
+            "samples": 81,
+            "supported": 63,
+            "fraction": 0.7777777777777778
+          },
+          "left_penalty_side_-1": {
+            "samples": 33,
+            "supported": 20,
+            "fraction": 0.6060606060606061
+          },
+          "left_penalty_side_1": {
+            "samples": 33,
+            "supported": 28,
+            "fraction": 0.8484848484848485
+          },
+          "left_goal_front": {
+            "samples": 37,
+            "supported": 32,
+            "fraction": 0.8648648648648649
+          },
+          "right_penalty_front": {
+            "samples": 81,
+            "supported": 45,
+            "fraction": 0.5555555555555556
+          },
+          "right_penalty_side_-1": {
+            "samples": 33,
+            "supported": 17,
+            "fraction": 0.5151515151515151
+          },
+          "right_penalty_side_1": {
+            "samples": 34,
+            "supported": 10,
+            "fraction": 0.29411764705882354
+          },
+          "right_goal_front": {
+            "samples": 37,
+            "supported": 30,
+            "fraction": 0.8108108108108109
+          },
+          "right_goal_side_1": {
+            "samples": 12,
+            "supported": 8,
+            "fraction": 0.6666666666666666
+          },
+          "circle": {
+            "samples": 116,
+            "supported": 116,
+            "fraction": 1.0
+          }
+        },
+        "scope": "Image consistency screen only; physical accuracy and orientation unverified"
+      }
+    },
+    {
+      "frame_index": 390,
+      "automatic": {
+        "accepted": false,
+        "reason": "insufficient_visible_pitch_paint_support",
+        "samples": 166,
+        "supported_fraction": 0.3313253012048193,
+        "supported_components": 0,
+        "tolerance_px": 6.0,
+        "components": {
+          "halfway": {
+            "samples": 86,
+            "supported": 31,
+            "fraction": 0.36046511627906974
+          },
+          "circle": {
+            "samples": 80,
+            "supported": 24,
+            "fraction": 0.3
+          }
+        },
+        "scope": "Image consistency screen only; physical accuracy and orientation unverified"
+      },
+      "reference_assisted_control": {
+        "accepted": false,
+        "reason": "insufficient_visible_pitch_paint_support",
+        "samples": 1127,
+        "supported_fraction": 0.5102040816326531,
+        "supported_components": 8,
+        "tolerance_px": 6.0,
+        "components": {
+          "halfway": {
+            "samples": 137,
+            "supported": 87,
+            "fraction": 0.635036496350365
+          },
+          "right_goal": {
+            "samples": 74,
+            "supported": 13,
+            "fraction": 0.17567567567567569
+          },
+          "far_touch": {
+            "samples": 209,
+            "supported": 93,
+            "fraction": 0.4449760765550239
+          },
+          "near_touch": {
+            "samples": 210,
+            "supported": 65,
+            "fraction": 0.30952380952380953
+          },
+          "left_penalty_front": {
+            "samples": 81,
+            "supported": 53,
+            "fraction": 0.654320987654321
+          },
+          "left_penalty_side_-1": {
+            "samples": 33,
+            "supported": 22,
+            "fraction": 0.6666666666666666
+          },
+          "left_penalty_side_1": {
+            "samples": 33,
+            "supported": 22,
+            "fraction": 0.6666666666666666
+          },
+          "left_goal_front": {
+            "samples": 37,
+            "supported": 33,
+            "fraction": 0.8918918918918919
+          },
+          "right_penalty_front": {
+            "samples": 81,
+            "supported": 28,
+            "fraction": 0.345679012345679
+          },
+          "right_penalty_side_-1": {
+            "samples": 33,
+            "supported": 9,
+            "fraction": 0.2727272727272727
+          },
+          "right_penalty_side_1": {
+            "samples": 34,
+            "supported": 4,
+            "fraction": 0.11764705882352941
+          },
+          "right_goal_front": {
+            "samples": 37,
+            "supported": 24,
+            "fraction": 0.6486486486486487
+          },
+          "right_goal_side_1": {
+            "samples": 12,
+            "supported": 6,
+            "fraction": 0.5
+          },
+          "circle": {
+            "samples": 116,
+            "supported": 116,
+            "fraction": 1.0
+          }
+        },
+        "scope": "Image consistency screen only; physical accuracy and orientation unverified"
+      }
+    },
+    {
+      "frame_index": 420,
+      "automatic": {
+        "accepted": false,
+        "reason": "insufficient_visible_pitch_paint_support",
+        "samples": 213,
+        "supported_fraction": 0.4413145539906103,
+        "supported_components": 1,
+        "tolerance_px": 6.0,
+        "components": {
+          "halfway": {
+            "samples": 85,
+            "supported": 10,
+            "fraction": 0.11764705882352941
+          },
+          "far_touch": {
+            "samples": 72,
+            "supported": 68,
+            "fraction": 0.9444444444444444
+          },
+          "circle": {
+            "samples": 56,
+            "supported": 16,
+            "fraction": 0.2857142857142857
+          }
+        },
+        "scope": "Image consistency screen only; physical accuracy and orientation unverified"
+      },
+      "reference_assisted_control": {
+        "accepted": false,
+        "reason": "insufficient_visible_pitch_paint_support",
+        "samples": 1127,
+        "supported_fraction": 0.580301685891748,
+        "supported_components": 8,
+        "tolerance_px": 6.0,
+        "components": {
+          "halfway": {
+            "samples": 137,
+            "supported": 102,
+            "fraction": 0.7445255474452555
+          },
+          "right_goal": {
+            "samples": 74,
+            "supported": 25,
+            "fraction": 0.33783783783783783
+          },
+          "far_touch": {
+            "samples": 209,
+            "supported": 99,
+            "fraction": 0.47368421052631576
+          },
+          "near_touch": {
+            "samples": 210,
+            "supported": 85,
+            "fraction": 0.40476190476190477
+          },
+          "left_penalty_front": {
+            "samples": 81,
+            "supported": 61,
+            "fraction": 0.7530864197530864
+          },
+          "left_penalty_side_-1": {
+            "samples": 33,
+            "supported": 20,
+            "fraction": 0.6060606060606061
+          },
+          "left_penalty_side_1": {
+            "samples": 33,
+            "supported": 23,
+            "fraction": 0.696969696969697
+          },
+          "left_goal_front": {
+            "samples": 37,
+            "supported": 30,
+            "fraction": 0.8108108108108109
+          },
+          "right_penalty_front": {
+            "samples": 81,
+            "supported": 40,
+            "fraction": 0.49382716049382713
+          },
+          "right_penalty_side_-1": {
+            "samples": 33,
+            "supported": 14,
+            "fraction": 0.42424242424242425
+          },
+          "right_penalty_side_1": {
+            "samples": 34,
+            "supported": 6,
+            "fraction": 0.17647058823529413
+          },
+          "right_goal_front": {
+            "samples": 37,
+            "supported": 27,
+            "fraction": 0.7297297297297297
+          },
+          "right_goal_side_1": {
+            "samples": 12,
+            "supported": 6,
+            "fraction": 0.5
+          },
+          "circle": {
+            "samples": 116,
+            "supported": 116,
+            "fraction": 1.0
+          }
+        },
+        "scope": "Image consistency screen only; physical accuracy and orientation unverified"
+      }
+    }
+  ],
+  "can_certify_real_speed": false,
+  "limits": "Same three development frames. Reference-assisted control only checks whether visible paint can support known geometry; it is not an automatic calibration result. No reference coordinates enter the automatic paint screen."
+}

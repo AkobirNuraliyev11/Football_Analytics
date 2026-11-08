@@ -1,0 +1,26 @@
+{
+  "frames": 79,
+  "source_sha256": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+  "cache_sha256": "6c46df7cf56666be77d770d7032d8123aaee7d77e7e1e9068ea7d7e115aaea38",
+  "reference_sha256": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+  "reference_observations": 1738,
+  "matched_observations": 65,
+  "emitted_person_observations": 617,
+  "unmatched_emitted_observations": 552,
+  "reference_adjacent_links": 1716,
+  "matched_adjacent_links": 29,
+  "same_id_adjacent_links": 29,
+  "eligible_same_id_links": 15,
+  "adjacent_id_changes": 0,
+  "tracks_associated_with_multiple_references": 2,
+  "observation_coverage": 0.037399309551208286,
+  "eligible_link_coverage": 0.008741258741258742,
+  "can_certify_real_speed": false,
+  "reference_supplied_to_tracker": false,
+  "limits": "79 cached original full-frame detector observations at about 10 Hz, one aerial shot, same-match development diagnostic. Not tiled-detector or full-frame-rate performance. Ambiguous image-space reference associations excluded. Adjacent ID changes exclude gaps; unmatched emitted observations may include officials/nonparticipants, not just false detections. No calibration, contact, team classification or physical speed validation.",
+  "models": {
+    "players": "75b09c377fbf9d0791d23f6cfb689f5aed6eaa43a6818bd1fb884cf7507fffaf",
+    "pitch": "28f68f7c4056d6d9b137efd2e7ab5f3c494039380c63831649126ced25628b36"
+  },
+  "detector_mode": "original"
+}

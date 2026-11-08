@@ -37,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
     analyze.add_argument("--max-frames", type=int)
     analyze.add_argument("--pitch-every", type=int, default=10)
     analyze.add_argument("--no-preview", action="store_true", help="Write analysis data without rendering video")
+    analyze.add_argument("--check-pitch-paint", action="store_true",
+                         help="Experimental screen: reject pitch fits unsupported by visible markings")
     analyze.add_argument("--config", type=Path)
     telemetry = commands.add_parser("compute-telemetry", help="Compute quality-gated telemetry from frame JSONL")
     telemetry.add_argument("path", type=Path)
@@ -104,6 +106,7 @@ def main(argv: list[str] | None = None) -> int:
             result = analyze_video(args.path,args.output,match_id=args.match_id,model_dir=args.model_dir,
                                    device=args.device,max_frames=args.max_frames,pitch_every=args.pitch_every,
                                    write_preview=not args.no_preview,
+                                   check_pitch_paint=args.check_pitch_paint,
                                    config=AppConfig.load(args.config) if args.config else AppConfig())
         elif args.command == "calibrate-pitch":
             from .calibration import fit_landmark_file

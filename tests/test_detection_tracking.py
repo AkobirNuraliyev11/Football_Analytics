@@ -169,6 +169,19 @@ class AnalysisTests(unittest.TestCase):
             self.assertNotIn("preview.mp4",data_only["artifacts"])
             self.assertFalse(list((root/"data-only").glob("*.mp4")))
             self.assertEqual((root/"data-only/tracks.jsonl").read_text(),(output/"tracks.jsonl").read_text())
+            from types import SimpleNamespace
+            class CandidateDetector(Detector):
+                def calibrate(self,*args,**kwargs):
+                    return SimpleNamespace(landmarks=[],inlier_names=[],matrix=None)
+            with patch("football_intelligence.analysis.paint_evidence", return_value={
+                    "accepted":False,"reason":"insufficient_visible_pitch_paint_support"}):
+                checked = analyze_video(source,root/"paint-rejected",match_id="test",detector=CandidateDetector(),
+                                        max_frames=3,write_preview=False,check_pitch_paint=True)
+            self.assertEqual(checked["frames_with_pitch_fit"],0)
+            rejected = json.loads((root/"paint-rejected/tracks.jsonl").read_text().splitlines()[0])
+            self.assertFalse(rejected["calibration_paint_evidence"]["accepted"])
+            self.assertIn("visible pitch paint",rejected["calibration_reason"])
+            self.assertIsNone(rejected["detections"][0]["pitch_position_candidate"])
             with self.assertRaises(FileExistsError):
                 analyze_video(source,output,match_id="test",detector=Detector())
             class BrokenDetector(Detector):

@@ -44,6 +44,16 @@ measurement accuracy has been demonstrated.
 
 ## Immediate task: automatic calibration/tracking validation
 
+Latest November 8 milestone: `docs/paint-and-tracking-audit.md`. Experimental
+`analyze-video --check-pitch-paint --no-preview` rejects all three bad automatic
+fits, but static reference controls also fail; keep this opt-in until false
+rejections/reference alignment are resolved. Dense original-cache tracker replay
+matches 65/1,738 observations and yields 15/1,716 eligible links; two predicted
+IDs associate with multiple reference players. No new player inference was run.
+155 tests pass. Next recover image-supported overhead geometry and distinguish
+static-reference alignment from paint extraction errors, then evaluate a short
+dense tiled detection run. Strict physical telemetry remains withheld.
+
 November 8 update: read `docs/automatic-calibration-audit.md` first. Three automatic
 aerial pitch fits pass internal RMSE checks but disagree strongly with publisher
 landmarks, including after orientation symmetries. Pair-distance discrepancies

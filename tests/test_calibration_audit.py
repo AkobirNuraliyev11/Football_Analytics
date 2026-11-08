@@ -1,7 +1,9 @@
 import unittest
+import importlib.util
 from scripts.audit_automatic_calibration import geometry_discrepancy
 
 
+@unittest.skipUnless(importlib.util.find_spec('numpy'), 'Requires calibration extras')
 class GeometryDiscrepancyTests(unittest.TestCase):
     def test_rotation_is_distinguished_from_distortion(self):
         reference = [[0, 0], [105, 0], [0, 68]]

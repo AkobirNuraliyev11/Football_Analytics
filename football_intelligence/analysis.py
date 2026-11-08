@@ -14,6 +14,7 @@ from .detection import FootballDetector
 from .ingestion import write_manifest
 from .model_assets import sha256
 from .models import PixelPoint
+from .pitch_paint import paint_evidence
 from .shots import ShotConfig, ShotDetector
 from .tracking import MultiObjectTracker
 from .telemetry import TelemetryEngine
@@ -88,7 +89,7 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
 def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("data/models"),
                   device="cpu", max_frames=None, pitch_every=10, detector=None,
                   pitch: PitchConfig | None = None, config: AppConfig | None = None,
-                  write_preview=True):
+                  write_preview=True, check_pitch_paint=False):
     """Pipeline has injectable detector for deterministic integration tests."""
     identifier("match_id",match_id)
     integer("pitch_every",pitch_every,minimum=1)
@@ -108,6 +109,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 "pitch_every":pitch_every,"device":device,"processed_frames":0,
                 "detection_policy":getattr(detector,"inference_policy","external_detector"),
                 "frames_with_pitch_fit":0,"preview_audio":False,"preview_enabled":write_preview,
+                "pitch_paint_screen_enabled":check_pitch_paint,
                 "model_hashes":detector.fingerprints,
                 "metric_telemetry_enabled":True,"metric_measurements_available":False,
                 "analytics":asdict(config.analytics),
@@ -130,6 +132,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 shot = shots.update(frame)
                 scope = dict(match_id=match_id,shot_id=shot["shot_id"],frame_index=frame.frame_index)
                 reason = None
+                paint_check = None
                 if shot["boundary_reasons"]:
                     calibration = None
                 try:
@@ -138,6 +141,12 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                     else:
                         calibration = update_camera(previous.rgb,frame.rgb,calibration,**scope,
                             previous_timestamp_s=previous.timestamp_s,timestamp_s=frame.timestamp_s)
+                    if check_pitch_paint:
+                        support = [[p.pixel.x, p.pixel.y] for p in calibration.landmarks
+                                   if p.name in calibration.inlier_names]
+                        paint_check = paint_evidence(frame.rgb, calibration.matrix, support, pitch)
+                        if not paint_check['accepted']:
+                            raise CalibrationError('Pitch fit rejected: insufficient visible pitch paint support')
                 except CalibrationError as exc:
                     calibration = None
                     reason = str(exc)
@@ -180,7 +189,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                         and not item["classification_conflict"] and not item["team_changed"])
                 record = frame.timing_record() | shot | {"match_id":match_id,"detections":records,
                     "calibration_status":"fit_unvalidated" if calibration else "unavailable",
-                    "calibration_reason":reason}
+                    "calibration_reason":reason,"calibration_paint_evidence":paint_check}
                 measurement = telemetry.update(record)
                 telemetry_file.write(json.dumps(measurement,allow_nan=False)+"\n")
                 for item, values in zip(records,measurement["observations"]):
