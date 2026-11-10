@@ -48,8 +48,8 @@ new comparisons identify their exact regenerated input hashes.
 
 Steps 1–7 are implemented: ingestion, calibration, detection/tracking, team and role
 classification, gated telemetry, and tactical radar/heatmaps. Step 8 now has a
-data-only candidate-event engine. See `docs/step-08-events.md`. Clip extraction
-and overlays remain pending.
+strict candidate-event engine, JSON window planning and explicit silent clip
+extraction. See `docs/step-08-events.md`. Overlays and viewer playlists remain pending.
 
 Real-video measurement continuity remains unresolved. Strict real-video outputs remain
 unavailable; experimental estimates are sparse. Improving continuity and validating
@@ -58,7 +58,9 @@ accuracy is the next task. Do not describe the platform as production-ready.
 Read `CONTINUE_PROJECT.md` before continuing development. The active next task is
 described in `docs/step07-closure.md`. Overhead calibration has improved and the
 dense tracker comparison is complete; tracking coverage and independent physical
-measurement validation still prevent Step 7 closure. Step 8 expansion remains paused.
+measurement validation still prevent Step 7 accuracy closure. On November 10 the
+user authorized Step 8 engineering to proceed separately. Current work is described
+in `docs/step-08-events.md`; strict measurement gates remain in force.
 
 ## Start and test
 

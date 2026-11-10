@@ -44,6 +44,15 @@ def main(argv: list[str] | None = None) -> int:
     telemetry.add_argument("path", type=Path)
     telemetry.add_argument("--output", type=Path, required=True)
     telemetry.add_argument("--config", type=Path)
+    highlights=commands.add_parser('plan-highlights',help='Recompute strict events and plan shot-bounded windows; JSON only')
+    highlights.add_argument('analysis',type=Path)
+    highlights.add_argument('--output',type=Path,required=True)
+    highlights.add_argument('--padding-s',type=float)
+    extract=commands.add_parser('extract-highlights',help='Explicitly write silent candidate clips from a verified source')
+    extract.add_argument('source',type=Path)
+    extract.add_argument('--analysis',type=Path,required=True)
+    extract.add_argument('--output',type=Path,required=True)
+    extract.add_argument('--padding-s',type=float)
     review = commands.add_parser("review-measurements", help="Experimental midfield estimates with visible-paint and camera checks")
     review.add_argument("path",type=Path)
     review.add_argument("--analysis",type=Path,required=True)
@@ -77,7 +86,15 @@ def main(argv: list[str] | None = None) -> int:
                         help="Experimental: mature identity separately from each measurement window (requires --review)")
     args = parser.parse_args(argv)
     try:
-        if args.command == "build-tactics":
+        if args.command == 'plan-highlights':
+            from .highlights import write_plan
+            result=write_plan(args.analysis,args.output,padding_s=args.padding_s)
+            result['observed_frames']=len(result.pop('timeline'))
+        elif args.command == 'extract-highlights':
+            from .highlights import extract_highlights
+            result=extract_highlights(args.source,args.analysis,args.output,padding_s=args.padding_s)
+            result['observed_frames']=len(result.pop('timeline'))
+        elif args.command == "build-tactics":
             from .tactical_io import build_tactics
             result=build_tactics(args.path,args.output,review=args.review,
                 config=AppConfig.load(args.config) if args.config else None,video=args.video,

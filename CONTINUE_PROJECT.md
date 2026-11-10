@@ -1,5 +1,18 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Current authorization and next task — November 10, 2026
+
+The user authorized Step 8 engineering while Step 7 measurement validation stays
+open. This supersedes older instructions below to pause Step 8. Strict events
+remain unavailable on unvalidated measurements. `plan-highlights` now recomputes
+strict events and writes shot-bounded, merged clip windows as JSON; explicit
+`extract-highlights` verifies the source/timestamps and atomically writes silent
+MP4 clips. Both commands use the analysis configuration and retain provenance.
+No real-video clip has been generated. See `docs/step-08-events.md`.
+Next: candidate overlays and viewer playlist/index support, using synthetic test
+fixtures. Do not generate a user review clip without a new request. Keep Step 7's
+accuracy research separate and never present software tests as physical validation.
+
 You are continuing my Football Analytics project. Inspect the actual repository,
 diagnose the outstanding measurement problem, implement improvements, test them,
 and push completed milestones to GitHub. Do not merely propose work you can perform.

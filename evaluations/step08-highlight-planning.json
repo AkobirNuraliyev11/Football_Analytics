@@ -1,0 +1,32 @@
+{
+  "runs": [
+    {
+      "status": "unavailable",
+      "match_id": "full-preview",
+      "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+      "analysis_sha256": {
+        "data/continuity-review/first-analysis/manifest.json": "68fa78f85161910aa4fcb71f6dbc5efd4d6833af93f5c04e186f33aaac3a8e91",
+        "data/continuity-review/first-analysis/tracks.jsonl": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c"
+      },
+      "padding_s": 1.5,
+      "processed_frames": 750,
+      "events": 0,
+      "planned_clips": 0
+    },
+    {
+      "status": "unavailable",
+      "match_id": "second-review",
+      "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+      "analysis_sha256": {
+        "data/continuity-review/second-analysis/manifest.json": "51f1f7abe574983f2a2e9f4382a19a8f52a9579d0ad9bb62611ef946e9b18525",
+        "data/continuity-review/second-analysis/tracks.jsonl": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a"
+      },
+      "padding_s": 1.5,
+      "processed_frames": 150,
+      "events": 0,
+      "planned_clips": 0
+    }
+  ],
+  "media_generated": false,
+  "scope": "Strict gating replay only; not an event-accuracy benchmark"
+}

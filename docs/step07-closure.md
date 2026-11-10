@@ -1,7 +1,11 @@
 # Step 7 closure assessment — November 8, 2026
 
-**Step 7 is not closed. Step 8 expansion has not resumed.** This is the current
-status record; it supersedes earlier continuation notes and benchmark counts.
+**November 10 authorization update:** Step 7 accuracy validation remains open.
+The user authorized Step 8 software engineering to proceed separately; strict
+measurement/event gates remain unchanged. The pause instructions below describe
+the November 8 assessment and are superseded by this authorization.
+
+This is the Step 7 validation record; it supersedes earlier benchmark counts.
 Implementation tests passing is not evidence that athlete measurements are accurate.
 
 ## Completed fixes

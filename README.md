@@ -1,7 +1,7 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–7 implemented. Step 8 event-candidate foundation started.**
+**Status: Steps 1–7 implemented; accuracy validation open. Step 8 engineering active.**
 The backend and dashboard are not implemented yet. Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings
 remain unavailable until geometry and ground contact are validated; automatic pitch
@@ -11,7 +11,8 @@ This foundation is not a production-ready analytics platform.
 **Current validation status:** [Step 7 closure assessment](docs/step07-closure.md).
 Automatic full-pitch overhead geometry now uses visible boundaries and native
 paint-line refinement. Dense tracking improved, but usable coverage and physical
-speed/contact validation remain blockers. Step 8 expansion remains paused.
+speed/contact validation remain release blockers. Step 8 engineering is authorized
+to proceed separately, with strict measurement gates preserved.
 Use `analyze-video --no-preview` for data-only analysis.
 
 Tracking/classification reliability guards are implemented: ambiguous associations now
@@ -53,11 +54,10 @@ The optional tactical replay flag is `--separate-identity-maturity` together wit
 
 ## Architectural roadmap and review gates
 
-Each numbered module requires user review and explicit approval before the next.
-After completing and validating each step, commit and push its implementation,
-tests, and documentation to GitHub before stopping for that review.
-The user requested fixes and progression toward Step 8. Its data-only event foundation
-has started. Real-video measurement validation remains a release blocker. No user
+The user authorized Step 8 engineering on November 10 while Step 7 accuracy
+validation continues separately. Commit and push completed, tested milestones
+and documentation to GitHub. Candidate replay, window planning and explicit silent
+clip extraction are implemented. Real-video validation remains a release blocker. No user
 preview clips should be generated without a new request.
 
 1. **Foundation (implemented):** Python package, strict configuration, coordinate and athlete observation contracts, CLI, tests.
@@ -67,7 +67,7 @@ preview clips should be generated without a new request.
 5. **Team and role classification (implemented):** Automatic torso-color clustering, temporal team assignments, official separation, and goalkeeper color/position checks with uncertainty.
 6. **Telemetry (engine implemented):** Time-based smoothing, displacement and observation-gap gates, ground-contact uncertainty, track maturation, speed, distance, and sprint state machines. Automatic evidence needed to enable trusted real-video measurements remains unresolved.
 7. **Tactical visualization (implemented):** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports. Real-video output remains limited to eligible observations.
-8. **Events and clips (started):** Strict sprint and duel candidates with continuous-encounter deduplication are implemented. Padded MP4 extraction and annotation overlays remain pending. See [Step 8](docs/step-08-events.md).
+8. **Events and clips (in progress):** Strict sprint/duel candidates, padded shot-bounded windows and explicit silent MP4 extraction are implemented. Overlays and viewer playlists remain pending. See [Step 8](docs/step-08-events.md).
 9. **Backend:** FastAPI, durable job records, worker integration, telemetry and artifact endpoints, HTTP range streaming, CORS, and exports.
 10. **Dashboard:** React and TypeScript, synchronized video and radar, KPI cards, sortable telemetry, charts, heatmaps, clips, and clearly labeled cached demo data.
 11. **Deployment and validation:** End-to-end fixtures, labeled-video evaluation, resource limits, access control, storage lifecycle, packaging, observability, and deployment documentation.
