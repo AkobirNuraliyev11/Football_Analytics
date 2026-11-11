@@ -1,6 +1,8 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
+
+[Complete results review: videos, tracking, classification, telemetry and evaluation archive](docs/current-results.md).
 **Status: Steps 1–8 core engineering implemented; accuracy validation open. Step 9 backend foundation implemented.**
 The local backend supports upload, durable jobs, progress and results; the dashboard is not implemented yet. Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings

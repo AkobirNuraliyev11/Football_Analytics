@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-11",
+  "scope": "Saved emitted observations, not independently verified accuracy; observations count people repeatedly across frames",
+  "runs": {
+    "first": {
+      "frames": 750,
+      "last_timestamp_s": 29.96,
+      "person_observations": 17460,
+      "local_track_ids": 44,
+      "roles": {
+        "unknown": 257,
+        "official": 2244,
+        "outfield": 14959
+      },
+      "teams": {
+        "unknown": 3155,
+        "B": 7458,
+        "A": 6847
+      },
+      "ball_observations": 461,
+      "pitch_fit_frames": 731,
+      "tracks_sha256": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c"
+    },
+    "second": {
+      "frames": 150,
+      "last_timestamp_s": 5.96,
+      "person_observations": 3606,
+      "local_track_ids": 33,
+      "roles": {
+        "unknown": 90,
+        "outfield": 3069,
+        "official": 424,
+        "goalkeeper": 23
+      },
+      "teams": {
+        "unknown": 815,
+        "B": 1658,
+        "A": 1133
+      },
+      "ball_observations": 143,
+      "pitch_fit_frames": 150,
+      "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a"
+    }
+  }
+}
