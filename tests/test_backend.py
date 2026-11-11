@@ -96,7 +96,8 @@ class BackendTests(unittest.TestCase):
         status = self.client.get(f'/jobs/{identity}', headers=self.headers).json()
         self.assertEqual(status['status'], 'queued')
         self.assertEqual(self.client.get(f'/jobs/{identity}/results', headers=self.headers).status_code, 409)
-        self.assertEqual(self.run_pipeline(identity), [1, 2, 3])
+        with patch('football_intelligence.analysis.PreviewWriter', side_effect=AssertionError('Media must be opt-in')):
+            self.assertEqual(self.run_pipeline(identity), [1, 2, 3])
         result = self.client.get(f'/jobs/{identity}/results', headers=self.headers).json()
         self.assertFalse(result['metric_measurements_available'])
         self.assertFalse(result['preview_generated'])
@@ -156,3 +157,174 @@ class BackendTests(unittest.TestCase):
             inference.assert_not_called()
         self.assertEqual(self.store.get(identity)['status'], 'failed')
         self.assertIn('source changed', self.store.get(identity)['error'])
+
+    def test_paginated_frames_filtering_empty_results_and_job_list(self):
+        identity = self.submit()
+        self.run_pipeline(identity)
+        url = f'/jobs/{identity}'
+        page = self.client.get(url+'/frames/tracks?limit=2', headers=self.headers).json()
+        self.assertEqual([r['frame_index'] for r in page['items']], [0, 1])
+        self.assertEqual(page['next_offset'], 2)
+        next_page = self.client.get(url+'/frames/tracks?limit=2&offset=2', headers=self.headers).json()
+        self.assertEqual([r['frame_index'] for r in next_page['items']], [2, 3])
+        last = self.client.get(url+'/frames/telemetry?limit=2&offset=4', headers=self.headers).json()
+        self.assertEqual(len(last['items']), 1)
+        self.assertIsNone(last['next_offset'])
+        filtered = self.client.get(url+'/frames/radar?start_s=0.2&end_s=0.5', headers=self.headers).json()
+        self.assertEqual([r['frame_index'] for r in filtered['items']], [2, 3])
+        for endpoint in ('telemetry', 'events', 'heatmaps'):
+            response = self.client.get(url+'/'+endpoint, headers=self.headers)
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(response.json()['items'], [])
+        self.assertEqual(self.client.get(url+'/events', headers=self.headers).json()['status'], 'unavailable')
+        placeholder = self.client.get(url+'/heatmaps', headers=self.headers).json()['placeholder_file']
+        self.assertEqual(self.client.get(url+'/artifacts/'+placeholder, headers=self.headers).status_code, 200)
+        for path in ('frames/tracks?limit=501', 'frames/tracks?start_s=nan',
+                     'frames/tracks?end_s=0&start_s=1', 'telemetry?sort=DROP_TABLE', 'telemetry?offset=-1'):
+            self.assertEqual(self.client.get(url+'/'+path, headers=self.headers).status_code, 422)
+        self.assertEqual(self.client.get(url+'/telemetry').status_code, 401)
+        other = self.submit()
+        jobs = self.client.get('/jobs?limit=1', headers=self.headers).json()
+        self.assertEqual(jobs['items'][0]['id'], other)
+        self.assertEqual(jobs['next_offset'], 1)
+
+    def test_cancel_waiting_and_retry_preserves_original(self):
+        identity = self.submit(params={'max_frames': 2, 'render_media': 'true'})
+        self.assertEqual(self.client.post(f'/jobs/{identity}/retry', headers=self.headers).status_code, 409)
+        response = self.client.post(f'/jobs/{identity}/cancel', headers=self.headers)
+        self.assertEqual(response.json()['status'], 'cancelled')
+        with self.store.worker_lock():
+            self.assertFalse(run_one(self.store))
+        response = self.client.post(f'/jobs/{identity}/retry', headers=self.headers)
+        self.assertEqual(response.status_code, 202)
+        new = response.json()
+        self.assertNotEqual(new['id'], identity)
+        self.assertEqual(new['parent_id'], identity)
+        self.assertEqual(new['max_frames'], 2)
+        self.assertTrue(new['render_media'])
+        self.assertEqual(self.store.get(identity)['status'], 'cancelled')
+        self.assertEqual((self.store.directory(new['id'])/'source.video').read_bytes(), self.source.read_bytes())
+        (self.store.directory(identity)/'source.video').write_bytes(b'tampered')
+        directories = set((self.store.root/'jobs').iterdir())
+        self.assertEqual(self.client.post(f'/jobs/{identity}/retry', headers=self.headers).status_code, 409)
+        self.assertEqual(set((self.store.root/'jobs').iterdir()), directories)
+
+    def test_cancel_running_stops_pipeline_and_hides_artifacts(self):
+        identity = self.submit()
+        original = self.store.progress
+        def progress(job, count, timestamp):
+            if count == 2:
+                response = self.client.post(f'/jobs/{identity}/cancel', headers=self.headers)
+                self.assertEqual(response.json()['status'], 'cancel_requested')
+            original(job, count, timestamp)
+        with patch.object(self.store, 'progress', side_effect=progress):
+            observed = self.run_pipeline(identity)
+        self.assertEqual(observed, [1])
+        job = self.store.get(identity)
+        self.assertEqual(job['status'], 'cancelled')
+        self.assertIsNone(job['result'])
+        self.assertEqual(self.client.get(f'/jobs/{identity}/frames/tracks', headers=self.headers).status_code, 409)
+
+    def test_opt_in_media_heatmaps_events_and_fragment_sorting(self):
+        from test_highlights import HighlightExtractionTests, analysis_fixture
+        from football_intelligence.telemetry import TelemetryEngine
+        from football_intelligence.analysis import PreviewWriter
+        from football_intelligence.video import iter_frames
+        from contextlib import closing
+        from fractions import Fraction
+        self.source, times = HighlightExtractionTests().setup_source(self.root, count=23)
+        identity = self.submit(params={'render_media': 'true'})
+        def synthetic_pipeline(source, output, **options):
+            analysis_fixture(output.parent, source, times)
+            path = output/'tracks.jsonl'
+            rows = [json.loads(line) for line in path.read_text().splitlines()]
+            import copy
+            for row in rows:
+                row['match_id'] = options['match_id']
+                second = copy.deepcopy(row['detections'][0])
+                second.update(track_id=2, team='B')
+                second['pitch_position_candidate'] = {'x_m': 10+3*row['timestamp_s'], 'y_m': 40}
+                row['detections'].append(second)
+            path.write_text(''.join(json.dumps(r)+'\n' for r in rows))
+            engine = TelemetryEngine()
+            measurements = [engine.update(r) for r in rows]
+            summary = engine.finish()
+            (output/'telemetry.jsonl').write_text(''.join(json.dumps(r)+'\n' for r in measurements))
+            (output/'telemetry-summary.json').write_text(json.dumps(summary))
+            (output/'calibrations.jsonl').write_text('')
+            manifest = json.loads((output/'manifest.json').read_text())
+            manifest.update(match_id=options['match_id'], metric_measurements_available=True)
+            (output/'manifest.json').write_text(json.dumps(manifest))
+            with closing(PreviewWriter(output/'preview.mp4',64,48,Fraction(25))) as writer, closing(iter_frames(source)) as frames:
+                for frame in frames:
+                    writer.write(frame.rgb,frame.timestamp_s)
+                    options['progress_callback'](frame.frame_index+1,frame.timestamp_s)
+            return manifest
+        with self.store.worker_lock():
+            run_one(self.store, pipeline=synthetic_pipeline)
+        job = self.store.get(identity)
+        self.assertEqual(job['status'], 'completed', job['error'])
+        base = f'/jobs/{identity}'
+        telemetry = self.client.get(base+'/telemetry?sort=top_speed_kmh&descending=true&limit=1', headers=self.headers).json()
+        self.assertEqual(telemetry['items'][0]['track_id'], 1)
+        self.assertAlmostEqual(telemetry['items'][0]['top_speed_kmh'], 21.6)
+        self.assertEqual(telemetry['next_offset'], 1)
+        filtered = self.client.get(base+'/telemetry?track_id=2', headers=self.headers).json()
+        self.assertEqual([r['track_id'] for r in filtered['items']], [2])
+        events = self.client.get(base+'/events', headers=self.headers).json()
+        self.assertEqual(events['status'], 'available')
+        self.assertEqual(events['items'][0]['kind'], 'sprint_candidate')
+        self.assertFalse(events['confirmed_tackles_available'])
+        maps = self.client.get(base+'/heatmaps', headers=self.headers).json()
+        self.assertEqual(len(maps['items']), 4)
+        png = self.client.get(base+'/artifacts/'+maps['items'][0]['file'], headers=self.headers)
+        self.assertEqual(png.status_code, 200)
+        self.assertEqual(png.headers['content-type'], 'image/png')
+        self.assertTrue(png.content.startswith(b'\x89PNG'))
+        for name in ['preview.mp4', 'tactics/preview.mp4', 'highlights/clip-0001.mp4']:
+            response = self.client.get(base+'/artifacts/'+name, headers=self.headers | {'Range': 'bytes=0-31'})
+            self.assertEqual(response.status_code, 206, response.text)
+            self.assertEqual(response.headers['content-type'], 'video/mp4')
+            self.assertEqual(len(response.content), 32)
+        self.assertEqual(self.client.post(base+'/cancel', headers=self.headers).status_code, 409)
+        for name in ['queries.sqlite3', '../source.video', 'tactics/../../source.video', 'highlights/index.html']:
+            self.assertEqual(self.client.get(base+'/artifacts/'+name, headers=self.headers).status_code, 404)
+        # Entire artifact subdirectories cannot be redirected via symlinks either.
+        directory = self.store.directory(identity)/'analysis'
+        (directory/'tactics').rename(directory/'moved-tactics')
+        (directory/'tactics').symlink_to(directory/'moved-tactics', target_is_directory=True)
+        self.assertEqual(self.client.get(base+'/artifacts/'+maps['items'][0]['file'], headers=self.headers).status_code, 404)
+
+
+class JobLifecycleTests(unittest.TestCase):
+    def test_cancel_wins_finish_transaction_and_survives_restart(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store = JobStore(tmp)
+            identity = str(uuid.uuid4())
+            store.enqueue(identity, 'hash', None)
+            with store.worker_lock():
+                store.claim()
+                store.cancel(identity)
+                store.finish(identity, result={'artifacts': {}})
+                self.assertEqual(store.get(identity)['status'], 'cancelled')
+                self.assertIsNone(store.get(identity)['result'])
+            second = str(uuid.uuid4())
+            store.enqueue(second, 'hash', None)
+            store.claim(); store.cancel(second)
+            with store.worker_lock():
+                self.assertEqual(store.get(second)['status'], 'cancelled')
+
+    def test_existing_database_migrates_without_losing_jobs(self):
+        import sqlite3
+        with tempfile.TemporaryDirectory() as tmp:
+            identity = str(uuid.uuid4())
+            with sqlite3.connect(Path(tmp)/'jobs.sqlite3') as db:
+                db.execute('''CREATE TABLE jobs (id TEXT PRIMARY KEY, status TEXT NOT NULL,
+                    created_at TEXT NOT NULL, updated_at TEXT NOT NULL, processed_frames INTEGER DEFAULT 0,
+                    timestamp_s REAL, max_frames INTEGER, source_sha256 TEXT NOT NULL, error TEXT, result TEXT)''')
+                db.execute("INSERT INTO jobs (id,status,created_at,updated_at,source_sha256) VALUES (?,'queued','now','now','hash')", (identity,))
+            for _ in range(2):
+                job = JobStore(tmp).get(identity)
+                self.assertEqual(job['status'], 'queued')
+                self.assertEqual(job['render_media'], 0)
+                self.assertIsNone(job['parent_id'])

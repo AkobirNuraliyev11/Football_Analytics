@@ -2,15 +2,24 @@
 
 ## Current authorization and next task — November 11, 2026
 
-The user authorized the synthetic Step 8 playback check and starting Step 9.
-Both synthetic clips played to completion in the in-app browser (3.34 seconds
-per clip, readyState 4, no media errors). No actual-match preview was generated.
-The Step 9 foundation now includes authenticated raw video upload, durable SQLite
-jobs, a separate single worker, per-frame progress, results and allowlisted data
-artifact downloads with byte ranges. See `docs/step-09-backend.md` for commands,
-tests and limitations. 182 tests pass without skips. Next: extend the API with
-paginated telemetry and explicit job lifecycle controls before the Step 10 dashboard.
-Keep measurement validation separate and preserve withholding of unsupported data.
+The user authorized finishing Step 9's result-serving workflow. It now includes
+paginated indexed tracking/telemetry/radar queries, sorted measurement fragments,
+event availability, heatmap listings/PNG downloads, opt-in preview/highlight MP4
+streaming, cooperative cancellation and retry into a new job with provenance.
+Existing databases migrate without reprocessing. Media is off by default; strict
+measurements and events remain unavailable where evidence is insufficient.
+188 tests pass without skips, including 12 backend tests. No real model inference
+or real-match preview was run for this backend milestone. See `docs/step-09-backend.md`.
+Next engineering work: Step 10 review dashboard, using the API and clearly labeled
+cached results. Keep measurement validation separate. Do not describe this as
+production-ready or claim confirmed tackle detection exists.
+
+The user also requested all results: `docs/current-results.md` and the local
+`data/project-results-bundle/index.html` gallery/ZIP contain the review snapshot.
+`scripts/export_results_bundle.py` regenerates a bundle from available saved outputs.
+That review reused a 12-second tracking preview under explicit user authorization.
+The bundle is a snapshot, not the product dashboard. No further match preview is
+needed for backend or dashboard development unless explicitly requested.
 
 ## Step 8 background — November 10, 2026
 

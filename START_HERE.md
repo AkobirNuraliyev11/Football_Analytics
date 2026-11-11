@@ -51,12 +51,13 @@ classification, gated telemetry, and tactical radar/heatmaps. Step 8 now has a
 strict candidate-event engine, JSON window planning and explicit silent clip
 extraction, optional candidate overlays and an offline viewer/JSON playlist.
 See `docs/step-08-events.md`. Synthetic browser playback is verified. Step 9 now
-has a local backend foundation: upload, durable queued analysis, progress and results.
+has a local result workflow: upload, durable jobs, cancellation/retry, paginated
+telemetry/radar/tracking, heatmaps, candidate events and opt-in video streaming.
 See `docs/step-09-backend.md`. Real-event accuracy remains unvalidated.
 
 Real-video measurement continuity remains unresolved. Strict real-video outputs remain
 unavailable; experimental estimates are sparse. Improving continuity and validating
-accuracy remains a separate research task. The next engineering work extends the Step 9 API. Do not describe the platform as production-ready.
+accuracy remains a separate research task. The next engineering work is the Step 10 review dashboard. Do not describe the platform as production-ready.
 
 Read `CONTINUE_PROJECT.md` before continuing development. The active next task is
 described in `docs/step07-closure.md`. Overhead calibration has improved and the

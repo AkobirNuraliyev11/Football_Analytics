@@ -2,6 +2,8 @@
 from contextlib import closing
 import hashlib
 import hmac
+import re
+from typing import Literal
 from pathlib import Path
 import shutil
 import uuid
@@ -12,6 +14,7 @@ from fastapi.responses import FileResponse
 from starlette.concurrency import run_in_threadpool
 
 from .jobs import ARTIFACTS, JobStore
+from .result_queries import query
 from .video import iter_frames, probe_video
 
 
@@ -40,7 +43,8 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
             raise HTTPException(404, 'Job not found') from None
 
     @app.post('/jobs', status_code=202)
-    async def submit(request: Request, max_frames: int | None = Query(default=None, ge=1)):
+    async def submit(request: Request, max_frames: int | None = Query(default=None, ge=1),
+                     render_media: bool = False):
         """Send the video as the raw request body (not multipart/form-data)."""
         if request.headers.get('content-type', '').split(';')[0] not in (
                 'application/octet-stream', 'video/mp4', 'video/quicktime', 'video/x-matroska'):
@@ -80,12 +84,33 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
                 await run_in_threadpool(validate)
             except ValueError:
                 raise HTTPException(422, 'Video is empty, unreadable, or has invalid timing') from None
-            job = store.enqueue(identity, digest.hexdigest(), max_frames)
+            job = store.enqueue(identity, digest.hexdigest(), max_frames, render_media=render_media)
             queued = True
             return job
         finally:
             if not queued:
                 shutil.rmtree(directory)
+
+    @app.get('/jobs')
+    def list_jobs(limit: int = Query(default=50, ge=1, le=100), offset: int = Query(default=0, ge=0)):
+        rows = store.list(limit + 1, offset)
+        return {'items': rows[:limit], 'next_offset': offset + limit if len(rows) > limit else None}
+
+    @app.post('/jobs/{identity}/cancel')
+    def cancel(identity: str):
+        get_job(identity)
+        try:
+            return store.cancel(identity)
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from None
+
+    @app.post('/jobs/{identity}/retry', status_code=202)
+    def retry(identity: str):
+        get_job(identity)
+        try:
+            return store.retry(identity)
+        except (ValueError, OSError) as exc:
+            raise HTTPException(409, str(exc)) from None
 
     @app.get('/jobs/{identity}')
     def status(identity: str):
@@ -98,22 +123,76 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
             raise HTTPException(409, 'Results require a completed job')
         return job['result']
 
-    @app.get('/jobs/{identity}/artifacts/{name}')
-    def artifact(identity: str, name: str, request: Request):
+    def complete(identity):
         job = get_job(identity)
         if job['status'] != 'completed':
-            raise HTTPException(409, 'Artifacts require a completed job')
-        if name not in ARTIFACTS or name not in job['result']['artifacts']:
+            raise HTTPException(409, 'Results require a completed job')
+        return job
+
+    def read_query(identity, kind, **kwargs):
+        job = complete(identity)
+        try:
+            data = query(store.directory(identity) / 'analysis', kind, **kwargs)
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from None
+        return data | {'metric_measurements_available': job['result']['metric_measurements_available'],
+                       'scope': 'Observed local tracks and fragments; not full-match athlete totals'}
+
+    @app.get('/jobs/{identity}/frames/{kind}')
+    def frames(identity: str, kind: Literal['tracks', 'telemetry', 'radar'],
+               offset: int = Query(default=0, ge=0), limit: int = Query(default=100, ge=1, le=500),
+               start_s: float = Query(default=0., ge=0, allow_inf_nan=False),
+               end_s: float | None = Query(default=None, ge=0, allow_inf_nan=False)):
+        if end_s is not None and end_s < start_s:
+            raise HTTPException(422, 'end_s must be at least start_s')
+        return read_query(identity, kind, offset=offset, limit=limit, start_s=start_s, end_s=end_s)
+
+    @app.get('/jobs/{identity}/telemetry')
+    def telemetry(identity: str, offset: int = Query(default=0, ge=0),
+                  limit: int = Query(default=100, ge=1, le=500),
+                  track_id: int | None = Query(default=None, ge=0),
+                  sort: Literal['start_s', 'top_speed_kmh', 'observed_distance_m', 'sprint_count'] = 'start_s',
+                  descending: bool = False):
+        return read_query(identity, 'fragments', offset=offset, limit=limit,
+                          track_id=track_id, sort=sort, descending=descending)
+
+    @app.get('/jobs/{identity}/events')
+    def events(identity: str, offset: int = Query(default=0, ge=0),
+               limit: int = Query(default=100, ge=1, le=500)):
+        job = complete(identity)
+        return read_query(identity, 'events', offset=offset, limit=limit) | {
+            'status': job['result']['events_status'], 'confirmed_tackles_available': False}
+
+    @app.get('/jobs/{identity}/heatmaps')
+    def heatmaps(identity: str):
+        result = complete(identity)['result']
+        return {'status': result.get('tactics_status', 'unavailable'),
+                'items': result.get('heatmaps', []), 'coverage': result.get('coverage'),
+                'placeholder_file': ('tactics/heatmap-unavailable.png' if
+                    'tactics/heatmap-unavailable.png' in result['artifacts'] else None),
+                'scope': 'Observed occupancy; not possession or pitch control'}
+
+    @app.get('/jobs/{identity}/artifacts/{name:path}')
+    def artifact(identity: str, name: str, request: Request):
+        job = complete(identity)
+        allowed = (name in ARTIFACTS or name == 'preview.mp4' or
+                   name in ('tactics/manifest.json', 'tactics/occupancy.json', 'tactics/radar.jsonl',
+                            'tactics/radar.png', 'tactics/preview.mp4', 'tactics/heatmap-unavailable.png', 'highlights/playlist.json') or
+                   re.fullmatch(r'tactics/heatmap-[0-9a-f]{20}\.png', name) or
+                   re.fullmatch(r'highlights/clip-[0-9]{4,}\.mp4', name))
+        if not allowed or name not in job['result']['artifacts']:
             raise HTTPException(404, 'Artifact not found')
-        # Only single ranges are needed by clients; bound parser work on older Starlette.
         range_header = request.headers.get('range', '')
         if len(range_header) > 128 or ',' in range_header:
             raise HTTPException(400, 'Only a single byte range is supported')
         directory = store.directory(identity) / 'analysis'
         path = directory / name
-        if path.is_symlink() or path.resolve().parent != directory.resolve() or not path.is_file():
+        if (not path.is_file() or not path.resolve().is_relative_to(directory.resolve()) or
+                any(part.is_symlink() for part in [path, *path.parents] if part != directory.parent)):
             raise HTTPException(404, 'Artifact not found')
-        return FileResponse(path, filename=name, media_type=(
-            'application/x-ndjson' if name.endswith('.jsonl') else 'application/json'))
+        media_type = {'.jsonl': 'application/x-ndjson', '.json': 'application/json',
+                      '.mp4': 'video/mp4', '.png': 'image/png'}[path.suffix]
+        return FileResponse(path, filename=path.name, media_type=media_type,
+                            content_disposition_type='inline' if path.suffix in ('.mp4', '.png') else 'attachment')
 
     return app

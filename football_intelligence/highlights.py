@@ -103,7 +103,7 @@ def write_plan(analysis, output, *, padding_s=None):
     return result
 
 
-def extract_highlights(source, analysis, output, *, padding_s=None, overlays=False):
+def extract_highlights(source, analysis, output, *, padding_s=None, overlays=False, cancel_check=None):
     """Explicit media action. Verify source/timing; atomically publish a new folder."""
     from .analysis import PreviewWriter
     from .video import iter_frames, probe_video
@@ -126,6 +126,8 @@ def extract_highlights(source, analysis, output, *, padding_s=None, overlays=Fal
                 with closing(iter_frames(source)) as frames, \
                      ((Path(analysis)/'tracks.jsonl').open() if overlays else nullcontext()) as tracks:
                     for frame in frames:
+                        if cancel_check is not None:
+                            cancel_check()
                         observed = None
                         if tracks is not None:
                             line = tracks.readline()

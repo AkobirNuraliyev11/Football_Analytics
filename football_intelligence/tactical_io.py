@@ -35,7 +35,7 @@ def input_frames(tracks, review=None):
 
 def build_tactics(tracks, output, *, review=None, config=None, video=None,
                   cell_m=1., sigma_m=2., rotate=False, preview_start_s=0., preview_seconds=12.,
-                  separate_identity_maturity=False):
+                  separate_identity_maturity=False, write_preview=True, cancel_check=None):
     from .analysis import PreviewWriter
     from .tactical_render import radar_image, export_heatmaps
     import cv2
@@ -81,7 +81,7 @@ def build_tactics(tracks, output, *, review=None, config=None, video=None,
         "input_hashes":{p:values[2] for p,values in snapshots.items()},
         "display_rotation_degrees":180 if rotate else 0,
         "preview_start_s":preview_start_s,"preview_seconds_limit":preview_seconds,
-        "preview_audio":False,"preview_frames":0,
+        "preview_audio":False,"preview_frames":0,"preview_enabled":write_preview,
         "orientation":"canonical; user display rotation does not establish attacking direction"}
     write_manifest(output/"manifest.json",manifest)
     try:
@@ -91,6 +91,8 @@ def build_tactics(tracks, output, *, review=None, config=None, video=None,
             writer = None
             preview_origin = None
             for frame in input_frames(tracks,review):
+                if cancel_check is not None:
+                    cancel_check()
                 radar = engine.update(frame)
                 records.write(json.dumps(radar,allow_nan=False)+"\n")
                 manifest["processed_frames"] += 1
@@ -99,7 +101,7 @@ def build_tactics(tracks, output, *, review=None, config=None, video=None,
                                abs(decoded.timestamp_s-frame["timestamp_s"]) > 1e-6):
                     raise ValueError("Source video and radar timestamps differ")
                 t = frame["timestamp_s"]
-                if preview_start_s <= t < preview_start_s+preview_seconds:
+                if write_preview and preview_start_s <= t < preview_start_s+preview_seconds:
                     image = radar_image(radar,pitch,rotate=rotate)
                     if decoded is not None:
                         rgb = decoded.rgb.copy()
