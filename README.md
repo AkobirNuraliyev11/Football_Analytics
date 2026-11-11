@@ -1,8 +1,8 @@
 # Football Intelligence
 
 An incremental implementation of a single-camera football analytics platform.
-**Status: Steps 1–7 implemented; accuracy validation open. Step 8 engineering active.**
-The backend and dashboard are not implemented yet. Automatic analysis produces an
+**Status: Steps 1–8 core engineering implemented; accuracy validation open. Step 9 backend foundation implemented.**
+The local backend supports upload, durable jobs, progress and results; the dashboard is not implemented yet. Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings
 remain unavailable until geometry and ground contact are validated; automatic pitch
 fits alone do not satisfy those requirements.
@@ -68,7 +68,7 @@ preview clips should be generated without a new request.
 6. **Telemetry (engine implemented):** Time-based smoothing, displacement and observation-gap gates, ground-contact uncertainty, track maturation, speed, distance, and sprint state machines. Automatic evidence needed to enable trusted real-video measurements remains unresolved.
 7. **Tactical visualization (implemented):** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports. Real-video output remains limited to eligible observations.
 8. **Events and clips (core engineering implemented):** Strict sprint/duel candidates, padded shot-bounded windows, explicit silent MP4 extraction, optional observed-participant overlays and an offline viewer/JSON playlist are implemented. Real-event accuracy remains unvalidated. See [Step 8](docs/step-08-events.md).
-9. **Backend:** FastAPI, durable job records, worker integration, telemetry and artifact endpoints, HTTP range streaming, CORS, and exports.
+9. **Backend (foundation implemented):** Authenticated FastAPI uploads, durable SQLite jobs, a separate worker, frame progress, results and JSON/JSONL downloads with HTTP ranges and explicit CORS. See [setup and remaining work](docs/step-09-backend.md).
 10. **Dashboard:** React and TypeScript, synchronized video and radar, KPI cards, sortable telemetry, charts, heatmaps, clips, and clearly labeled cached demo data.
 11. **Deployment and validation:** End-to-end fixtures, labeled-video evaluation, resource limits, access control, storage lifecycle, packaging, observability, and deployment documentation.
 
@@ -226,7 +226,7 @@ when evidence is insufficient; goalkeeper team membership is not inferred from p
 
 See the [Step 5 guide](docs/step-05-team-classification.md) for behavior and test coverage.
 
-**Current status:** Step 8 data-only event candidates have started. Real-video metric validation and clip extraction remain pending. No preview clips are authorized.
+**Current status:** Step 8 candidate/clip engineering and its synthetic browser playback check are complete. Step 9 backend foundation is implemented. Real-video metric validation remains open. No user preview clip is authorized.
 
 The [penalty-area junction trial](docs/penalty-area-trial.md) improves local geometry
 coverage, with original and audited annotations preserved. It is not yet used for
@@ -237,8 +237,8 @@ conditional pixel-localization speed ranges. The later reference-methodology rev
 This does not certify real-player speed or contact.
 
 [Independent sensor comparison and high-resolution fix](docs/sensor-comparison.md):
-large inputs now preserve small players using overlapping crops. Step 8 expansion
-is paused. The GNSS benchmark is a secondary source comparison. See the
+large inputs now preserve small players using overlapping crops. Step 8 engineering
+has proceeded under the updated user authorization. The GNSS benchmark is a secondary source comparison. See the
 [reference-methodology correction](docs/reference-methodology-correction.md): video
 annotations now provide the component reference, while end-to-end physical accuracy
 remains unverified.

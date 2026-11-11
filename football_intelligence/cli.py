@@ -85,9 +85,32 @@ def main(argv: list[str] | None = None) -> int:
     tactics.add_argument("--preview-seconds",type=float,default=12.)
     tactics.add_argument("--separate-identity-maturity",action="store_true",
                         help="Experimental: mature identity separately from each measurement window (requires --review)")
+    serve = commands.add_parser('serve', help='Start authenticated local API (install backend extras)')
+    serve.add_argument('--data-dir', type=Path, default=Path('data/backend'))
+    serve.add_argument('--port', type=int, default=8000)
+    serve.add_argument('--allow-origin', action='append', default=[])
+    work = commands.add_parser('worker', help='Run one local analysis worker (macOS/Linux)')
+    work.add_argument('--data-dir', type=Path, default=Path('data/backend'))
+    work.add_argument('--model-dir', type=Path, default=Path('data/models'))
+    work.add_argument('--device', default='cpu')
+    work.add_argument('--once', action='store_true')
     args = parser.parse_args(argv)
     try:
-        if args.command == 'plan-highlights':
+        if args.command == 'serve':
+            import os
+            import uvicorn
+            from .api import create_app
+            token = os.environ.get('FOOTBALL_API_TOKEN')
+            if not token:
+                raise ValueError('Set FOOTBALL_API_TOKEN before starting the API')
+            uvicorn.run(create_app(args.data_dir, token=token, allowed_origins=args.allow_origin),
+                        host='127.0.0.1', port=args.port)
+            return 0
+        elif args.command == 'worker':
+            from .jobs import worker
+            worker(args.data_dir, once=args.once, model_dir=args.model_dir, device=args.device)
+            return 0
+        elif args.command == 'plan-highlights':
             from .highlights import write_plan
             result=write_plan(args.analysis,args.output,padding_s=args.padding_s)
             result['observed_frames']=len(result.pop('timeline'))

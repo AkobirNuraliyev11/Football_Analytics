@@ -89,7 +89,7 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
 def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("data/models"),
                   device="cpu", max_frames=None, pitch_every=10, detector=None,
                   pitch: PitchConfig | None = None, config: AppConfig | None = None,
-                  write_preview=True, check_pitch_paint=False):
+                  write_preview=True, check_pitch_paint=False, progress_callback=None):
     """Pipeline has injectable detector for deterministic integration tests."""
     identifier("match_id",match_id)
     integer("pitch_every",pitch_every,minimum=1)
@@ -198,6 +198,8 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 if preview:
                     preview.write(annotate(frame.rgb,records,calibration,frame.frame_index,shot["shot_id"]),frame.timestamp_s)
                 manifest["processed_frames"] += 1
+                if progress_callback is not None:
+                    progress_callback(manifest["processed_frames"], frame.timestamp_s)
                 previous = frame
                 if max_frames is not None and manifest["processed_frames"] >= max_frames:
                     break

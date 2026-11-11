@@ -119,7 +119,11 @@ The overlay/playlist milestone uses temporary synthetic fixtures only. No actual
 match clip was generated or displayed. Tests cover active/padding intervals,
 missing and unrelated participants, bad coordinates, escaped HTML, relative cues,
 empty states, local-link restrictions, rendered extraction and failure cleanup.
-Browser appearance/playback has not been manually verified in this milestone.
+Browser appearance/playback was verified on November 11 using two synthetic
+clips served on loopback. Both reached their 3.34-second ends with readyState 4
+and no media errors; candidate labels and the two-column layout were visible.
+The low-resolution test fixture verifies playback, not footage or overlay quality.
+No real-video preview was generated. Step 9 is now underway.
 
 November 11 validation: **176 tests passed with no skips**, including 13 tests
 covering highlight planning, extraction, overlays and playlist generation. The CLI

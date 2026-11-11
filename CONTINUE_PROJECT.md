@@ -1,6 +1,18 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
-## Current authorization and next task — November 10, 2026
+## Current authorization and next task — November 11, 2026
+
+The user authorized the synthetic Step 8 playback check and starting Step 9.
+Both synthetic clips played to completion in the in-app browser (3.34 seconds
+per clip, readyState 4, no media errors). No actual-match preview was generated.
+The Step 9 foundation now includes authenticated raw video upload, durable SQLite
+jobs, a separate single worker, per-frame progress, results and allowlisted data
+artifact downloads with byte ranges. See `docs/step-09-backend.md` for commands,
+tests and limitations. 182 tests pass without skips. Next: extend the API with
+paginated telemetry and explicit job lifecycle controls before the Step 10 dashboard.
+Keep measurement validation separate and preserve withholding of unsupported data.
+
+## Step 8 background — November 10, 2026
 
 The user authorized Step 8 engineering while Step 7 measurement validation stays
 open. This supersedes older instructions below to pause Step 8. Strict events
@@ -14,8 +26,7 @@ tested with synthetic fixtures. `extract-highlights --overlays` labels candidate
 intervals/context padding and draws only current observed participant boxes.
 Extraction always includes offline `index.html` and `playlist.json`, with safe
 relative filenames, source/clip timing, event membership and hashes. Empty states
-remain explicit. No real-video clip was generated. Browser playback/layout has
-not been manually verified. Step 8 core engineering is implemented; validated
+remain explicit. No real-video clip was generated. Browser playback/layout was verified with synthetic footage on November 11. Step 8 core engineering is implemented; validated
 real-event accuracy is still open. Do not generate a user review clip without a new request. Keep Step 7's
 accuracy research separate and never present software tests as physical validation.
 
@@ -57,7 +68,7 @@ resolution or pixel coordinates. Pitch dimensions currently use an explicit conf
 
 Steps 1–7 are implemented: foundation, timestamp-aware ingestion, calibration, detection
 and tracking, classification, gated telemetry, and tactical visualization. Step 8 now includes strict data-only sprint and duel candidate records. Read
-`docs/step-08-events.md`. Backend, dashboard, and highlight extraction are not implemented. The user has requested progression toward Step 8 after addressing Step 7 problems.
+`docs/step-08-events.md`. Highlight extraction and the first local backend milestone are implemented; the dashboard is not. The user has requested progression toward Step 8 after addressing Step 7 problems.
 Keep event engineering isolated from unvalidated real-video geometry. Implementation does not mean real-video physical
 measurement accuracy has been demonstrated.
 
