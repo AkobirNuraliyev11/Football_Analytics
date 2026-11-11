@@ -112,6 +112,11 @@ class HighlightExtractionTests(unittest.TestCase):
                 self.assertAlmostEqual(decoded.timestamp_s,t-expected[0],places=5)
             self.assertEqual(sha256(root/'clips'/window['file']),window['sha256'])
             self.assertFalse(result['audio_included'])
+            self.assertTrue((root/'clips/index.html').is_file())
+            playlist=json.loads((root/'clips/playlist.json').read_text())
+            self.assertEqual(playlist['clips'][0]['sha256'],window['sha256'])
+            for filename,digest in result['viewer_sha256'].items():
+                self.assertEqual(sha256(root/'clips'/filename),digest)
             with self.assertRaises(FileExistsError):
                 extract_highlights(source,analysis,root/'clips')
 
@@ -129,6 +134,24 @@ class HighlightExtractionTests(unittest.TestCase):
             path.write_text(''.join(json.dumps(r)+'\n' for r in rows))
             with self.assertRaisesRegex(ValueError,'timestamps'):
                 extract_highlights(source,analysis,root/'failed')
+            self.assertFalse((root/'failed').exists())
+            self.assertFalse(list(root.glob('.highlights-*')))
+
+    @unittest.skipUnless(importlib.util.find_spec('cv2'), 'Requires overlay extras')
+    def test_overlay_extraction_and_failure_publish_together(self):
+        from football_intelligence.video import iter_frames
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source,times=self.setup_source(root)
+            analysis=analysis_fixture(root,source,times)
+            result=extract_highlights(source,analysis,root/'annotated',overlays=True,padding_s=0)
+            self.assertTrue(result['overlays_included'])
+            clip=list(iter_frames(root/'annotated'/result['windows'][0]['file']))
+            self.assertEqual(len(clip),result['windows'][0]['frame_count'])
+            self.assertEqual(clip[0].timestamp_s,0.)
+            self.assertGreater(int(clip[0].rgb[:16].max())-int(clip[0].rgb[:16].min()),50)
+            with patch('football_intelligence.highlight_viewer.overlay_candidate',side_effect=ValueError('Overlay failed')):
+                with self.assertRaisesRegex(ValueError,'Overlay failed'):
+                    extract_highlights(source,analysis,root/'failed',overlays=True)
             self.assertFalse((root/'failed').exists())
             self.assertFalse(list(root.glob('.highlights-*')))
 

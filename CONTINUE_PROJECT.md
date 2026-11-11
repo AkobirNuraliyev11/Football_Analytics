@@ -9,8 +9,14 @@ strict events and writes shot-bounded, merged clip windows as JSON; explicit
 `extract-highlights` verifies the source/timestamps and atomically writes silent
 MP4 clips. Both commands use the analysis configuration and retain provenance.
 No real-video clip has been generated. See `docs/step-08-events.md`.
-Next: candidate overlays and viewer playlist/index support, using synthetic test
-fixtures. Do not generate a user review clip without a new request. Keep Step 7's
+Candidate overlays and viewer playlist/index support are now implemented and
+tested with synthetic fixtures. `extract-highlights --overlays` labels candidate
+intervals/context padding and draws only current observed participant boxes.
+Extraction always includes offline `index.html` and `playlist.json`, with safe
+relative filenames, source/clip timing, event membership and hashes. Empty states
+remain explicit. No real-video clip was generated. Browser playback/layout has
+not been manually verified. Step 8 core engineering is implemented; validated
+real-event accuracy is still open. Do not generate a user review clip without a new request. Keep Step 7's
 accuracy research separate and never present software tests as physical validation.
 
 You are continuing my Football Analytics project. Inspect the actual repository,

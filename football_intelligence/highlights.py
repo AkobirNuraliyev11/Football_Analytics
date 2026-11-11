@@ -1,5 +1,5 @@
 """Strict event replay, shot-bounded clip planning, and explicitly invoked extraction."""
-from contextlib import closing
+from contextlib import closing, nullcontext
 from fractions import Fraction
 import json
 from pathlib import Path
@@ -103,10 +103,11 @@ def write_plan(analysis, output, *, padding_s=None):
     return result
 
 
-def extract_highlights(source, analysis, output, *, padding_s=None):
+def extract_highlights(source, analysis, output, *, padding_s=None, overlays=False):
     """Explicit media action. Verify source/timing; atomically publish a new folder."""
     from .analysis import PreviewWriter
     from .video import iter_frames, probe_video
+    from .highlight_viewer import overlay_candidate, write_viewer
     source, output = Path(source), Path(output)
     if output.exists():
         raise FileExistsError(output)
@@ -122,17 +123,29 @@ def extract_highlights(source, analysis, output, *, padding_s=None):
             metadata = probe_video(source)
             window_index, writer, count = 0, None, 0
             try:
-                with closing(iter_frames(source)) as frames:
+                with closing(iter_frames(source)) as frames, \
+                     ((Path(analysis)/'tracks.jsonl').open() if overlays else nullcontext()) as tracks:
                     for frame in frames:
+                        observed = None
+                        if tracks is not None:
+                            line = tracks.readline()
+                            if not line:
+                                raise ValueError('Incomplete overlay records')
+                            observed = json.loads(line)
                         expected = plan['timeline'][frame.frame_index]
                         if abs(expected['timestamp_s']-frame.timestamp_s) > 1e-6:
                             raise ValueError('Source timestamps differ from analysis')
+                        if observed is not None and (observed['frame_index'] != frame.frame_index or
+                            observed['shot_id'] != expected['shot_id'] or
+                            abs(observed['timestamp_s']-frame.timestamp_s)>1e-6):
+                            raise ValueError('Overlay records differ from source timing')
                         window = windows[window_index]
                         if frame.frame_index >= window['start_frame']:
                             if writer is None:
                                 writer = PreviewWriter(staging/window['file'], metadata.width, metadata.height,
                                                        Fraction(metadata.average_rate or '25'))
-                            writer.write(frame.rgb, frame.timestamp_s-window['start_s'])
+                            rgb = overlay_candidate(frame.rgb, observed, plan['events'], window) if overlays else frame.rgb
+                            writer.write(rgb, frame.timestamp_s-window['start_s'])
                             count += 1
                         if frame.frame_index == window['end_frame']:
                             writer.close(); writer = None
@@ -150,7 +163,11 @@ def extract_highlights(source, analysis, output, *, padding_s=None):
         if sha256(source) != plan['source_sha256'] or any(
                 sha256(Path(p)) != digest for p,digest in plan['analysis_sha256'].items()):
             raise ValueError('Input changed during extraction')
-        result = plan | dict(extraction_status='completed', clips_written=len(windows))
+        result = plan | dict(extraction_status='completed', clips_written=len(windows),
+                             overlays_requested=overlays,overlays_included=bool(overlays and windows),
+                             viewer_file='index.html',playlist_file='playlist.json')
+        write_viewer(staging,result)
+        result['viewer_sha256']={name:sha256(staging/name) for name in ('index.html','playlist.json')}
         (staging/'manifest.json').write_text(json.dumps(result, indent=2, allow_nan=False)+'\n')
         if output.exists():
             raise FileExistsError(output)

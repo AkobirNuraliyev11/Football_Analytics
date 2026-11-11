@@ -53,6 +53,7 @@ def main(argv: list[str] | None = None) -> int:
     extract.add_argument('--analysis',type=Path,required=True)
     extract.add_argument('--output',type=Path,required=True)
     extract.add_argument('--padding-s',type=float)
+    extract.add_argument('--overlays',action='store_true',help='Label candidate intervals and observed participant boxes')
     review = commands.add_parser("review-measurements", help="Experimental midfield estimates with visible-paint and camera checks")
     review.add_argument("path",type=Path)
     review.add_argument("--analysis",type=Path,required=True)
@@ -92,7 +93,7 @@ def main(argv: list[str] | None = None) -> int:
             result['observed_frames']=len(result.pop('timeline'))
         elif args.command == 'extract-highlights':
             from .highlights import extract_highlights
-            result=extract_highlights(args.source,args.analysis,args.output,padding_s=args.padding_s)
+            result=extract_highlights(args.source,args.analysis,args.output,padding_s=args.padding_s,overlays=args.overlays)
             result['observed_frames']=len(result.pop('timeline'))
         elif args.command == "build-tactics":
             from .tactical_io import build_tactics

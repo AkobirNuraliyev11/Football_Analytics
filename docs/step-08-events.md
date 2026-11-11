@@ -3,7 +3,8 @@
 Started November 5, 2026. On November 10 the user authorized Step 8 engineering
 separately from Step 7's unresolved accuracy validation. Candidate timestamps,
 shot-bounded window planning and explicit silent extraction are implemented.
-Overlays and viewer playlists remain pending. Replay and planning create JSON only.
+Optional candidate overlays and an offline viewer playlist are also implemented.
+Replay and planning create JSON only.
 
 Run from the project root with an unused output filename:
 
@@ -67,19 +68,19 @@ quality flags remain assertions, not independent physical validation.
 Only invoke this command when media output is wanted:
 
 ```sh
-.venv/bin/python -m football_intelligence extract-highlights SOURCE.mp4 --analysis ANALYSIS_DIRECTORY --output NEW_CLIP_DIRECTORY
+.venv/bin/python -m football_intelligence extract-highlights SOURCE.mp4 --analysis ANALYSIS_DIRECTORY --output NEW_CLIP_DIRECTORY --overlays
 ```
 
 Extraction recomputes the plan, verifies the source-video hash, and checks decoded
 timestamps against analysis. Inclusive observed frame ranges preserve variable
-presentation intervals and each clip starts at zero. Native-raster MP4s are silent,
-without overlays. The last frame's encoded duration uses the nominal rate; the
+presentation intervals and each clip starts at zero. Native-raster MP4s are silent.
+Omit `--overlays` for clean video. The last frame's encoded duration uses the nominal rate; the
 plan's end time is the last selected frame's start, not exact container duration.
 The manifest records source timing, frame counts, event IDs and output hashes.
 
 All clips are staged and inputs rechecked before publishing a new output folder.
 Existing outputs are refused; failures clean up staged media. Empty plans produce
-only a manifest and never open an encoder. No model inference is repeated.
+only a manifest and viewer/playlist files, never an encoder or MP4. No model inference is repeated.
 
 Tests use temporary synthetic videos: variable timing, nonzero source origins,
 multiple shots, merged windows, invalid ranges, experimental inputs, source/timing
@@ -91,6 +92,39 @@ November 10 validation: **170 tests passed with no skips**, including seven
 highlight-planning/extraction tests. Synthetic media is temporary and removed by
 the tests. These checks establish software behavior, not real-event accuracy.
 
-Next Step 8 work: candidate overlays and a viewer-friendly playlist/index. Physical
-speed/event accuracy remains a separate Step 7 validation task. Do not generate a
-user review clip until requested.
+## Candidate overlays and offline viewer
+
+`--overlays` labels active sprint/duel candidates and the source timestamp. Outside
+the candidate interval it displays "Context padding". Boxes are drawn only for
+event participants with an actual observed box in that exact frame; missing
+participants never receive stale or interpolated boxes. No new speed estimate,
+tackle claim or possession inference is introduced. Overlay records must match
+source timing and their boxes must lie inside the source raster. Overlay failure
+aborts the entire staged extraction.
+
+Every successful extraction also writes:
+
+- `index.html`: open locally in a browser for clip players, candidate descriptions,
+  local track IDs, source/clip times, boundary-truncation notes and downloads.
+- `playlist.json`: relative MP4 filenames, output hashes, event membership and
+  clip-relative cue intervals for a future dashboard.
+
+The viewer needs no server, JavaScript, network access or remote assets. Text is
+HTML-escaped and filenames restricted to generated local clip names. It clearly
+distinguishes unavailable measurements from valid measurements with no qualifying
+events. The manifest records whether overlays were requested/included and hashes
+both viewer files. Clips and viewer files are published atomically together.
+
+The overlay/playlist milestone uses temporary synthetic fixtures only. No actual
+match clip was generated or displayed. Tests cover active/padding intervals,
+missing and unrelated participants, bad coordinates, escaped HTML, relative cues,
+empty states, local-link restrictions, rendered extraction and failure cleanup.
+Browser appearance/playback has not been manually verified in this milestone.
+
+November 11 validation: **176 tests passed with no skips**, including 13 tests
+covering highlight planning, extraction, overlays and playlist generation. The CLI
+exposes overlays as an explicit `--overlays` option. No real-video preview was made.
+
+Step 8's core candidate/clip engineering is implemented. Physical speed/event
+accuracy remains a separate validation task; this is not a validated event-detection
+release. Do not generate a user review clip until requested.

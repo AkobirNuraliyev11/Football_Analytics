@@ -49,7 +49,8 @@ new comparisons identify their exact regenerated input hashes.
 Steps 1–7 are implemented: ingestion, calibration, detection/tracking, team and role
 classification, gated telemetry, and tactical radar/heatmaps. Step 8 now has a
 strict candidate-event engine, JSON window planning and explicit silent clip
-extraction. See `docs/step-08-events.md`. Overlays and viewer playlists remain pending.
+extraction, optional candidate overlays and an offline viewer/JSON playlist.
+See `docs/step-08-events.md`. Real-event accuracy remains unvalidated.
 
 Real-video measurement continuity remains unresolved. Strict real-video outputs remain
 unavailable; experimental estimates are sparse. Improving continuity and validating
