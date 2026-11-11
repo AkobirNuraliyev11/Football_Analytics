@@ -244,3 +244,19 @@ has proceeded under the updated user authorization. The GNSS benchmark is a seco
 [reference-methodology correction](docs/reference-methodology-correction.md): video
 annotations now provide the component reference, while end-to-end physical accuracy
 remains unverified.
+
+## Export all saved results for offline review
+
+With the local result data present, create a portable HTML gallery and ZIP:
+
+```sh
+.venv/bin/python scripts/export_results_bundle.py --output data/my-results-bundle
+```
+
+Open `index.html` in the generated folder, or extract the adjacent ZIP and open
+its `index.html`. The gallery includes every saved heatmap, derived previews,
+experimental telemetry, synthetic demonstrations and the evaluation archive.
+It explicitly marks unavailable features, including confirmed tackle detection.
+It does not run inference or convert unavailable measurements into statistics.
+Raw source videos, model weights and backend credentials/databases are excluded.
+Choose a new output directory each time; existing exports are not overwritten.
