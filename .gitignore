@@ -9,3 +9,5 @@ data/
 .env
 *.pt
 *.onnx
+node_modules/
+frontend/public/demo/

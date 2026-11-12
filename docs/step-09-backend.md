@@ -168,11 +168,10 @@ migration of preexisting queue databases. Auth, CORS, size limits, path/symlink
 restrictions, worker failures and atomic worker claims remain covered.
 No trained-model inference or real-match preview was needed for this milestone.
 
-The core local result-serving workflow is implemented. Next is the Step 10 review
-dashboard. Before public deployment, work remains on bounded storage cleanup,
+The core local result-serving workflow is implemented. The first Step 10 review dashboard is now implemented; see
+[dashboard setup](step-10-dashboard.md). Before public deployment, work remains on bounded storage cleanup,
 isolation of untrusted media decoding, per-user authorization/quotas, upload
 concurrency limits, worker supervision and resource/time limits. Failed/interrupted
 job data and any upload orphaned by a hard server crash currently remain on disk
-for manual cleanup. There is no cloud queue, automatic retry, resumable upload,
-or dashboard yet. Physical speed/sprint accuracy and confirmed tackle detection
+for manual cleanup. There is no cloud queue, automatic retry or resumable upload yet. Physical speed/sprint accuracy and confirmed tackle detection
 remain separate unresolved product requirements.

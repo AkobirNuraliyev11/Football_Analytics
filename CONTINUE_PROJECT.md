@@ -1,25 +1,29 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
-## Current authorization and next task — November 11, 2026
+## Current authorization and next task — November 12, 2026
 
-The user authorized finishing Step 9's result-serving workflow. It now includes
-paginated indexed tracking/telemetry/radar queries, sorted measurement fragments,
-event availability, heatmap listings/PNG downloads, opt-in preview/highlight MP4
-streaming, cooperative cancellation and retry into a new job with provenance.
-Existing databases migrate without reprocessing. Media is off by default; strict
-measurements and events remain unavailable where evidence is insufficient.
-188 tests pass without skips, including 12 backend tests. No real model inference
-or real-match preview was run for this backend milestone. See `docs/step-09-backend.md`.
-Next engineering work: Step 10 review dashboard, using the API and clearly labeled
-cached results. Keep measurement validation separate. Do not describe this as
-production-ready or claim confirmed tackle detection exists.
+The user approved professional coaching Concept 01 and authorized implementing it.
+Step 10 now has a React/TypeScript dashboard connected to the local FastAPI service.
+Read `docs/step-10-dashboard.md` for setup, contracts, validation and remaining scope.
+Build: `cd frontend && npm ci && npm run build`. Run from the root with
+`.venv/bin/python scripts/run_dashboard.py` (API + worker, Ctrl-C stops both).
+The prepared six-second cached review uses existing public-sample artifacts only.
+`prepare_dashboard_demo.py` copies them without inference. No new real match
+preview was generated. Static build/demo assets are ignored; source is committed.
+Browser sessions use an HttpOnly same-site cookie; tokens are not put into media
+URLs or browser storage. The API remains local-only and supports bearer clients.
 
-The user also requested all results: `docs/current-results.md` and the local
-`data/project-results-bundle/index.html` gallery/ZIP contain the review snapshot.
-`scripts/export_results_bundle.py` regenerates a bundle from available saved outputs.
-That review reused a 12-second tracking preview under explicit user authorization.
-The bundle is a snapshot, not the product dashboard. No further match preview is
-needed for backend or dashboard development unless explicitly requested.
+Validation: 190 Python tests and three frontend tests passed; TypeScript/Vite build
+passed. Browser QA covered sample playback, heatmap/team selectors, mobile layout,
+synthetic upload, cancellation/retry and completed live results with a fake detector.
+The next step is user review/refinement of the working dashboard, then the scoped
+accuracy study/deployment requirements. Do not claim verified speed, sprint or
+confirmed tackle results. No user review clip is needed for frontend changes.
+
+Step 9's indexed result queries, cancellation/retry, heatmap/media endpoints and
+strict measurement gates remain intact. `docs/current-results.md` and the local
+`data/project-results-bundle/index.html` are earlier snapshots of saved results,
+not the dashboard. Preserve the preexisting untracked Lumiere interview example.
 
 ## Step 8 background — November 10, 2026
 

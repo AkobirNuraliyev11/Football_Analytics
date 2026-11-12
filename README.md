@@ -3,8 +3,9 @@
 An incremental implementation of a single-camera football analytics platform.
 
 [Complete results review: videos, tracking, classification, telemetry and evaluation archive](docs/current-results.md).
-**Status: Steps 1–8 core engineering implemented; accuracy validation open. Step 9 local result workflow implemented.**
-The local backend supports upload, durable jobs, progress, cancellation/retry, telemetry queries and media/heatmap results; the dashboard is not implemented yet. Automatic analysis produces an
+**Status: Steps 1–8 core engineering implemented; accuracy validation open. Step 9 local result workflow and initial Step 10 dashboard implemented.**
+The local backend supports upload, durable jobs, progress, cancellation/retry and results.
+The first React/TypeScript dashboard is implemented: [run it locally](docs/step-10-dashboard.md). Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings
 remain unavailable until geometry and ground contact are validated; automatic pitch
 fits alone do not satisfy those requirements.
@@ -71,7 +72,7 @@ preview clips should be generated without a new request.
 7. **Tactical visualization (implemented):** Synchronized radar, pitch markings, occupancy grids, time-weighted Gaussian heatmaps, and image exports. Real-video output remains limited to eligible observations.
 8. **Events and clips (core engineering implemented):** Strict sprint/duel candidates, padded shot-bounded windows, explicit silent MP4 extraction, optional observed-participant overlays and an offline viewer/JSON playlist are implemented. Real-event accuracy remains unvalidated. See [Step 8](docs/step-08-events.md).
 9. **Backend (local workflow implemented):** Authenticated uploads, durable jobs, a worker, progress, cancellation/retry, indexed telemetry queries, heatmaps, event metadata and opt-in video/highlight streaming with HTTP ranges. See [setup and remaining work](docs/step-09-backend.md).
-10. **Dashboard:** React and TypeScript, synchronized video and radar, KPI cards, sortable telemetry, charts, heatmaps, clips, and clearly labeled cached demo data.
+10. **Dashboard (first implementation):** React/TypeScript upload and job controls, video/radar review, current observations, sorted telemetry fragments, heatmaps, candidate clips and labeled cached results. See [setup and limits](docs/step-10-dashboard.md).
 11. **Deployment and validation:** End-to-end fixtures, labeled-video evaluation, resource limits, access control, storage lifecycle, packaging, observability, and deployment documentation.
 
 The intended data flow is video → timestamped frames → calibrated tracks →

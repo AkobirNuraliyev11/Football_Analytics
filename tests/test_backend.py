@@ -328,3 +328,38 @@ class JobLifecycleTests(unittest.TestCase):
                 self.assertEqual(job['status'], 'queued')
                 self.assertEqual(job['render_media'], 0)
                 self.assertIsNone(job['parent_id'])
+
+@unittest.skipUnless(all(importlib.util.find_spec(m) for m in ('fastapi','httpx')), 'Requires backend extras')
+class DashboardSessionTests(unittest.TestCase):
+    def setUp(self):
+        from fastapi.testclient import TestClient
+        from football_intelligence.api import create_app
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.client = TestClient(create_app(self.temp.name, token='private-test-token'))
+        self.addCleanup(self.client.close)
+
+    def test_cookie_session_authenticates_native_requests_and_logout_revokes_it(self):
+        self.assertEqual(self.client.get('/jobs').status_code,401)
+        self.assertEqual(self.client.post('/session',json={'token':'wrong'}).status_code,401)
+        response=self.client.post('/session',json={'token':'private-test-token'},headers={'Origin':'http://testserver'})
+        self.assertEqual(response.status_code,200)
+        cookie=response.headers['set-cookie'].lower()
+        self.assertIn('httponly',cookie);self.assertIn('samesite=strict',cookie)
+        self.assertNotIn('private-test-token',cookie)
+        session=self.client.cookies.get('football_session')
+        self.assertEqual(self.client.get('/jobs').status_code,200)
+        self.assertEqual(self.client.delete('/session',headers={'Origin':'https://attacker.invalid'}).status_code,403)
+        self.assertEqual(self.client.delete('/session').status_code,200)
+        self.assertEqual(self.client.get('/jobs',headers={'Cookie':f'football_session={session}'}).status_code,401)
+
+    def test_cross_origin_login_expiration_and_invalid_body(self):
+        self.assertEqual(self.client.post('/session',json={'token':'private-test-token'},headers={'Origin':'https://attacker.invalid'}).status_code,403)
+        self.assertEqual(self.client.post('/session',json=['private-test-token']).status_code,401)
+        self.client.post('/session',json={'token':'private-test-token'})
+        import time
+        with patch('football_intelligence.api.time.time',return_value=time.time()+9*3600):
+            self.assertEqual(self.client.get('/jobs').status_code,401)
+        # Existing CLI clients remain compatible and do not need browser cookies.
+        self.client.cookies.clear()
+        self.assertEqual(self.client.get('/jobs',headers={'Authorization':'Bearer private-test-token'}).status_code,200)

@@ -57,7 +57,7 @@ See `docs/step-09-backend.md`. Real-event accuracy remains unvalidated.
 
 Real-video measurement continuity remains unresolved. Strict real-video outputs remain
 unavailable; experimental estimates are sparse. Improving continuity and validating
-accuracy remains a separate research task. The next engineering work is the Step 10 review dashboard. Do not describe the platform as production-ready.
+accuracy remains a separate research task. The first Step 10 review dashboard is now implemented; see `docs/step-10-dashboard.md` for local startup and limitations. Do not describe the platform as production-ready.
 
 Read `CONTINUE_PROJECT.md` before continuing development. The active next task is
 described in `docs/step07-closure.md`. Overhead calibration has improved and the

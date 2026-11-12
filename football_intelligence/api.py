@@ -3,6 +3,8 @@ from contextlib import closing
 import hashlib
 import hmac
 import re
+import secrets
+import time
 from typing import Literal
 from pathlib import Path
 import shutil
@@ -10,7 +12,8 @@ import uuid
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 
 from .jobs import ARTIFACTS, JobStore
@@ -23,13 +26,67 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
         raise ValueError('A nonempty API token and positive upload limit are required')
     store = JobStore(root)
 
+    sessions = {}
+
+    def check_origin(request):
+        origin = request.headers.get('origin')
+        if origin and origin != str(request.base_url).rstrip('/'):
+            raise HTTPException(403, 'Browser sessions require same-origin requests')
+
     async def authorize(request: Request):
+        if (request.url.path == '/session' and request.method == 'POST') or (request.url.path == '/' and request.method == 'GET'):
+            return
+        session = request.cookies.get('football_session')
+        if session and sessions.get(session, 0) > time.time():
+            if request.method not in ('GET', 'HEAD', 'OPTIONS'):
+                check_origin(request)
+            return
         supplied = request.headers.get('authorization', '')
         if not hmac.compare_digest(supplied.encode(), f'Bearer {token}'.encode()):
             raise HTTPException(401, 'Bearer token required', headers={'WWW-Authenticate': 'Bearer'})
 
     app = FastAPI(title='Football Analytics', version='0.1.0', dependencies=[Depends(authorize)])
     app.state.store = store
+
+    @app.post('/session')
+    async def sign_in(request: Request):
+        check_origin(request)
+        try:
+            body = await request.json()
+            supplied = body.get('token', '') if isinstance(body, dict) else ''
+        except ValueError:
+            supplied = ''
+        if not isinstance(supplied, str) or not hmac.compare_digest(supplied.encode(), token.encode()):
+            raise HTTPException(401, 'Incorrect API token')
+        for key, expiry in list(sessions.items()):
+            if expiry <= time.time():
+                del sessions[key]
+        if len(sessions) >= 128:
+            del sessions[next(iter(sessions))]
+        session = secrets.token_urlsafe(32)
+        sessions[session] = time.time() + 8 * 3600
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({'authenticated': True})
+        response.set_cookie('football_session', session, httponly=True, samesite='strict',
+                            secure=request.url.scheme == 'https', max_age=8*3600)
+        return response
+
+    @app.delete('/session')
+    def sign_out(request: Request):
+        sessions.pop(request.cookies.get('football_session'), None)
+        from fastapi.responses import JSONResponse
+        response = JSONResponse({'authenticated': False})
+        response.delete_cookie('football_session')
+        return response
+
+    dashboard = Path(__file__).resolve().parents[1] / 'frontend/dist'
+    if (dashboard / 'index.html').is_file():
+        app.mount('/dashboard', StaticFiles(directory=dashboard, html=True), name='dashboard')
+
+    @app.get('/')
+    def home():
+        return RedirectResponse('/dashboard/')
+
     if allowed_origins:
         app.add_middleware(CORSMiddleware, allow_origins=list(allowed_origins),
             allow_methods=['GET', 'POST'], allow_headers=['Authorization', 'Content-Type', 'Range'],
