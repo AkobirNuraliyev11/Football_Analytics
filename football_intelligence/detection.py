@@ -134,7 +134,10 @@ class FootballDetector:
             if right > left and bottom > top:
                 detections.append(Detection(BoundingBox(left,top,right,bottom), float(confidence),
                                             "ball" if name == "ball" else "person", roles.get(name, Role.UNKNOWN)))
-        return detections
+        # Model NMS separates player/referee/goalkeeper labels, although these
+        # all represent people. Suppress near-identical boxes across those roles
+        # before they can start competing tracker IDs. Keep balls separate.
+        return merge_tile_detections(detections, iou_threshold=.85)
 
     def calibrate(self, rgb, *, match_id, shot_id, frame_index, pitch=None):
         import numpy as np
@@ -177,7 +180,7 @@ def detection_tiles(width, height, size):
             for y in origins(height) for x in origins(width)]
 
 
-def merge_tile_detections(items):
+def merge_tile_detections(items, *, iou_threshold=.5):
     """Confidence-first, kind-specific overlap suppression across crop boundaries."""
     kept = []
     for item in sorted(items,key=lambda d:d.confidence,reverse=True):
@@ -189,7 +192,7 @@ def merge_tile_detections(items):
             b = old.bbox
             intersection = max(0,min(a.x_max,b.x_max)-max(a.x_min,b.x_min))*max(0,min(a.y_max,b.y_max)-max(a.y_min,b.y_min))
             union = (a.x_max-a.x_min)*(a.y_max-a.y_min)+(b.x_max-b.x_min)*(b.y_max-b.y_min)-intersection
-            if intersection/union > .5:
+            if intersection/union > iou_threshold:
                 duplicate = True
                 break
         if not duplicate:

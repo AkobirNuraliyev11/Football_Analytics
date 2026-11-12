@@ -12,6 +12,29 @@ class TileMergeTests(unittest.TestCase):
         ball=Detection(a.bbox,.6,'ball')
         self.assertEqual(merge_tile_detections([b,c,a,ball]),[a,c,ball])
 
+
+    @unittest.skipUnless(importlib.util.find_spec('numpy'), 'Requires detection extras')
+    def test_full_frame_suppresses_duplicate_roles_without_removing_ball_or_neighbour(self):
+        import numpy as np
+        from types import SimpleNamespace
+        from football_intelligence.models import Role
+        class Tensor:
+            def __init__(self, values): self.values = np.array(values)
+            def cpu(self): return self
+            def numpy(self): return self.values
+        boxes = SimpleNamespace(
+            xyxy=Tensor([[10,10,30,60], [10.2,10,30.2,60], [20,10,40,60], [10,10,30,60]]),
+            conf=Tensor([.8,.9,.75,.7]), cls=Tensor([0,1,0,2]))
+        detector = FootballDetector.__new__(FootballDetector)
+        detector.device = 'cpu'
+        detector.players = SimpleNamespace(names={0:'player',1:'referee',2:'ball'},
+                                          predict=lambda *args, **kwargs:[SimpleNamespace(boxes=boxes)])
+        found = detector.detect(np.zeros((100,200,3), dtype=np.uint8))
+        self.assertEqual(len(found),3)
+        self.assertEqual(sum(d.kind=='person' for d in found),2)
+        self.assertEqual(found[0].role,Role.OFFICIAL)
+        self.assertEqual(sum(d.kind=='ball' for d in found),1)
+
     def test_tiles_cover_4k_frame_and_overlap(self):
         tiles=detection_tiles(3840,2160,1280)
         self.assertEqual(len(tiles),8)

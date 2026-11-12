@@ -1,5 +1,13 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest user feedback — November 12, 2026
+
+User approves the visual design but reports inaccessible Players/Heatmaps and poor
+ball/player detections. See `docs/dashboard-detection-review.md` for navigation
+repairs, a full-frame duplicate-person fix, saved-output diagnostics and remaining
+accuracy work. 191 Python tests + three frontend tests pass. Existing cached video
+is unchanged. Do not represent the duplicate fix as solving ball/player accuracy.
+
 ## Current authorization and next task — November 12, 2026
 
 The user approved professional coaching Concept 01 and authorized implementing it.
