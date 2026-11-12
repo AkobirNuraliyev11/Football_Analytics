@@ -14,7 +14,7 @@ from football_intelligence.tracking import MultiObjectTracker
 from football_intelligence.video import iter_frames
 
 
-def run(root, cache, output, *, start_frame=0, end_frame=234, tracks_output=None):
+def run(root, cache, output, *, start_frame=0, end_frame=234, tracks_output=None, prioritize_confidence=True):
     if output.exists():
         raise FileExistsError(output)
     if tracks_output is not None and tracks_output.exists():
@@ -36,7 +36,7 @@ def run(root, cache, output, *, start_frame=0, end_frame=234, tracks_output=None
     cached = {r['frame_index']:r for r in records if start_frame <= r['frame_index'] <= end_frame}
     if sorted(cached) != list(range(start_frame, end_frame+1, 3)):
         raise ValueError('Expected a complete dense three-frame-spaced segment')
-    tracker = MultiObjectTracker(); predictions = []
+    tracker = MultiObjectTracker(prioritize_confidence=prioritize_confidence); predictions = []
     for frame in iter_frames(source):
         if frame.frame_index not in cached:
             continue
@@ -70,7 +70,7 @@ def run(root, cache, output, *, start_frame=0, end_frame=234, tracks_output=None
             h, x, y, w = map(float, row[col:col+4])
             references[index][(rows[0][col], rows[1][col])] = [x+w/2,y+h/2]
     report = dict(frames=len(predictions), source_sha256=pinned[source.name], cache_sha256=sha256(cache),
-        start_frame=start_frame,end_frame=end_frame,
+        start_frame=start_frame,end_frame=end_frame, prioritize_confidence=prioritize_confidence,
         models=proof['models'], detector_mode=proof['mode'],
         reference_sha256=pinned[label.name], **score_tracking(predictions,references),
         can_certify_real_speed=False, reference_supplied_to_tracker=False,
@@ -96,5 +96,7 @@ if __name__ == '__main__':
     parser.add_argument('--start-frame',type=int,default=0)
     parser.add_argument('--end-frame',type=int,default=234)
     parser.add_argument('--tracks-output',type=Path)
+    parser.add_argument('--legacy-association',action='store_true')
     a=parser.parse_args();run(a.root,a.cache,a.output,start_frame=a.start_frame,
-                             end_frame=a.end_frame,tracks_output=a.tracks_output)
+                             end_frame=a.end_frame,tracks_output=a.tracks_output,
+                             prioritize_confidence=not a.legacy_association)

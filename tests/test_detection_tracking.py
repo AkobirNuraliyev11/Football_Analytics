@@ -38,6 +38,15 @@ class TrackingTests(unittest.TestCase):
         first = self.update([self.detection()],.04)[0][0].track_id
         self.assertEqual(self.update([self.detection(confidence=.2)],.08)[0][0].track_id,first)
 
+    def test_weak_box_cannot_steal_id_from_strong_observation(self):
+        original = self.update([self.detection()],0)[0][0].track_id
+        result = self.update([self.detection(10,confidence=.2), self.detection(12,confidence=.9)],.04)
+        self.assertEqual(len(result),1)
+        self.assertEqual(result[0][0].track_id,original)
+        self.assertEqual(result[0][0].detection.confidence,.9)
+        # A competing box still makes physical continuity uncertain.
+        self.assertFalse(result[0][0].continuity_safe)
+
     def test_shots_and_gaps_reset_identity(self):
         a = self.update([self.detection()],0)[0][0].track_id
         b = self.update([self.detection()],.04,1)[0][0].track_id

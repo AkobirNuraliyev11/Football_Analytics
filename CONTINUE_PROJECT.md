@@ -1,5 +1,20 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest accuracy work — November 12, 2026
+
+User authorized accuracy improvements. Confidence-priority tracking now prevents
+weak boxes from stealing IDs before stronger observations are matched. See
+`docs/tracking-confidence-priority.md` and its paired reports: tiled matches
+330→332/682, eligible links 206→208/660, adjacent switches 1→0; a later original
+cache segment retains its previous match/link scores but remains very sparse.
+This is a small same-match result, not resolved tracking accuracy. Three reviewed
+broadcast frames expose a white turf object falsely detected as a ball; a blanket
+threshold increase loses true ball observations and was rejected. Reviewed candidate
+labels and a hash-checked scorer are committed. Next: broader independent annotated
+ball/player sequences; no new clips or expensive tiling sweeps. 193 tests passed
+across the full existing suite and newly added review test. Running workers need
+restart for new tracker code. Cached reviews still show historical predictions.
+
 ## Latest user feedback — November 12, 2026
 
 User approves the visual design but reports inaccessible Players/Heatmaps and poor

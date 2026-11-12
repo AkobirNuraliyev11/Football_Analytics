@@ -1,0 +1,26 @@
+{
+  "reviewed_candidates": 6,
+  "thresholds": [
+    {
+      "confidence_threshold": 0,
+      "retained_true_candidates": 3,
+      "retained_false_candidates": 3,
+      "rejected_true_candidates": 0
+    },
+    {
+      "confidence_threshold": 0.4,
+      "retained_true_candidates": 1,
+      "retained_false_candidates": 1,
+      "rejected_true_candidates": 2
+    },
+    {
+      "confidence_threshold": 0.5,
+      "retained_true_candidates": 1,
+      "retained_false_candidates": 0,
+      "rejected_true_candidates": 2
+    }
+  ],
+  "scope": "Assistant-reviewed development subset of retained candidates. Not independent labels, full-frame precision/recall or model accuracy. Missing detector outputs are not represented. No threshold is selected by this report.",
+  "review_sha256": "f6fe99d384f3b5824266f11d582fd8d180f5bb8d2df969044f9677347eb61c98",
+  "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a"
+}

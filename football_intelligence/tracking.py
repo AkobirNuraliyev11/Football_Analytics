@@ -47,11 +47,12 @@ def iou(a, b):
 
 
 class MultiObjectTracker:
-    def __init__(self, *, max_lost_s=1.0, max_gap_s=0.25, min_hits=3):
+    def __init__(self, *, max_lost_s=1.0, max_gap_s=0.25, min_hits=3, prioritize_confidence=True):
         finite("max_lost_s", max_lost_s, minimum=.001)
         finite("max_gap_s", max_gap_s, minimum=.001)
         integer("min_hits", min_hits, minimum=1)
         self.max_lost_s, self.max_gap_s, self.min_hits = max_lost_s, max_gap_s, min_hits
+        self.prioritize_confidence = prioritize_confidence
         self.tracks = {}
         self.next_id = 1
         self.shot_id = None
@@ -89,12 +90,27 @@ class MultiObjectTracker:
                 visual = 1-float(np.clip(np.dot(track.appearance,descriptors[j]),0,1))
                 costs[i,j] = .5*(1-iou(predicted,box)) + .3*min(distance,1) + .2*visual
         matched = {}
+        assignments = []
         if costs.size:
-            # Dummy columns permit a track to remain unmatched rather than force a poor pairing.
-            rows, columns = linear_sum_assignment(np.column_stack([costs,np.full((len(old),len(old)),.78)]))
-            for i,j in zip(rows,columns):
-                if j>=len(detections) or costs[i,j] >= .78:
+            # Strong observations get first choice of existing IDs. Weak boxes
+            # may recover remaining tracks, but cannot steal an ID and leave a
+            # stronger duplicate to start a new track.
+            remaining = list(range(len(old)))
+            groups = ([j for j,d in enumerate(detections) if d.confidence >= .4],
+                      [j for j,d in enumerate(detections) if d.confidence < .4]) if self.prioritize_confidence else (list(range(len(detections))),)
+            for candidates in groups:
+                if not remaining or not candidates:
                     continue
+                subset = costs[np.ix_(remaining, candidates)]
+                rows, columns = linear_sum_assignment(np.column_stack([
+                    subset, np.full((len(remaining), len(remaining)), .78)]))
+                used = set()
+                for row, column in zip(rows, columns):
+                    if column < len(candidates) and subset[row, column] < .78:
+                        assignments.append((remaining[row], candidates[column]))
+                        used.add(remaining[row])
+                remaining = [i for i in remaining if i not in used]
+            for i,j in assignments:
                 track, detection = old[i], detections[j]
                 dt = timestamp_s-track.last_seen_s
                 alternatives=np.concatenate([np.delete(costs[i],j),np.delete(costs[:,j],i)])

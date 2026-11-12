@@ -1,0 +1,38 @@
+{
+  "source_sha256": "7788719b32b944e42d8f1024fb4802f681bc2053d6301218a5bff6705b549f96",
+  "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a",
+  "reviewer": "assistant visual review; development diagnostic, not independent ground truth",
+  "method": "Inspected source-image context at frames 41, 60 and 78. Track 25 follows the ball beside the red player; track 26 covers a separate flattened white turf object. Only reviewed retained candidates are labeled.",
+  "candidates": [
+    {
+      "frame_index": 41,
+      "track_id": 25,
+      "label": "ball"
+    },
+    {
+      "frame_index": 41,
+      "track_id": 26,
+      "label": "not_ball"
+    },
+    {
+      "frame_index": 60,
+      "track_id": 25,
+      "label": "ball"
+    },
+    {
+      "frame_index": 60,
+      "track_id": 26,
+      "label": "not_ball"
+    },
+    {
+      "frame_index": 78,
+      "track_id": 25,
+      "label": "ball"
+    },
+    {
+      "frame_index": 78,
+      "track_id": 26,
+      "label": "not_ball"
+    }
+  ]
+}
