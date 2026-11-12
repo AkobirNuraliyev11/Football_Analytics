@@ -5,6 +5,7 @@ import hmac
 import re
 import secrets
 import time
+import threading
 from typing import Literal
 from pathlib import Path
 import shutil
@@ -16,15 +17,38 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 
-from .jobs import ARTIFACTS, JobStore
+from .jobs import ARTIFACTS, JobStore, QueueFull
 from .result_queries import query
 from .video import iter_frames, probe_video
 
 
-def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=()):
+def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=(),
+               max_active_jobs=10, min_free_bytes=512 * 1024**2, max_video_pixels=3840*2160):
     if not token or max_upload_bytes < 1:
         raise ValueError('A nonempty API token and positive upload limit are required')
+    if (type(max_active_jobs) is not int or max_active_jobs < 1 or
+            type(min_free_bytes) is not int or min_free_bytes < 0 or
+            type(max_video_pixels) is not int or max_video_pixels < 1):
+        raise ValueError('Invalid queue, disk or video pixel limit')
     store = JobStore(root)
+    upload_slot = threading.BoundedSemaphore(1)
+
+    def check_disk(incoming=0):
+        if shutil.disk_usage(store.root).free - incoming < min_free_bytes:
+            raise HTTPException(507, 'Insufficient free disk space; free storage before uploading')
+
+    def admission():
+        if not upload_slot.acquire(blocking=False):
+            raise HTTPException(429, 'Another video submission is in progress; try again shortly')
+        try:
+            check_disk()
+            counts = store.system_status()['jobs']
+            if sum(counts.get(k,0) for k in ('queued','running','cancel_requested')) >= max_active_jobs:
+                raise HTTPException(429, 'Analysis queue is full; wait or cancel a queued job')
+            yield
+        finally:
+            upload_slot.release()
+
 
     sessions = {}
 
@@ -99,7 +123,15 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
         except (ValueError, KeyError):
             raise HTTPException(404, 'Job not found') from None
 
-    @app.post('/jobs', status_code=202)
+    @app.get('/system')
+    def system_status():
+        state = store.system_status()
+        return state | {'status': 'ready' if state['worker_connected'] else 'worker_offline',
+                        'limits': {'max_upload_bytes': max_upload_bytes, 'max_active_jobs': max_active_jobs,
+                                   'min_free_bytes': min_free_bytes, 'max_video_pixels': max_video_pixels},
+                        'metric_accuracy_validated': False}
+
+    @app.post('/jobs', status_code=202, dependencies=[Depends(admission)])
     async def submit(request: Request, max_frames: int | None = Query(default=None, ge=1),
                      render_media: bool = False):
         """Send the video as the raw request body (not multipart/form-data)."""
@@ -116,6 +148,7 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
                 raise HTTPException(400, 'Invalid Content-Length')
             if size > max_upload_bytes:
                 raise HTTPException(413, 'Video exceeds upload limit')
+        check_disk(int(length) if length else 0)
         identity = str(uuid.uuid4())
         directory = store.directory(identity)
         directory.mkdir()
@@ -128,10 +161,13 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
                     size += len(chunk)
                     if size > max_upload_bytes:
                         raise HTTPException(413, 'Video exceeds upload limit')
+                    check_disk(len(chunk))
                     digest.update(chunk)
                     await run_in_threadpool(target.write, chunk)
             def validate():
                 metadata = probe_video(source)
+                if metadata.width * metadata.height > max_video_pixels:
+                    raise HTTPException(422, 'Video resolution exceeds the configured pixel limit')
                 if metadata.width < 1 or metadata.height < 1:
                     raise ValueError('Invalid video dimensions')
                 with closing(iter_frames(source)) as frames:
@@ -141,7 +177,10 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
                 await run_in_threadpool(validate)
             except ValueError:
                 raise HTTPException(422, 'Video is empty, unreadable, or has invalid timing') from None
-            job = store.enqueue(identity, digest.hexdigest(), max_frames, render_media=render_media)
+            try:
+                job = store.enqueue(identity, digest.hexdigest(), max_frames, render_media=render_media, max_active=max_active_jobs)
+            except QueueFull as exc:
+                raise HTTPException(429, str(exc)) from None
             queued = True
             return job
         finally:
@@ -161,11 +200,14 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=())
         except ValueError as exc:
             raise HTTPException(409, str(exc)) from None
 
-    @app.post('/jobs/{identity}/retry', status_code=202)
+    @app.post('/jobs/{identity}/retry', status_code=202, dependencies=[Depends(admission)])
     def retry(identity: str):
         get_job(identity)
         try:
-            return store.retry(identity)
+            check_disk((store.directory(identity) / 'source.video').stat().st_size)
+            return store.retry(identity, max_active=max_active_jobs)
+        except QueueFull as exc:
+            raise HTTPException(429, str(exc)) from None
         except (ValueError, OSError) as exc:
             raise HTTPException(409, str(exc)) from None
 

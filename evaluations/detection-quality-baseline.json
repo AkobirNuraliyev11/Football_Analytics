@@ -1,0 +1,36 @@
+{
+  "first": {
+    "frames": 750,
+    "ball_frames": {
+      "missing": 295,
+      "candidate": 449,
+      "ambiguous": 6
+    },
+    "people": {
+      "observations": 17460,
+      "unconfirmed": 83,
+      "unsafe_association": 205,
+      "unknown_team": 3155,
+      "unknown_role": 257
+    },
+    "scope": "Prediction diagnostics, not precision or recall. Missing balls may be occluded; a single candidate and a confirmed track do not establish a true ball. Person flags overlap; officials may have unknown teams.",
+    "tracks_sha256": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c"
+  },
+  "second": {
+    "frames": 150,
+    "ball_frames": {
+      "missing": 39,
+      "candidate": 79,
+      "ambiguous": 32
+    },
+    "people": {
+      "observations": 3606,
+      "unconfirmed": 64,
+      "unsafe_association": 98,
+      "unknown_team": 815,
+      "unknown_role": 90
+    },
+    "scope": "Prediction diagnostics, not precision or recall. Missing balls may be occluded; a single candidate and a confirmed track do not establish a true ball. Person flags overlap; officials may have unknown teams.",
+    "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a"
+  }
+}

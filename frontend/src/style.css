@@ -6,3 +6,5 @@
 
 .stage[hidden]{display:none}.section-timeline{margin-bottom:20px}
 @media(max-width:900px){.sidebar nav .nav{font-size:9px;flex-direction:column;gap:4px}.sidebar nav .nav.active i{display:none}}
+
+.quality-details{margin-bottom:15px;font-size:12px}.quality-details summary{cursor:pointer;color:#badbd3}.quality-details p{margin-top:10px}

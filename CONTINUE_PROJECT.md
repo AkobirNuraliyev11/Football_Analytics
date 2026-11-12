@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest authorization and Step 11 work — November 13, 2026
+
+User explicitly authorized dealing with accuracy problems while proceeding with
+next steps. Step 11 local reliability foundation is implemented; read
+`docs/step-11-local-reliability.md`. API now has authenticated `/system`, upload
+admission/disk/pixel/atomic queue limits, and a supervised launcher. New analyses
+export per-frame ball ambiguity and aggregate prediction diagnostics; dashboard
+shows them and worker/storage warnings. Cached demo was prepared from unchanged
+historical video/data. No inference or new clip was generated. 199 Python tests,
+three frontend tests, production build and isolated launcher/browser smoke checks
+passed. These changes do NOT improve model precision; detector/physical accuracy
+remain open. Continue representative annotated sequence work and Step 11 storage,
+runtime limits/packaging; do not call this a public production deployment.
+
 ## Latest accuracy work — November 12, 2026
 
 User authorized accuracy improvements. Confidence-priority tracking now prevents

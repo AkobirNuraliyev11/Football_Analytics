@@ -10,6 +10,7 @@ import uuid
 from .calibration import CalibrationError, update_camera
 from .classification import TeamRoleClassifier
 from .config import AppConfig, PitchConfig
+from .detection_quality import DetectionQuality
 from .detection import FootballDetector
 from .ingestion import write_manifest
 from .model_assets import sha256
@@ -121,6 +122,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
         shots, tracker = ShotDetector(ShotConfig()), MultiObjectTracker()
         classifier = TeamRoleClassifier(pitch=pitch)
         telemetry = TelemetryEngine(config)
+        detection_quality = DetectionQuality()
         calibration, previous = None, None
         preview = PreviewWriter(output/"preview.partial.mp4", metadata.width,metadata.height,
                                 Fraction(metadata.average_rate) if metadata.average_rate else Fraction(25)) if write_preview else None
@@ -189,7 +191,8 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                         and not item["classification_conflict"] and not item["team_changed"])
                 record = frame.timing_record() | shot | {"match_id":match_id,"detections":records,
                     "calibration_status":"fit_unvalidated" if calibration else "unavailable",
-                    "calibration_reason":reason,"calibration_paint_evidence":paint_check}
+                    "calibration_reason":reason,"calibration_paint_evidence":paint_check,
+                    "detection_quality":detection_quality.update(records)}
                 measurement = telemetry.update(record)
                 telemetry_file.write(json.dumps(measurement,allow_nan=False)+"\n")
                 for item, values in zip(records,measurement["observations"]):
@@ -215,7 +218,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
             stem,suffix = name.rsplit(".",1)
             (output/f"{stem}.partial.{suffix}").replace(output/name)
         manifest.update(status="completed",shot_count=shots.shot_id+1,
-                        classification=classifier.summary(),
+                        classification=classifier.summary(), detection_quality=detection_quality.summary(),
                         artifacts=artifacts,metric_measurements_available=summary["status"]=="available",
                         completed_at=datetime.now(timezone.utc).isoformat())
         write_manifest(output/"manifest.json",manifest)

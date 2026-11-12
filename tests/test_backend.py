@@ -30,6 +30,32 @@ class QueueTests(unittest.TestCase):
                 self.assertEqual(restored.claim()['id'], second)
                 self.assertIsNone(restored.claim())
 
+    def test_status_probe_does_not_recover_or_change_active_job(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            store=JobStore(tmp)
+            identity=str(uuid.uuid4());store.enqueue(identity,'hash',None)
+            self.assertFalse(store.system_status()['worker_connected'])
+            with store.worker_lock():
+                store.claim()
+                self.assertTrue(JobStore(tmp).system_status()['worker_connected'])
+                self.assertEqual(store.get(identity)['status'],'running')
+            self.assertFalse(store.system_status()['worker_connected'])
+            self.assertEqual(store.get(identity)['status'],'running')
+
+    def test_queue_capacity_is_atomic(self):
+        from football_intelligence.jobs import QueueFull
+        with tempfile.TemporaryDirectory() as tmp:
+            store=JobStore(tmp);results=[]
+            def enqueue():
+                try:
+                    store.enqueue(str(uuid.uuid4()),'hash',None,max_active=1)
+                    results.append('queued')
+                except QueueFull:results.append('full')
+            threads=[threading.Thread(target=enqueue) for _ in range(2)]
+            for t in threads:t.start()
+            for t in threads:t.join()
+            self.assertCountEqual(results,['queued','full'])
+
     def test_claim_is_atomic_between_connections(self):
         with tempfile.TemporaryDirectory() as tmp:
             store = JobStore(tmp)
@@ -99,6 +125,7 @@ class BackendTests(unittest.TestCase):
         with patch('football_intelligence.analysis.PreviewWriter', side_effect=AssertionError('Media must be opt-in')):
             self.assertEqual(self.run_pipeline(identity), [1, 2, 3])
         result = self.client.get(f'/jobs/{identity}/results', headers=self.headers).json()
+        self.assertEqual(result['detection_quality']['ball_frames']['missing'],3)
         self.assertFalse(result['metric_measurements_available'])
         self.assertFalse(result['preview_generated'])
         self.assertEqual(result['events_status'], 'unavailable')
@@ -139,6 +166,35 @@ class BackendTests(unittest.TestCase):
                 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'Authorization'})
             self.assertEqual(response.status_code, expected)
         self.assertEqual(self.client.get('/jobs/not-a-uuid', headers=self.headers).status_code, 404)
+
+    def test_system_status_requires_auth_and_reports_worker(self):
+        self.assertEqual(self.client.get('/system').status_code,401)
+        response=self.client.get('/system',headers=self.headers)
+        self.assertEqual(response.json()['status'],'worker_offline')
+        with self.store.worker_lock():
+            state=self.client.get('/system',headers=self.headers).json()
+            self.assertEqual(state['status'],'ready')
+            self.assertFalse(state['metric_accuracy_validated'])
+            self.assertEqual(state['limits']['max_active_jobs'],10)
+
+    def test_capacity_disk_and_pixel_limits_leave_no_partial_upload(self):
+        from fastapi.testclient import TestClient
+        from football_intelligence.api import create_app
+        from types import SimpleNamespace
+        with TestClient(create_app(self.root/'capacity',token='test-only',max_active_jobs=1)) as client:
+            response=client.post('/jobs',headers=self.headers,content=self.source.read_bytes())
+            self.assertEqual(response.status_code,202)
+            identity=response.json()['id']
+            self.assertEqual(client.post('/jobs',headers=self.headers,content=b'bad').status_code,429)
+            client.post(f'/jobs/{identity}/cancel',headers=self.headers)
+            self.assertEqual(client.post(f'/jobs/{identity}/retry',headers=self.headers).status_code,202)
+            self.assertEqual(client.post(f'/jobs/{identity}/retry',headers=self.headers).status_code,429)
+        with patch('football_intelligence.api.shutil.disk_usage',return_value=SimpleNamespace(free=1)):
+            self.assertEqual(self.client.post('/jobs',headers=self.headers,content=b'x').status_code,507)
+        self.assertEqual(list((self.store.root/'jobs').iterdir()),[])
+        with TestClient(create_app(self.root/'pixels',token='test-only',max_video_pixels=1)) as client:
+            self.assertEqual(client.post('/jobs',headers=self.headers,content=self.source.read_bytes()).status_code,422)
+        self.assertEqual(list((self.root/'pixels/jobs').iterdir()),[])
 
     def test_failed_worker_does_not_publish_partial_artifacts(self):
         identity = self.submit()

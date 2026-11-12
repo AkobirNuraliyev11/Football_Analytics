@@ -1,9 +1,10 @@
+export type DetectionQuality={frames:number;ball_frames:{missing:number;candidate:number;ambiguous:number};people:{observations:number;unconfirmed:number;unsafe_association:number;unknown_team:number;unknown_role:number};scope:string};
 export type Detection={track_id:number;kind:string;team:string;role:string;telemetry?:{speed_kmh:number|null;observed_distance_m:number|null;sprint_count:number|null;reasons?:string[]}};
 export type Frame={frame_index:number;timestamp_s:number;shot_id:number;detections?:Detection[];positions?:{track_id:number;team:string;x_m:number;y_m:number;role:string}[];quality?:string};
 export type Heatmap={file:string;identity:{type:string;team:string;track_id?:number;role?:string};observed_person_seconds:number;quality:string};
 export type EventRow={event_id:number;kind:string;start_s:number;end_s:number;track_ids:number[]};
-export type Review={title:string;frames:Frame[];radar:Frame[];heatmaps:Heatmap[];coverage?:{sample_fraction:number};pitch:{length_m:number;width_m:number};video?:string;measurement_available:boolean;events_status:string;events:EventRow[];scope:string;fragments?:Record<string,unknown>[]};
-export type Job={id:string;status:string;processed_frames:number;timestamp_s:number|null;error:string|null;created_at:string;render_media:number;result?:{metric_measurements_available:boolean;events_status:string;artifacts:Record<string,unknown>}};
+export type Review={detection_quality?:DetectionQuality;title:string;frames:Frame[];radar:Frame[];heatmaps:Heatmap[];coverage?:{sample_fraction:number};pitch:{length_m:number;width_m:number};video?:string;measurement_available:boolean;events_status:string;events:EventRow[];scope:string;fragments?:Record<string,unknown>[]};
+export type Job={id:string;status:string;processed_frames:number;timestamp_s:number|null;error:string|null;created_at:string;render_media:number;result?:{detection_quality?:DetectionQuality;metric_measurements_available:boolean;events_status:string;artifacts:Record<string,unknown>}};
 // A frame is valid only until its actual successor, capped at the supported gap.
 // No nearest-future sample or stale position persistence across missing frames.
 export function currentFrame(rows:Frame[],time:number,maxGap=.25):Frame|undefined {

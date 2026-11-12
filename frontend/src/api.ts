@@ -15,7 +15,7 @@ export async function loadReview(job:Job, signal:AbortSignal):Promise<Review>{
  request<{pitch:{length_m:number;width_m:number}}>(artifact(job.id,'manifest.json'),{},signal)]);
  return {title:`Analysis ${job.id.slice(0,8)}`,frames:[],radar:[],heatmaps:heat.items,coverage:heat.coverage,pitch:manifest.pitch,
  video:result.artifacts['preview.mp4']?artifact(job.id,'preview.mp4'):undefined,measurement_available:result.metric_measurements_available,
- events_status:result.events_status,events:events.items,scope:'Local tracking IDs; observed continuous fragments, not full-match athlete totals.'};
+ detection_quality:result.detection_quality,events_status:result.events_status,events:events.items,scope:'Local tracking IDs; observed continuous fragments, not full-match athlete totals.'};
 }
 export async function frameWindow(job:string,kind:string,start:number,end:number,signal:AbortSignal){
  const rows:Frame[]=[];let offset:number|null=0;

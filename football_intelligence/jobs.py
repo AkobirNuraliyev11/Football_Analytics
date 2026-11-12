@@ -14,6 +14,10 @@ ARTIFACTS = ('manifest.json', 'tracks.jsonl', 'calibrations.jsonl',
              'telemetry.jsonl', 'telemetry-summary.json', 'highlight-plan.json')
 
 
+class QueueFull(ValueError):
+    pass
+
+
 class JobCancelled(Exception):
     pass
 
@@ -56,9 +60,14 @@ class JobStore:
             raise ValueError('Invalid job ID')
         return self.root / 'jobs' / identity
 
-    def enqueue(self, identity, digest, max_frames, *, render_media=False, parent_id=None):
+    def enqueue(self, identity, digest, max_frames, *, render_media=False, parent_id=None, max_active=None):
         self.directory(identity)
         with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            if max_active is not None and db.execute(
+                    "SELECT count(*) FROM jobs WHERE status IN ('queued','running','cancel_requested')"
+                    ).fetchone()[0] >= max_active:
+                raise QueueFull('Analysis queue is full; wait for a job to finish or cancel a queued job')
             db.execute('''INSERT INTO jobs
                 (id,status,created_at,updated_at,max_frames,source_sha256,render_media,parent_id)
                 VALUES (?,'queued',?,?,?,?,?,?)''', (identity, now(), now(), max_frames, digest,
@@ -96,7 +105,7 @@ class JobStore:
         if self.get(identity)['status'] in ('cancel_requested', 'cancelled'):
             raise JobCancelled('Cancellation requested')
 
-    def retry(self, identity):
+    def retry(self, identity, *, max_active=None):
         old = self.get(identity)
         if old['status'] not in ('failed', 'cancelled'):
             raise ValueError('Retry requires a failed or cancelled job')
@@ -109,10 +118,29 @@ class JobStore:
             if sha256(directory / 'source.video') != old['source_sha256']:
                 raise ValueError('Source changed; upload the video again')
             return self.enqueue(new_id, old['source_sha256'], old['max_frames'],
-                                render_media=old['render_media'], parent_id=identity)
+                                render_media=old['render_media'], parent_id=identity, max_active=max_active)
         except BaseException:
             shutil.rmtree(directory)
             raise
+
+    def system_status(self):
+        import fcntl
+        # Check ownership, not the existence of a leftover lock file. This probe
+        # must never call worker_lock(), which performs recovery mutations.
+        with (self.root / 'worker.lock').open('a') as lock:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                worker_connected = True
+            else:
+                worker_connected = False
+                fcntl.flock(lock, fcntl.LOCK_UN)
+        with self.connect() as db:
+            counts = {r['status']:r['n'] for r in db.execute(
+                'SELECT status,count(*) AS n FROM jobs GROUP BY status')}
+        return {'worker_connected': worker_connected, 'jobs': counts,
+                'disk_free_bytes': shutil.disk_usage(self.root).free,
+                'worker_status_scope': 'Worker lock ownership; not an inference responsiveness check'}
 
     def claim(self):
         with self.connect() as db:
@@ -209,6 +237,7 @@ def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'
         occupancy = json.loads((output / 'tactics/occupancy.json').read_text())
         store.finish(identity, result={'artifacts': artifacts,
             'metric_measurements_available': manifest['metric_measurements_available'],
+            'detection_quality': manifest.get('detection_quality'),
             'events_status': plan['status'], 'candidate_events': len(plan['events']),
             'preview_generated': bool(job['render_media']),
             'heatmaps': [{'file': 'tactics/heatmap-' + g['id'] + '.png',

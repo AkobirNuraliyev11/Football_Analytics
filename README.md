@@ -3,7 +3,7 @@
 An incremental implementation of a single-camera football analytics platform.
 
 [Complete results review: videos, tracking, classification, telemetry and evaluation archive](docs/current-results.md).
-**Status: Steps 1–8 core engineering implemented; accuracy validation open. Step 9 local result workflow and initial Step 10 dashboard implemented.**
+**Status: Steps 1–8 core engineering implemented; accuracy validation open. Step 9 local result workflow and initial Step 10 dashboard implemented; Step 11 local reliability started.**
 The local backend supports upload, durable jobs, progress, cancellation/retry and results.
 The first React/TypeScript dashboard is implemented: [run it locally](docs/step-10-dashboard.md). Automatic analysis produces an
 annotated preview, track records, and telemetry outputs. Validated real-video metric readings
@@ -261,3 +261,5 @@ It explicitly marks unavailable features, including confirmed tackle detection.
 It does not run inference or convert unavailable measurements into statistics.
 Raw source videos, model weights and backend credentials/databases are excluded.
 Choose a new output directory each time; existing exports are not overwritten.
+
+Step 11 local operations, resource limits and prediction diagnostics: [local reliability guide](docs/step-11-local-reliability.md).

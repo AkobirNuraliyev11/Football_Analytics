@@ -109,3 +109,5 @@ layout, additional real-video validation, richer exports and measured-fragment c
 and deployment/storage/resource controls. No CSV export, full-match athlete
 re-identification or verified tackle detector is claimed. Large media and generated
 build/demo files remain ignored by Git; source and lockfile are committed.
+
+November 13 update: the dashboard exposes detection-quality diagnostics and connected worker/storage warnings. See [Step 11](step-11-local-reliability.md) for API and startup controls.
