@@ -1,0 +1,38 @@
+{
+  "tracks_sha256": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c",
+  "source_sha256": "43d342c78fbb40e522f48ab378fbee83b5b880d35c056836e0d493ec2b15ee51",
+  "reviewer": "assistant visual review of six image context crops; development controls, not independent ground truth",
+  "method": "For each starting index 0,120,240,360,480,600, chose the first retained ball in the next 100 frames. Each central object is visually consistent with a ball; blurred examples retained. Frames were selected before running temporal-selection evaluation. Both matches were previously used for development.",
+  "candidates": [
+    {
+      "frame_index": 15,
+      "track_id": 25,
+      "label": "ball"
+    },
+    {
+      "frame_index": 120,
+      "track_id": 28,
+      "label": "ball"
+    },
+    {
+      "frame_index": 241,
+      "track_id": 39,
+      "label": "ball"
+    },
+    {
+      "frame_index": 394,
+      "track_id": 51,
+      "label": "ball"
+    },
+    {
+      "frame_index": 480,
+      "track_id": 55,
+      "label": "ball"
+    },
+    {
+      "frame_index": 600,
+      "track_id": 59,
+      "label": "ball"
+    }
+  ]
+}

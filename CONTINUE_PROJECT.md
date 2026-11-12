@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest model work and packaging preference — November 13, 2026
+
+User wants actual model/system repairs and visible results; Mac and Windows apps
+must come at the end. Temporal ball selection is now integrated (post-processing,
+not retraining). Read `docs/ball-selection-review.md`: of three reviewed competing
+ball frames, two select the true ball and one abstains; no reviewed turf false
+candidate is selected. All six other-recording ball controls are retained. Both
+recordings informed development, not held-out evidence. 205 Python tests pass.
+Raw alternatives remain in JSON; future requested previews omit only resolved
+alternatives and label all balls as candidates. Cached dashboard footage is unchanged.
+A before/after still exists at `docs/design/ball-selection-comparison.png`; no video
+was generated. Next: representative annotated missed-player/isolated-false-ball
+sequences and detector comparison, preserving strict measurement gates.
+
 ## Latest authorization and Step 11 work — November 13, 2026
 
 User explicitly authorized dealing with accuracy problems while proceeding with

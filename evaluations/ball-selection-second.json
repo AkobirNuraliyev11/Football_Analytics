@@ -1,0 +1,55 @@
+{
+  "tracks_sha256": "4c12c4b7cd10dfa4df3da0b3e496e00778645346e466efb56405e609bb229e7a",
+  "frames": 150,
+  "frames_with_competing_candidates": 32,
+  "frames_with_selection": 100,
+  "reviewed_candidates": [
+    {
+      "frame_index": 41,
+      "track_id": 25,
+      "label": "ball",
+      "selected": false,
+      "selection_reason": "insufficient_history"
+    },
+    {
+      "frame_index": 41,
+      "track_id": 26,
+      "label": "not_ball",
+      "selected": false,
+      "selection_reason": "insufficient_history"
+    },
+    {
+      "frame_index": 60,
+      "track_id": 25,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "temporal_candidate"
+    },
+    {
+      "frame_index": 60,
+      "track_id": 26,
+      "label": "not_ball",
+      "selected": false,
+      "selection_reason": "temporal_candidate"
+    },
+    {
+      "frame_index": 78,
+      "track_id": 25,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "temporal_candidate"
+    },
+    {
+      "frame_index": 78,
+      "track_id": 26,
+      "label": "not_ball",
+      "selected": false,
+      "selection_reason": "temporal_candidate"
+    }
+  ],
+  "retained_true_candidates": 2,
+  "retained_false_candidates": 0,
+  "unselected_true_candidates": 1,
+  "scope": "Selection on retained detections. Assistant-reviewed development examples; not whole-frame precision/recall, held-out validation or verified ball identity.",
+  "review_sha256": "f6fe99d384f3b5824266f11d582fd8d180f5bb8d2df969044f9677347eb61c98"
+}

@@ -1,0 +1,55 @@
+{
+  "tracks_sha256": "0490b950dd60a8355222f67c3db9ef288bf374a4fd28fcc1a2e560b764ef5a9c",
+  "frames": 750,
+  "frames_with_competing_candidates": 6,
+  "frames_with_selection": 450,
+  "reviewed_candidates": [
+    {
+      "frame_index": 15,
+      "track_id": 25,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "single_observed_candidate"
+    },
+    {
+      "frame_index": 120,
+      "track_id": 28,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "single_observed_candidate"
+    },
+    {
+      "frame_index": 241,
+      "track_id": 39,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "single_observed_candidate"
+    },
+    {
+      "frame_index": 394,
+      "track_id": 51,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "single_observed_candidate"
+    },
+    {
+      "frame_index": 480,
+      "track_id": 55,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "single_observed_candidate"
+    },
+    {
+      "frame_index": 600,
+      "track_id": 59,
+      "label": "ball",
+      "selected": true,
+      "selection_reason": "single_observed_candidate"
+    }
+  ],
+  "retained_true_candidates": 6,
+  "retained_false_candidates": 0,
+  "unselected_true_candidates": 0,
+  "scope": "Selection on retained detections. Assistant-reviewed development examples; not whole-frame precision/recall, held-out validation or verified ball identity.",
+  "review_sha256": "938854d5299ba038366dfc66daaaeeb0e63148ffd130dcdbded7adc205185aa2"
+}

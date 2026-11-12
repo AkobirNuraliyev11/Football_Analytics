@@ -10,6 +10,7 @@ import uuid
 from .calibration import CalibrationError, update_camera
 from .classification import TeamRoleClassifier
 from .config import AppConfig, PitchConfig
+from .ball_selection import BallSelector
 from .detection_quality import DetectionQuality
 from .detection import FootballDetector
 from .ingestion import write_manifest
@@ -60,6 +61,8 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
     import cv2
     output = rgb.copy()
     for record in records:
+        if record.get("ball_selection_state")=="alternative":
+            continue
         box = record["bbox"]
         color = {"A":(250,95,105),"B":(235,235,245)}.get(record.get("team"),(155,155,155))
         if record.get("role")=="official": color=(40,220,220)
@@ -68,7 +71,7 @@ def annotate(rgb, records, calibration, frame_index, shot_id):
         p2 = (int(box["x_max"]), int(box["y_max"]))
         cv2.rectangle(output,p1,p2,color,2)
         label = f'{record.get("role",record["kind"])} #{record["track_id"]} {record.get("team","unknown")}'
-        if record["kind"]=="ball": label=f'ball #{record["track_id"]}'
+        if record["kind"]=="ball": label=f'ball candidate #{record["track_id"]}'
         elif "telemetry" in record:
             speed = record["telemetry"]["speed_kmh"]
             label += f" | {speed:.1f} km/h" if speed is not None else " | -- km/h"
@@ -109,6 +112,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 "pitch":asdict(pitch),"pitch_dimensions_assumed":True,"max_frames":max_frames,
                 "pitch_every":pitch_every,"device":device,"processed_frames":0,
                 "detection_policy":getattr(detector,"inference_policy","external_detector"),
+                "ball_selection_policy":"temporal-confidence-v1; single candidates unverified; alternatives retained in JSON",
                 "frames_with_pitch_fit":0,"preview_audio":False,"preview_enabled":write_preview,
                 "pitch_paint_screen_enabled":check_pitch_paint,
                 "model_hashes":detector.fingerprints,
@@ -123,6 +127,7 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
         classifier = TeamRoleClassifier(pitch=pitch)
         telemetry = TelemetryEngine(config)
         detection_quality = DetectionQuality()
+        ball_selector = BallSelector()
         calibration, previous = None, None
         preview = PreviewWriter(output/"preview.partial.mp4", metadata.width,metadata.height,
                                 Fraction(metadata.average_rate) if metadata.average_rate else Fraction(25)) if write_preview else None
@@ -189,10 +194,15 @@ def analyze_video(source: Path, output: Path, *, match_id: str, model_dir=Path("
                 for item in records:
                     item["measurement_link_eligible"]=(item["confirmed"] and item["continuity_safe"]
                         and not item["classification_conflict"] and not item["team_changed"])
+                ball_selection = ball_selector.update(records,timestamp_s=frame.timestamp_s,shot_id=shot["shot_id"])
+                for item in records:
+                    if item['kind']=='ball':
+                        item['ball_selection_state'] = ('unresolved' if ball_selection['selected_track_id'] is None
+                            else 'selected_candidate' if item['track_id']==ball_selection['selected_track_id'] else 'alternative')
                 record = frame.timing_record() | shot | {"match_id":match_id,"detections":records,
                     "calibration_status":"fit_unvalidated" if calibration else "unavailable",
                     "calibration_reason":reason,"calibration_paint_evidence":paint_check,
-                    "detection_quality":detection_quality.update(records)}
+                    "detection_quality":detection_quality.update(records), "ball_selection":ball_selection}
                 measurement = telemetry.update(record)
                 telemetry_file.write(json.dumps(measurement,allow_nan=False)+"\n")
                 for item, values in zip(records,measurement["observations"]):
