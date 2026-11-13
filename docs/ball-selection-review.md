@@ -30,3 +30,7 @@ Files: `evaluations/ball-selection-first.json`, `evaluations/ball-selection-seco
 205 Python tests passed. Selector regressions cover true-candidate retention, weak competing boxes, unresolved ties, missing observations, shot resets, expired history and monotonic timing. Pipeline integration preserves all raw ball candidates and the unverified physical-depth contract. Cached dashboard video is unchanged; restart the worker before new analyses to use this code.
 
 Next model work: expand independent annotations of missed players, false isolated balls, occlusions and camera motion; compare detector candidates on that dataset. No claim is made that ball detection, tracking, classification or physical speed is fully solved. The user requests Mac and Windows applications only at the final packaging stage, after model/system reliability work.
+
+## Broader-view follow-up
+
+The subsequent [aerial audit](aerial-ball-player-audit.md) found no resolved selections on 31 aerial frames. The small broadcast result above does not establish generalization. Two attempted fixes were rejected rather than enabled.

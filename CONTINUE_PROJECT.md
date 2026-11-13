@@ -1,5 +1,20 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest broader model evaluation — November 13, 2026
+
+Read `docs/aerial-ball-player-audit.md` first. Publisher BALL labels were found in
+the existing aerial CSV, enabling a 31-frame independent-annotation diagnostic
+(still a development recording). Default temporal ball selection resolves 0/31,
+although raw detections contain a reference-near ball on 29/31. Padded pitch context
+and wider ball motion were tested and rejected: 1 and 2 wrong selections respectively,
+no correct selections. Neither is enabled by production code. Matched player
+coverage under identical symmetric scoring is 358/682 raw and 332/682 tracked;
+most misses arise before tracking. 208 tests pass. No inference or video generation.
+Next: representative detector training/evaluation data with recording-level split,
+and match-ball versus spare-ball/camera-motion evidence; do not claim previous
+broadcast improvements generalize to aerial views. Final desktop packaging remains
+Mac and Windows, after model/system reliability.
+
 ## Latest model work and packaging preference — November 13, 2026
 
 User wants actual model/system repairs and visible results; Mac and Windows apps

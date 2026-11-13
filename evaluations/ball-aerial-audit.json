@@ -1,0 +1,65 @@
+{
+  "baseline": {
+    "frames": 31,
+    "ball_center_tolerance_px": 10,
+    "ball_raw_missed_frames": 2,
+    "selection": {
+      "before": {
+        "correct": 0,
+        "wrong": 0,
+        "unresolved": 31
+      },
+      "field_context": {
+        "correct": 0,
+        "wrong": 1,
+        "unresolved": 30
+      }
+    },
+    "player_reference_observations": 682,
+    "player_raw_matched_observations": 370,
+    "hashes": {
+      "data/soccertrack-reference/D_20220220_1_0000_0030.mp4": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+      "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+      "data/soccertrack-reference/detections-tiled-dense.jsonl": "2de8f861b46a412d0dbccf97d1678eea2e9d8c0d915fef00ac18a5fd5bc69617",
+      "data/overhead-geometry-final.jsonl": "ccb5b2ff1c37061029714f6161f3762f6acc9777c491ffe8bce4fd83c79ef37c"
+    },
+    "scope": "Same-recording development diagnostic, publisher image annotations. No labels enter prediction. Region screen requires current paint-checked overhead geometry. No physical accuracy or held-out claim."
+  },
+  "wider_ball_motion_trial": {
+    "ball_motion_fraction": 0.5,
+    "frames": 31,
+    "ball_center_tolerance_px": 10,
+    "ball_raw_missed_frames": 2,
+    "selection": {
+      "before": {
+        "correct": 0,
+        "wrong": 0,
+        "unresolved": 31
+      },
+      "field_context": {
+        "correct": 0,
+        "wrong": 2,
+        "unresolved": 29
+      }
+    },
+    "player_reference_observations": 682,
+    "player_raw_matched_observations": 370,
+    "hashes": {
+      "data/soccertrack-reference/D_20220220_1_0000_0030.mp4": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+      "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+      "data/soccertrack-reference/detections-tiled-dense.jsonl": "2de8f861b46a412d0dbccf97d1678eea2e9d8c0d915fef00ac18a5fd5bc69617",
+      "data/overhead-geometry-final.jsonl": "ccb5b2ff1c37061029714f6161f3762f6acc9777c491ffe8bce4fd83c79ef37c"
+    },
+    "scope": "Same-recording development diagnostic, publisher image annotations. No labels enter prediction. Region screen requires current paint-checked overhead geometry. No physical accuracy or held-out claim."
+  },
+  "accepted_changes": false,
+  "player_funnel": {
+    "reference_observations": 682,
+    "raw_matches_symmetric_association": 358,
+    "tracked_matches_symmetric_association": 332,
+    "matching_policy": "40 pixel maximum center distance; 10 pixel ambiguity margin against competing references and detections",
+    "tracked_report": "evaluations/tracking-confidence-priority.json / tiled_after",
+    "warning": "The 370 raw matches in the trial reports use the older asymmetric anchor scorer. Use 358 for comparison with 332 tracked observations. Unmatched predictions are not automatically false positives; annotations omit officials/nonparticipants."
+  },
+  "conclusion": "Neither pitch-region screening nor wider ball-motion association is enabled in production. Ball detector contains a reference-near candidate on 29/31 frames, but temporal selection resolves none; player detector coverage is the dominant player bottleneck."
+}

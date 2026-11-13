@@ -47,11 +47,15 @@ def iou(a, b):
 
 
 class MultiObjectTracker:
-    def __init__(self, *, max_lost_s=1.0, max_gap_s=0.25, min_hits=3, prioritize_confidence=True):
+    def __init__(self, *, max_lost_s=1.0, max_gap_s=0.25, min_hits=3, prioritize_confidence=True, ball_motion_fraction=0.):
         finite("max_lost_s", max_lost_s, minimum=.001)
         finite("max_gap_s", max_gap_s, minimum=.001)
         integer("min_hits", min_hits, minimum=1)
         self.max_lost_s, self.max_gap_s, self.min_hits = max_lost_s, max_gap_s, min_hits
+        finite("ball_motion_fraction",ball_motion_fraction,minimum=0)
+        # Experimental benchmark override only; the nonzero trial regressed
+        # ball selection and is NOT enabled by the analysis pipeline.
+        self.ball_motion_fraction = ball_motion_fraction
         self.prioritize_confidence = prioritize_confidence
         self.tracks = {}
         self.next_id = 1
@@ -81,6 +85,8 @@ class MultiObjectTracker:
                     continue
                 box = box_array(detection.bbox)
                 scale = max(float(np.linalg.norm(predicted[2:]-predicted[:2])), 20)
+                if detection.kind == "ball" and self.ball_motion_fraction:
+                    scale = max(scale, rgb.shape[1] * dt * self.ball_motion_fraction)
                 distance = float(np.linalg.norm((predicted[:2]+predicted[2:]-box[:2]-box[2:])/2)) / scale
                 if distance > 1.5:
                     continue
@@ -88,7 +94,10 @@ class MultiObjectTracker:
                     and np.linalg.norm(track.kit_feature-kits[j])>.20):
                     continue
                 visual = 1-float(np.clip(np.dot(track.appearance,descriptors[j]),0,1))
-                costs[i,j] = .5*(1-iou(predicted,box)) + .3*min(distance,1) + .2*visual
+                if detection.kind == "ball" and self.ball_motion_fraction:
+                    costs[i,j] = .2*(1-iou(predicted,box)) + .6*min(distance,1) + .2*visual
+                else:
+                    costs[i,j] = .5*(1-iou(predicted,box)) + .3*min(distance,1) + .2*visual
         matched = {}
         assignments = []
         if costs.size:

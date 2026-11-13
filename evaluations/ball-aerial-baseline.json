@@ -1,0 +1,31 @@
+{
+  "person_observation_funnel": {
+    "raw": 358,
+    "tracked": 332
+  },
+  "ball_motion_fraction": 0.0,
+  "frames": 31,
+  "ball_center_tolerance_px": 10,
+  "ball_raw_missed_frames": 2,
+  "selection": {
+    "before": {
+      "correct": 0,
+      "wrong": 0,
+      "unresolved": 31
+    },
+    "field_context": {
+      "correct": 0,
+      "wrong": 1,
+      "unresolved": 30
+    }
+  },
+  "player_reference_observations": 682,
+  "player_raw_matched_observations": 358,
+  "hashes": {
+    "data/soccertrack-reference/D_20220220_1_0000_0030.mp4": "26c3b4016b943219855f2006d4083744a00f2e5f4770bc63a595ae378c444eda",
+    "data/soccertrack-reference/D_20220220_1_0000_0030.csv": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309",
+    "data/soccertrack-reference/detections-tiled-dense.jsonl": "2de8f861b46a412d0dbccf97d1678eea2e9d8c0d915fef00ac18a5fd5bc69617",
+    "data/overhead-geometry-final.jsonl": "ccb5b2ff1c37061029714f6161f3762f6acc9777c491ffe8bce4fd83c79ef37c"
+  },
+  "scope": "Same-recording development diagnostic, publisher image annotations. No labels enter prediction. Player funnel uses symmetric 40px/10px matching. Region screen requires current paint-checked overhead geometry. No physical accuracy or held-out claim."
+}

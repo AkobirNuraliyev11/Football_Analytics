@@ -53,6 +53,19 @@ class TrackingTests(unittest.TestCase):
         c = self.update([self.detection()],1,1)[0][0].track_id
         self.assertEqual(len({a,b,c}),3)
 
+    def test_experimental_ball_motion_override_is_off_by_default(self):
+        import numpy as np
+        from football_intelligence.tracking import MultiObjectTracker
+        rgb=np.zeros((100,2000,3),dtype=np.uint8)
+        def det(x,kind):return Detection(BoundingBox(x,20,x+6,26),.9,kind)
+        for kind in ('person','ball'):
+            for fraction in (0.,.5):
+                tracker=MultiObjectTracker(ball_motion_fraction=fraction)
+                first=tracker.update([det(20,kind)],rgb,timestamp_s=0,shot_id=0)[0][0].track_id
+                later=tracker.update([det(80,kind)],rgb,timestamp_s=.1,shot_id=0)[0][0].track_id
+                self.assertEqual(first==later,kind=='ball' and fraction==.5)
+        self.assertEqual(MultiObjectTracker().ball_motion_fraction,0.)
+
     def test_person_and_ball_never_share_identity(self):
         a = self.update([self.detection()],0)[0][0].track_id
         b = self.update([self.detection(kind="ball")],.04)[0][0].track_id
