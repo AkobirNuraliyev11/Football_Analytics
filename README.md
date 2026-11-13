@@ -55,6 +55,8 @@ For a data-only geometry review, add `--no-preview` to `review-measurements`.
 The optional tactical replay flag is `--separate-identity-maturity` together with
 `--review`. Missing position frames stay empty under either policy.
 
+Full implemented-versus-validated status: [illustrated project report](docs/project-status-report.md).
+
 ## Architectural roadmap and review gates
 
 The user authorized Step 8 engineering on November 10 while Step 7 accuracy

@@ -1,5 +1,21 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest training-data audit and overview — November 13, 2026
+
+User requested continuing model work plus a full illustrated explanation. Read
+`docs/project-status-report.md` for consolidated status and remaining work;
+`docs/design/project-evidence.png` plots the saved aerial diagnostic counts.
+New `scripts/audit_training_data.py` verifies pinned annotation hashes and reports
+16,938/19,800 player boxes exactly 39x39 px (85.55%). This is a tight-box review
+flag, not proof of invalid labels. Officials/nonparticipants are not exhaustively
+labeled; one match cannot supply an independent split. New training_data checks
+match/source split leakage and reviewed-complete-box metadata. No training,
+new weights or accuracy gain. 211 Python tests pass. Official SoccerTrack v2 file
+access currently requires account agreement; protected SoccerNet footage has an
+access/NDA process. Neither was accepted; no footage downloaded. Next: annotation
+review/acquisition and recording-level splits, then detector comparisons. Desktop
+packaging stays last.
+
 ## Latest broader model evaluation — November 13, 2026
 
 Read `docs/aerial-ball-player-audit.md` first. Publisher BALL labels were found in

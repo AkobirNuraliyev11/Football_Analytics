@@ -100,4 +100,4 @@ Your proposed smartphone research study fits this plan: compare the same actions
 
 This is a credible research prototype and a useful platform for conducting the study. It is not ready to promise accurate coaching statistics on arbitrary uploads. The hardest remaining work is data quality and validated model performance, rather than adding more dashboard screens. Progress should be judged by independently measured accuracy/coverage and usable outputs, not test count or number of features.
 
-At this report update, the existing 208-test suite had passed; the three new data-readiness tests also passed. Frontend build and three frontend tests passed at the previous frontend change. No fresh video was generated for this report.
+At this report update, all 211 Python tests passed, including the three new data-readiness tests. Frontend build and three frontend tests passed at the previous frontend change. No fresh video was generated for this report.
