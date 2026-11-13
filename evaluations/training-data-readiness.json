@@ -1,0 +1,34 @@
+{
+  "frames": 900,
+  "classes": {
+    "person": {
+      "observations": 19800,
+      "unique_sizes": 48,
+      "most_common_size_px": [
+        39.0,
+        39.0
+      ],
+      "most_common_size_count": 16938,
+      "most_common_size_fraction": 0.8554545454545455
+    },
+    "ball": {
+      "observations": 900,
+      "unique_sizes": 23,
+      "most_common_size_px": [
+        12.0,
+        11.0
+      ],
+      "most_common_size_count": 427,
+      "most_common_size_fraction": 0.47444444444444445
+    }
+  },
+  "tight_box_review_required": true,
+  "detector_training_ready": false,
+  "blockers": [
+    "Tight image-box semantics have not been visually approved for training",
+    "This table labels team players and ball, not exhaustive person/official instances",
+    "A separate match-level validation/test split has not been supplied"
+  ],
+  "note": "Repeated box dimensions are a review flag, not proof of incorrect labels. These annotations remain useful for their existing center-location diagnostics.",
+  "annotation_sha256": "8137989fa32ec2ee54df051816d2aadca91e6c9a4d1229dcf3fab653254eb309"
+}
