@@ -94,6 +94,9 @@ def main(argv: list[str] | None = None) -> int:
     work.add_argument('--model-dir', type=Path, default=Path('data/models'))
     work.add_argument('--device', default='cpu')
     work.add_argument('--once', action='store_true')
+    work.add_argument('--max-job-seconds', type=float, default=21600,
+                      help='Cooperative per-job time budget (default: 6 hours)')
+    work.add_argument('--min-free-bytes', type=int, default=512 * 1024 * 1024)
     args = parser.parse_args(argv)
     try:
         if args.command == 'serve':
@@ -108,7 +111,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         elif args.command == 'worker':
             from .jobs import worker
-            worker(args.data_dir, once=args.once, model_dir=args.model_dir, device=args.device)
+            worker(args.data_dir, once=args.once, model_dir=args.model_dir, device=args.device,
+                   max_job_seconds=args.max_job_seconds, min_free_bytes=args.min_free_bytes)
             return 0
         elif args.command == 'plan-highlights':
             from .highlights import write_plan

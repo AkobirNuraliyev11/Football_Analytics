@@ -28,6 +28,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port',type=int,default=8000)
     parser.add_argument('--data-dir',type=Path,default=ROOT/'data/backend')
+    parser.add_argument('--max-job-seconds',type=float,default=21600)
+    parser.add_argument('--min-free-bytes',type=int,default=512 * 1024 * 1024)
     args=parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error('--port must be between 1 and 65535')
@@ -35,15 +37,19 @@ def main():
         raise SystemExit('Build the dashboard first: cd frontend && npm ci && npm run build')
     import uvicorn
     from football_intelligence.api import create_app
+    from football_intelligence.jobs import RuntimeBudget
     data_dir=args.data_dir.resolve()
+    RuntimeBudget(data_dir, max_seconds=args.max_job_seconds, min_free_bytes=args.min_free_bytes)
     os.chdir(ROOT)
     token = os.environ.get('FOOTBALL_API_TOKEN') or secrets.token_urlsafe(32)
-    app=create_app(data_dir, token=token)
+    app=create_app(data_dir, token=token, min_free_bytes=args.min_free_bytes)
     # Bind before launching a worker. A busy port must not leave an orphan worker.
     with reserve_socket(args.port) as sock:
         server=uvicorn.Server(uvicorn.Config(app,host='127.0.0.1',port=args.port))
         worker=subprocess.Popen([sys.executable,'-m','football_intelligence','worker',
-                                 '--data-dir',str(data_dir)],cwd=ROOT)
+                                 '--data-dir',str(data_dir),
+                                 '--max-job-seconds',str(args.max_job_seconds),
+                                 '--min-free-bytes',str(args.min_free_bytes)],cwd=ROOT)
         stopping=threading.Event()
         failed=threading.Event()
         def supervise():

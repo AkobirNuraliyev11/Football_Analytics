@@ -26,6 +26,37 @@ Configure limits through `create_app(...)`. No files are automatically deleted. 
 
 ## Prediction diagnostics
 
+### Runtime budgets (November 16)
+
+The worker now checks elapsed monotonic time and free storage before inference,
+at each frame progress callback, between post-processing stages and at their
+cancellation checkpoints. Defaults are six hours per job and a 512 MiB free-disk
+reserve. Configure the launcher or standalone worker with `--max-job-seconds`
+and `--min-free-bytes`. The launcher applies the same disk reserve to uploads.
+Exhausting a budget fails the job with an actionable error and withholds partial
+results; subsequent queued jobs remain eligible to run. Existing files are kept.
+
+These are cooperative limits, not a hard timeout: a blocked decoder/model call or
+long operation without a checkpoint can overrun the budget. Disk checks do not
+reserve capacity and a single write can cross the reserve. Hard process isolation,
+memory/output quotas and retention controls remain unfinished.
+
+### Trying your own video
+
+Start `.venv/bin/python scripts/run_dashboard.py`, open
+`http://127.0.0.1:8000/dashboard/`, and paste the printed temporary token into
+**Connection**. Select **New analysis**, choose MP4/MOV/MKV (up to 2 GiB and
+8,294,400 pixels), and begin with a frame limit such as 150 to check compatibility
+and processing cost. This is about six seconds at 25 fps; duration varies with
+frame rate. Resolution and timestamps are automatic. No pixel coordinates are
+required. Pitch dimensions currently assume 105 × 68 m.
+
+Preview/highlight generation is optional and off by default. Without it, use the
+result timeline and analysis tabs. Predictions can miss or misidentify players
+and the ball; experimental maps can be sparse or empty. Physical speed and sprint
+accuracy are not validated, and confirmed tackles are not implemented. Uploading
+your footage does not itself retrain the model. Files stay in the local workspace.
+
 Each newly analyzed frame records `detection_quality`: missing, single-candidate or ambiguous ball state; candidate IDs; and `verified_ball_available=false`. No score-based candidate is silently promoted to a verified match ball. Aggregate diagnostics are stored in the analysis manifest and completed job results, and displayed in a collapsible dashboard panel. Existing stored results without these optional fields remain readable.
 
 Person summaries count unconfirmed observations, unsafe associations, unknown teams and unknown roles. Flags overlap. These are predictions, not precision/recall; officials may legitimately lack team labels. A confirmed tracker ID is not verification of the underlying detection.

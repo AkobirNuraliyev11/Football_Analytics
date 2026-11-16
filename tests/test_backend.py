@@ -7,7 +7,29 @@ import unittest
 from unittest.mock import patch
 import uuid
 
-from football_intelligence.jobs import JobStore, run_one
+from football_intelligence.jobs import JobStore, RuntimeBudget, JobBudgetExceeded, run_one
+
+
+class RuntimeBudgetTests(unittest.TestCase):
+    def test_elapsed_time_uses_monotonic_deadline(self):
+        with patch('football_intelligence.jobs.time.monotonic', side_effect=[100, 109, 110]), \
+             patch('football_intelligence.jobs.shutil.disk_usage') as disk:
+            disk.return_value.free = 1024
+            budget = RuntimeBudget('.', max_seconds=10, min_free_bytes=1024)
+            budget.check()
+            with self.assertRaisesRegex(JobBudgetExceeded, 'time budget'):
+                budget.check()
+
+    def test_disk_reserve_and_invalid_configuration(self):
+        with patch('football_intelligence.jobs.shutil.disk_usage') as disk:
+            disk.return_value.free = 1023
+            with self.assertRaisesRegex(JobBudgetExceeded, 'free disk'):
+                RuntimeBudget('.', min_free_bytes=1024).check()
+        for seconds in (0, -1, float('nan'), float('inf')):
+            with self.assertRaises(ValueError):
+                RuntimeBudget('.', max_seconds=seconds)
+        with self.assertRaises(ValueError):
+            RuntimeBudget('.', min_free_bytes=-1)
 
 
 class QueueTests(unittest.TestCase):
@@ -213,6 +235,24 @@ class BackendTests(unittest.TestCase):
             inference.assert_not_called()
         self.assertEqual(self.store.get(identity)['status'], 'failed')
         self.assertIn('source changed', self.store.get(identity)['error'])
+
+    def test_runtime_budget_failure_withholds_results_and_queue_continues(self):
+        first = self.submit()
+        second = self.submit()
+        def exhausting_pipeline(source, output, **kwargs):
+            # Simulate storage falling below the reserve after inference begins.
+            with patch('football_intelligence.jobs.shutil.disk_usage') as disk:
+                disk.return_value.free = 0
+                kwargs['progress_callback'](1, 0.0)
+            self.fail('Budget must interrupt this pipeline')
+        with self.store.worker_lock():
+            run_one(self.store, pipeline=exhausting_pipeline)
+        self.assertEqual(self.store.get(first)['status'], 'failed')
+        self.assertIn('JobBudgetExceeded', self.store.get(first)['error'])
+        self.assertEqual(self.client.get(f'/jobs/{first}/results', headers=self.headers).status_code, 409)
+        self.assertEqual(self.store.get(second)['status'], 'queued')
+        self.run_pipeline(second)
+        self.assertEqual(self.store.get(second)['status'], 'completed')
 
     def test_paginated_frames_filtering_empty_results_and_job_list(self):
         identity = self.submit()

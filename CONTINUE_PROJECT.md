@@ -1,5 +1,17 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest own-video and runtime work — November 16, 2026
+
+Dashboard reopened and local session connected; own-video upload is available.
+Worker now enforces cooperative elapsed-time/free-disk budgets at progress and
+post-processing checkpoints (six hours/512 MiB defaults). Launcher and worker CLI
+accept `--max-job-seconds` and `--min-free-bytes`. Budget failures withhold partial
+results and do not prevent the next queued job. Not a hard watchdog or output/
+memory quota. See `docs/step-11-local-reliability.md` for own-video instructions.
+Model accuracy, reviewed training data, independent physical validation, confirmed
+tackles and native packaging remain unresolved; no retraining or new clip occurred.
+All 214 Python tests passed, including runtime budget and queue recovery tests.
+
 ## Latest training-data audit and overview — November 13, 2026
 
 User requested continuing model work plus a full illustrated explanation. Read

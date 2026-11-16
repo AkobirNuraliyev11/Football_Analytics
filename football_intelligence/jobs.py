@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 from datetime import datetime, timezone
 import json
+import math
 from pathlib import Path
 import sqlite3
 import shutil
@@ -20,6 +21,29 @@ class QueueFull(ValueError):
 
 class JobCancelled(Exception):
     pass
+
+
+class JobBudgetExceeded(RuntimeError):
+    pass
+
+
+class RuntimeBudget:
+    """Cooperative limits: checked between frames/stages, not a hard watchdog."""
+    def __init__(self, root, *, max_seconds=21600, min_free_bytes=512 * 1024 * 1024):
+        if not math.isfinite(max_seconds) or max_seconds <= 0:
+            raise ValueError('Job time budget must be finite and positive')
+        if min_free_bytes < 0:
+            raise ValueError('Minimum free bytes must be nonnegative')
+        self.root = root
+        self.max_seconds = max_seconds
+        self.min_free_bytes = min_free_bytes
+        self.started = time.monotonic()
+
+    def check(self):
+        if time.monotonic() - self.started >= self.max_seconds:
+            raise JobBudgetExceeded('Analysis time budget exceeded; retry with a shorter frame limit')
+        if shutil.disk_usage(self.root).free < self.min_free_bytes:
+            raise JobBudgetExceeded('Analysis stopped because free disk space is below the worker reserve')
 
 
 def now():
@@ -190,31 +214,40 @@ class JobStore:
                 fcntl.flock(lock, fcntl.LOCK_UN)
 
 
-def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'):
+def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu',
+            max_job_seconds=21600, min_free_bytes=512 * 1024 * 1024):
     """Caller must own worker_lock. Returns False when queue is empty."""
     from .analysis import analyze_video
     from .highlights import write_plan, extract_highlights
     from .tactical_io import build_tactics
     from .config import AppConfig
     from .result_queries import build_index
+    budget = RuntimeBudget(store.root, max_seconds=max_job_seconds, min_free_bytes=min_free_bytes)
     job = store.claim()
     if job is None:
         return False
     identity = job['id']
     directory = store.directory(identity)
     output = directory / 'analysis'
-    try:
+    def check():
         store.check_cancel(identity)
+        budget.check()
+    def progress(count, timestamp):
+        check()
+        store.progress(identity, count, timestamp)
+    try:
+        check()
         source = directory / 'source.video'
         if sha256(source) != job['source_sha256']:
             raise ValueError('Uploaded source changed before analysis')
+        check()
         manifest = (pipeline or analyze_video)(source, output, match_id=identity,
             model_dir=model_dir, device=device, max_frames=job['max_frames'], write_preview=bool(job['render_media']),
-            progress_callback=lambda count, timestamp: store.progress(identity, count, timestamp))
+            progress_callback=progress)
+        check()
         if manifest['status'] != 'completed':
             raise ValueError('Analysis did not complete')
         plan = write_plan(output, output / 'highlight-plan.json')
-        check = lambda: store.check_cancel(identity)
         check()
         config = AppConfig.from_dict({'pitch': manifest['pitch'], 'analytics': manifest['analytics']})
         tactical = build_tactics(output / 'tracks.jsonl', output / 'tactics', config=config,
@@ -235,6 +268,7 @@ def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'
         artifacts = {name: {'bytes': (output / name).stat().st_size,
                             'sha256': sha256(output / name)} for name in names}
         occupancy = json.loads((output / 'tactics/occupancy.json').read_text())
+        check()
         store.finish(identity, result={'artifacts': artifacts,
             'metric_measurements_available': manifest['metric_measurements_available'],
             'detection_quality': manifest.get('detection_quality'),
@@ -251,11 +285,13 @@ def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'
     return True
 
 
-def worker(root, *, once=False, model_dir=Path('data/models'), device='cpu'):
+def worker(root, *, once=False, model_dir=Path('data/models'), device='cpu',
+           max_job_seconds=21600, min_free_bytes=512 * 1024 * 1024):
     store = JobStore(root)
     with store.worker_lock():
         while True:
-            worked = run_one(store, model_dir=model_dir, device=device)
+            worked = run_one(store, model_dir=model_dir, device=device,
+                             max_job_seconds=max_job_seconds, min_free_bytes=min_free_bytes)
             if once:
                 return
             if not worked:
