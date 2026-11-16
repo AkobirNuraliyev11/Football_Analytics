@@ -1,5 +1,17 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Latest upload diagnosis — November 16, 2026
+
+User reported missing heatmaps/radar/events and weak tracking on their upload.
+Completed analysis exists locally; read `data/upload-review/FINDINGS.md` and
+`diagnosis.json`. A bounded 150-frame experimental review finished without new
+inference or video: no frame passed geometry, so wiring this review into uploads
+alone would not fix this segment. Keep strict gates. Reusable diagnostic script
+and shot/gap/count regression test added; see `docs/analysis-diagnosis.md`.
+Next: annotated visible objects and independent pitch landmarks for comparisons,
+not blind threshold changes. No detector improvement claimed. Private upload and
+derived review files stay under gitignored data/. Preserve the interview example.
+
 ## Latest own-video and runtime work — November 16, 2026
 
 Dashboard reopened and local session connected; own-video upload is available.
