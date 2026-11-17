@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Pitch input comparison — November 17, 2026
+
+User reiterated tracking, heatmaps, radar and events remain open. Paired pitch-only
+inference tested native vs square-stretched inputs on five uploaded-video frames.
+Neither passed paint checks. Six approximate assistant-reviewed line intersections
+also did not justify switching preprocessing; confidence coverage regressed.
+All private evidence is in `data/upload-review/`, especially FINDINGS.md and
+pitch-input-comparison.json. New image-landmark scorer retains missing predictions,
+review uncertainty and input hashes; see `docs/pitch-landmark-comparison.md`.
+No production model change, retraining, physical validation or new video.
+Do not rerun this stretch trial as an untested next idea. Next work is actual
+object annotations and more reliable pitch landmarks, not lowering gates or
+presenting diagnostic tooling as an accuracy improvement.
+
 ## Latest upload diagnosis — November 16, 2026
 
 User reported missing heatmaps/radar/events and weak tracking on their upload.
