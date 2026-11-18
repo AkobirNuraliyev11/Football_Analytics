@@ -1,5 +1,18 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Specialist ball checkpoint — November 18, 2026
+
+Downloaded separate Roboflow ball checkpoint into data/models/experimental and
+pinned its hash in benchmarks/ball_detector.py. Bounded paired raw inference and
+center scorer added; docs/specialist-ball-trial.md explains reproduction. Nine
+upload frames tested, five approximately visible-ball-labeled, four uncertain.
+Tiled model recovers candidates but introduces errors; no default replacement.
+At .15 threshold raw matches 4/5 vs baseline 3/5; at .4 both 3/5 and specialist adds
+an off-reference candidate. Private details in data/upload-review/FINDINGS.md.
+No new clip, retraining or production integration. Next sequence-level ball trials
+around recoveries/false detections plus separate-recording controls; keep player
+tracking, geometry, maps and events open. Preserve preexisting interview example.
+
 ## Pitch input comparison — November 17, 2026
 
 User reiterated tracking, heatmaps, radar and events remain open. Paired pitch-only
