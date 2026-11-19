@@ -1,5 +1,18 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Deadline and tracker fix — November 19, 2026
+
+User set November 23 deadline and clarified the required deliverable is a RESEARCH
+PRESENTATION WITH MEASURED RESULTS AND LIMITATIONS. Read
+`docs/november-23-research-delivery.md`: deck/rehearsal still pending, phone-vs-pro
+accuracy loss not measured. Do not promise a production app or validated metrics.
+Tracker predict_box now restores observed extents if corner extrapolation inverts
+a box; fallback associations are unsafe and break continuity. Paired retained-box
+replay: 486 invalid person predictions -> 0; 68 new IDs -> 67 (NOT identity accuracy).
+224 tests pass. docs/tracker-motion-box-fix.md; private replay under upload-review.
+Keep player tracking, geometry, radar/heatmaps/events priority. Ball trials paused.
+No new video generated or existing job results rewritten. Native packaging last.
+
 ## Priority and classification fix — November 19, 2026
 
 User explicitly prioritized player tracking, pitch geometry, heatmaps/radar and

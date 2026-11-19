@@ -39,6 +39,23 @@ def box_array(box):
     return np.array([box.x_min, box.y_min, box.x_max, box.y_max], dtype=float)
 
 
+def predict_box(track, timestamp_s):
+    """Prevent corner-velocity extrapolation from inverting a lost track box."""
+    import numpy as np
+    observed = box_array(track.detection.bbox)
+    predicted = observed + track.velocity * (timestamp_s-track.last_seen_s)
+    invalid = not np.isfinite(predicted).all() or bool((predicted[2:] <= predicted[:2]).any())
+    if invalid:
+        # Retain predicted translation but restore the last observed extent.
+        # This is association-only; no predicted observation is emitted.
+        center = (predicted[:2]+predicted[2:])/2
+        if not np.isfinite(center).all():
+            center = (observed[:2]+observed[2:])/2
+        half = (observed[2:]-observed[:2])/2
+        predicted = np.r_[center-half, center+half]
+    return predicted, invalid
+
+
 def iou(a, b):
     import numpy as np
     size = np.maximum(0, np.minimum(a[2:], b[2:]) - np.maximum(a[:2], b[:2]))
@@ -76,10 +93,13 @@ class MultiObjectTracker:
         descriptors = [appearance(rgb,d.bbox) for d in detections]
         kits = [torso_feature(rgb,asdict(d.bbox)) if d.kind=="person" else None for d in detections]
         old = list(self.tracks.values())
+        prediction_resets = set()
         costs = np.full((len(old),len(detections)), 1e6)
         for i, track in enumerate(old):
             dt = timestamp_s-track.last_seen_s
-            predicted = box_array(track.detection.bbox) + track.velocity * dt
+            predicted, reset = predict_box(track, timestamp_s)
+            if reset:
+                prediction_resets.add(i)
             for j, detection in enumerate(detections):
                 if detection.kind != track.detection.kind:
                     continue
@@ -124,7 +144,8 @@ class MultiObjectTracker:
                 dt = timestamp_s-track.last_seen_s
                 alternatives=np.concatenate([np.delete(costs[i],j),np.delete(costs[:,j],i)])
                 margin=float(alternatives.min()-costs[i,j]) if len(alternatives) else float("inf")
-                reason=("reacquired_after_gap" if dt>.12 else "ambiguous_assignment" if margin<.08
+                reason=("invalid_motion_prediction" if i in prediction_resets else
+                        "reacquired_after_gap" if dt>.12 else "ambiguous_assignment" if margin<.08
                         else "weak_assignment" if costs[i,j]>.6 else "matched")
                 track.continuity_safe=reason=="matched"
                 track.association_reason=reason

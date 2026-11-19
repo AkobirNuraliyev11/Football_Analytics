@@ -38,6 +38,30 @@ class TrackingTests(unittest.TestCase):
         first = self.update([self.detection()],.04)[0][0].track_id
         self.assertEqual(self.update([self.detection(confidence=.2)],.08)[0][0].track_id,first)
 
+    def test_collapsed_prediction_restores_extent_without_certifying_identity(self):
+        import numpy as np
+        from football_intelligence.tracking import predict_box
+        track=self.update([self.detection()],0)[0][0]
+        track.velocity=np.array([400.,0.,-400.,0.])
+        predicted,reset=predict_box(track,.04)
+        self.assertTrue(reset)
+        np.testing.assert_allclose(predicted,[10,20,30,70])
+        recovered=self.update([self.detection()],.04)[0][0]
+        self.assertEqual(recovered.track_id,track.track_id)
+        self.assertFalse(recovered.continuity_safe)
+        self.assertEqual(recovered.association_reason,'invalid_motion_prediction')
+        self.assertEqual(recovered.continuity_segment,1)
+
+    def test_valid_prediction_is_unchanged_and_lost_track_is_not_emitted(self):
+        import numpy as np
+        from football_intelligence.tracking import predict_box
+        track=self.update([self.detection()],0)[0][0]
+        track.velocity=np.array([20.,5.,20.,5.])
+        predicted,reset=predict_box(track,.1)
+        self.assertFalse(reset)
+        np.testing.assert_allclose(predicted,[12,20.5,32,70.5])
+        self.assertEqual(self.update([],.1),[])
+
     def test_weak_box_cannot_steal_id_from_strong_observation(self):
         original = self.update([self.detection()],0)[0][0].track_id
         result = self.update([self.detection(10,confidence=.2), self.detection(12,confidence=.9)],.04)
