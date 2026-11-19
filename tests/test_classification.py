@@ -13,7 +13,7 @@ class ClassificationTests(unittest.TestCase):
         self.time=-.04
         self.colors=[(210,30,30)]*4+[(210,210,210)]*4
 
-    def frame(self,colors=None,roles=None,shot=0,step=.04,points=None):
+    def frame(self,colors=None,roles=None,shot=0,step=.04,points=None,segments=None):
         colors=colors or self.colors
         rgb=self.np.zeros((100,40*len(colors),3),dtype=self.np.uint8)
         records=[]
@@ -23,6 +23,8 @@ class ClassificationTests(unittest.TestCase):
                 "bbox":{"x_min":i*40,"y_min":0,"x_max":(i+1)*40,"y_max":100},
                 "role_candidate":roles[i] if roles else "outfield",
                 "pitch_position_candidate":points[i] if points else None})
+            if segments is not None:
+                records[-1]['continuity_segment']=segments[i]
         self.time+=step
         return self.classifier.update(rgb,records,timestamp_s=self.time,shot_id=shot)
 
@@ -36,6 +38,26 @@ class ClassificationTests(unittest.TestCase):
         self.assertNotEqual(result[0]["team"],result[4]["team"])
         self.assertNotIn("unknown",{x["team"] for x in result})
         self.assertEqual(self.classifier.summary()["bootstrap_track_support"],[4,4])
+
+    def test_identity_break_discards_prior_team_and_role_votes(self):
+        for _ in range(10):old=self.frame(segments=[0]*8)
+        centers=self.classifier.summary()['team_centers']
+        current=self.frame(segments=[1]+[0]*7)
+        self.assertEqual(current[0]['team'],'unknown')
+        self.assertEqual(current[0]['role'],'unknown')
+        self.assertEqual(current[0]['classification_reason'],'identity_continuity_reset')
+        self.assertEqual([r['team'] for r in current[1:]],[r['team'] for r in old[1:]])
+        self.assertEqual(self.classifier.summary()['team_centers'],centers)
+        for _ in range(6):current=self.frame(segments=[1]+[0]*7)
+        self.assertEqual(current[0]['team'],old[0]['team'])
+        self.assertEqual(current[0]['role'],'outfield')
+
+    def test_identity_break_removes_unfinished_bootstrap_votes(self):
+        self.classifier=TeamRoleClassifier(ClassificationConfig(min_bootstrap_tracks=10))
+        for _ in range(6):self.frame(segments=[0]*8)
+        self.assertIn(1,self.classifier.bootstrap)
+        self.frame(segments=[1]+[0]*7)
+        self.assertNotIn(1,self.classifier.bootstrap)
 
     def test_uniform_shadow_preserves_assignment(self):
         original=self.warmup()

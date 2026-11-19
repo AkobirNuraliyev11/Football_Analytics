@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Priority and classification fix — November 19, 2026
+
+User explicitly prioritized player tracking, pitch geometry, heatmaps/radar and
+events BEFORE further ball-recovery sequence trials. Ball work is paused.
+Classifier now resets per-track team/role votes and bootstrap contribution on
+continuity_segment change; numeric IDs previously carried old votes across unsafe
+associations. Learned prototypes/unrelated tracks remain. Tests cover recovery and
+abstention. docs/classification-continuity-reset.md explains behavior. Private
+paired replay in data/upload-review/classification-continuity.json; no detector
+rerun, existing analysis rewrite or video. This is stale-evidence correction, not
+measured tracking accuracy. Geometry seed-search trial rejected (0/5 usable fits),
+see local FINDINGS.md. Do not repeat that trial or promote diagnostic scores as
+accuracy. Maps and events still blocked by geometry; all remain open.
+
 ## Specialist ball checkpoint — November 18, 2026
 
 Downloaded separate Roboflow ball checkpoint into data/models/experimental and

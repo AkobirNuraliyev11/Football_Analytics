@@ -50,6 +50,7 @@ def torso_feature(rgb, bbox):
 @dataclass
 class TrackClassification:
     last_seen: float
+    continuity_segment: int | None = None
     role_scores: dict = field(default_factory=dict)
     samples: int = 0
     role_last_evidence: float | None = None
@@ -164,11 +165,26 @@ class TeamRoleClassifier:
         self.states={k:s for k,s in self.states.items() if timestamp_s-s.last_seen<=self.config.stale_after_s}
         self.bootstrap={k:v for k,v in self.bootstrap.items() if k in self.states}
         features={}
+        reset_ids=set()
         for record in records:
             if record["kind"]!="person":
                 continue
             key=record["track_id"]
             state=self.states.setdefault(key,TrackClassification(timestamp_s))
+            segment=record.get("continuity_segment")
+            if segment is not None:
+                integer("continuity_segment",segment,minimum=0)
+            if (segment is not None and state.continuity_segment is not None
+                and segment!=state.continuity_segment):
+                # The numeric ID may survive an ambiguous match or occlusion.
+                # Its previous occupant's team/role votes must not survive an
+                # explicit identity-continuity break.
+                state=TrackClassification(timestamp_s)
+                self.states[key]=state
+                self.bootstrap.pop(key,None)
+                reset_ids.add(key)
+            if segment is not None:
+                state.continuity_segment=segment
             state.last_seen=timestamp_s
             candidate=record.get("role_candidate","unknown")
             for role in state.role_scores:
@@ -223,6 +239,8 @@ class TeamRoleClassifier:
                     state.team="unknown"
                     state.team_confidence=0.0
                 enriched.update(role=role,role_confidence=role_score,classification_reason=reason)
+                if record["track_id"] in reset_ids:
+                    enriched["classification_reason"]="identity_continuity_reset"
                 if eligible:
                     enriched.update(team=state.team,team_confidence=state.team_confidence*math.exp(-age)
                                     if math.isfinite(age) else 0.)
