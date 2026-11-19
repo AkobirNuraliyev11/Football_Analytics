@@ -1,5 +1,17 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## 86% acceptance work — November 19, 2026
+
+User accepted separate 86% targets for detection precision/recall, team labels and
+IDF1. These are NOT achieved. New benchmarks/player_metrics.py and score_players.py
+score exhaustive box/identity annotations, counting misses/unknowns. Four targeted
+tests cover ID swaps despite perfect boxes, missed predictions, unknown teams and
+invalid annotations. Read docs/accuracy-targets.md. Independent complete labels and
+held-out evaluation remain required. Inspection confirms main referee often labeled
+outfield Team B; simple color veto was not promoted because kit features overlap.
+Do not turn diagnostic counts into accuracy or announce target completion. Keep
+tracking/geometry/maps/events priority; ball experiments remain paused.
+
 ## Deadline and tracker fix — November 19, 2026
 
 User set November 23 deadline and clarified the required deliverable is a RESEARCH
