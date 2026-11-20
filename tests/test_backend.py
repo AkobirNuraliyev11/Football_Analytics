@@ -227,6 +227,45 @@ class BackendTests(unittest.TestCase):
         self.assertEqual(self.client.get(f'/jobs/{identity}/artifacts/manifest.json', headers=self.headers).status_code, 409)
         self.assertEqual(self.client.get(f'/jobs/{identity}/results', headers=self.headers).status_code, 409)
 
+    def test_unvalidated_upload_exports_review_without_enabling_physical_metrics(self):
+        identity=self.submit()
+        self.run_pipeline(identity)
+        result=self.client.get(f'/jobs/{identity}/results',headers=self.headers).json()
+        self.assertFalse(result['metric_measurements_available'])
+        self.assertEqual(result['events_status'],'unavailable')
+        response=self.client.get(f'/jobs/{identity}/artifacts/measurement-review/manifest.json',headers=self.headers)
+        self.assertEqual(response.status_code,200)
+        self.assertFalse(response.json()['ground_contact_verified'])
+        maps=self.client.get(f'/jobs/{identity}/artifacts/tactics/manifest.json',headers=self.headers).json()
+        self.assertEqual(maps['quality'],'experimental_position_only')
+        self.assertTrue(maps['position_only'])
+
+    def test_review_stage_honors_cancellation(self):
+        identity=self.submit()
+        def cancelled_review(*args,**kwargs):
+            self.store.cancel(identity)
+            kwargs['cancel_check']()
+            self.fail('Cancellation must stop the review')
+        with patch('football_intelligence.real_measurements.estimate_video',side_effect=cancelled_review):
+            self.run_pipeline(identity)
+        self.assertEqual(self.store.get(identity)['status'],'cancelled')
+        self.assertIsNone(self.store.get(identity)['result'])
+
+    def test_saved_review_preserves_original_and_never_runs_detector(self):
+        from scripts.review_saved_job import review_saved_job
+        identity=self.submit()
+        self.run_pipeline(identity)
+        original=self.store.get(identity)
+        with patch('football_intelligence.analysis.analyze_video',side_effect=AssertionError('No inference')):
+            reviewed=review_saved_job(self.store.root,identity,self.root/'review-copy')
+        self.assertEqual(reviewed['status'],'completed')
+        self.assertEqual(reviewed['parent_id'],identity)
+        self.assertFalse(reviewed['render_media'])
+        self.assertEqual(self.store.get(identity),original)
+        self.assertNotIn('preview.mp4',reviewed['result']['artifacts'])
+        with self.assertRaisesRegex(ValueError,'separate review'):
+            review_saved_job(self.store.root,identity,self.store.root)
+
     def test_changed_source_fails_before_inference(self):
         identity = self.submit()
         (self.store.directory(identity) / 'source.video').write_bytes(b'changed')

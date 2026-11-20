@@ -24,19 +24,26 @@ def gaussian_density(grid, sigma_cells):
 class TacticalEngine:
     """Never interpolates missing points or joins different identity fragments.
 
-    Only mature telemetry samples enter radar. Occupancy weights the endpoints
+    By default only mature telemetry samples enter radar. Reviewed position-only
+    mode requires mature identities and current spatial evidence, independently
+    of velocity-window maturity. Occupancy weights the endpoints
     of each eligible consecutive interval equally (trapezoidal integration).
     """
     def __init__(self, config=None, *, experimental=False, cell_m=1.0, sigma_m=2.0,
-                 separate_identity_maturity=False):
+                 separate_identity_maturity=False, position_only=False):
         import numpy as np
         self.config = config or AppConfig()
+        if position_only and not experimental:
+            raise ValueError('Position-only maps require experimental reviewed inputs')
+        self.position_only = position_only
+        separate_identity_maturity = separate_identity_maturity or position_only
         finite("cell_m", cell_m, minimum=.5)
         finite("sigma_m", sigma_m, minimum=.1)
         self.cell_m, self.sigma_m = cell_m, sigma_m
         self.telemetry = TelemetryEngine(self.config, experimental=experimental,
                                         separate_identity_maturity=separate_identity_maturity)
-        self.grade = "experimental_estimate" if experimental else "input_validated"
+        self.grade = ("experimental_position_only" if position_only else
+                      "experimental_estimate" if experimental else "input_validated")
         self.shape = (math.ceil(self.config.pitch.width_m/cell_m),
                       math.ceil(self.config.pitch.length_m/cell_m))
         if self.shape[0] * self.shape[1] > 100000:
@@ -78,8 +85,16 @@ class TacticalEngine:
             if item.get("kind") != "person":
                 continue
             self.person_samples += 1
-            self.statuses[measured["status"]] += 1
-            if measured["status"] != "measured":
+            eligible = measured["status"] == "measured"
+            if self.position_only and measured['status'] == 'warming_up':
+                history = self.telemetry.identity_history.get((frame['match_id'],frame['shot_id'],item['track_id']))
+                # Current geometry/foot/camera checks already passed. Position
+                # display does not require the velocity smoothing window, but
+                # still requires a mature, continuously observed identity.
+                eligible = bool(history and t-history[1]+1e-9 >= self.config.analytics.min_track_duration_s
+                    and set(measured['reasons']) <= {'first_eligible_sample','short_track'})
+            self.statuses['position_only' if eligible and measured['status']!='measured' else measured['status']] += 1
+            if not eligible:
                 self.breaks.update(measured["reasons"])
                 continue
             dot = {k: item[k] for k in ("track_id", "continuity_segment", "role",
@@ -121,6 +136,7 @@ class TacticalEngine:
                 "occupancy_seconds": grid.tolist(), "smoothed_seconds": smooth.tolist(),
                 "probability_mass": probability.tolist()})
         return {"schema_version": 1, "quality": self.grade,
+            "position_only": self.position_only,
             "status": "available" if any(g["observed_person_seconds"] > 0 for g in groups) else "unavailable",
             "pitch": self.config.to_dict()["pitch"], "cell_m": self.cell_m, "sigma_m": self.sigma_m,
             "grid_shape": list(self.shape), "groups": groups,
@@ -129,5 +145,5 @@ class TacticalEngine:
                 "input_span_s": self.last_time-self.first_time if self.first_time is not None else 0,
                 "statuses": dict(self.statuses), "reasons": dict(self.breaks)},
             "telemetry": telemetry,
-            "scope": "Observed occupancy only; not pitch control, full-match totals, or verified athletes",
-            "time_weighting": "Half interval duration at each eligible endpoint; no gaps, tails, or warmup"}
+            "scope": "Observed occupancy only; not pitch control, full-match totals, or verified athletes. Position-only maps do not establish speed or event accuracy.",
+            "time_weighting": "Half interval duration at each eligible endpoint; no gaps, tails, or identity warmup"}

@@ -15,9 +15,10 @@ from .validation import integer
 from .video import iter_frames, probe_video
 
 
-def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True):
+def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None):
     import cv2
     source,analysis,output=Path(source),Path(analysis),Path(output)
+    if cancel_check is not None: cancel_check()
     if max_frames is not None: integer("max_frames",max_frames,minimum=1)
     manifest=json.loads((analysis/"manifest.json").read_text())
     source_before=source.stat()
@@ -30,7 +31,7 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
         review=json.loads((tracks.parent/"review.json").read_text())
         if review["source_sha256"]!=source_hash or review["frames"]!=manifest["processed_frames"]:
             raise ValueError("Replacement tracks do not match the analysis source/length")
-    config=AppConfig(pitch=PitchConfig(**manifest["pitch"]))
+    config=AppConfig.from_dict({'pitch':manifest['pitch'],'analytics':manifest.get('analytics',{})})
     engine=TelemetryEngine(config,experimental=True)
     calibrations={c["frame_index"]:c for c in map(json.loads,(analysis/"calibrations.jsonl").read_text().splitlines())}
     meta=probe_video(source)
@@ -48,6 +49,7 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
              (closing(PreviewWriter(output/"preview.partial.mp4",meta.width,meta.height,
                                    Fraction(meta.average_rate or "25"))) if write_preview else nullcontext()) as writer:
             for line,frame in zip(cached,frames):
+                if cancel_check is not None: cancel_check()
                 old=json.loads(line)
                 if old["frame_index"]!=frame.frame_index or abs(old["timestamp_s"]-frame.timestamp_s)>1e-6:
                     raise ValueError("Video and saved detections are not synchronized")
@@ -119,6 +121,7 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
                 job["processed_frames"]+=1
                 if max_frames and job["processed_frames"]>=max_frames: break
         expected=min(manifest["processed_frames"],max_frames or manifest["processed_frames"])
+        if cancel_check is not None: cancel_check()
         if job["processed_frames"]!=expected: raise ValueError("Incomplete source or track records")
         for path,before in [(source,source_before),(tracks,tracks_before)]:
             after=path.stat()

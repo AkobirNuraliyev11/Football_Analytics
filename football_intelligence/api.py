@@ -275,6 +275,8 @@ def create_app(root, *, token, max_upload_bytes=2 * 1024**3, allowed_origins=(),
     def artifact(identity: str, name: str, request: Request):
         job = complete(identity)
         allowed = (name in ARTIFACTS or name == 'preview.mp4' or
+                   name in ('measurement-review/manifest.json','measurement-review/quality.jsonl',
+                            'measurement-review/summary.json','measurement-review/estimates.jsonl') or
                    name in ('tactics/manifest.json', 'tactics/occupancy.json', 'tactics/radar.jsonl',
                             'tactics/radar.png', 'tactics/preview.mp4', 'tactics/heatmap-unavailable.png', 'highlights/playlist.json') or
                    re.fullmatch(r'tactics/heatmap-[0-9a-f]{20}\.png', name) or

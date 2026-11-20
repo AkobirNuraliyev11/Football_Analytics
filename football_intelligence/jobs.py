@@ -222,6 +222,7 @@ def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'
     from .tactical_io import build_tactics
     from .config import AppConfig
     from .result_queries import build_index
+    from .real_measurements import estimate_video
     budget = RuntimeBudget(store.root, max_seconds=max_job_seconds, min_free_bytes=min_free_bytes)
     job = store.claim()
     if job is None:
@@ -250,7 +251,12 @@ def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'
         plan = write_plan(output, output / 'highlight-plan.json')
         check()
         config = AppConfig.from_dict({'pitch': manifest['pitch'], 'analytics': manifest['analytics']})
+        review = None
+        if not manifest['metric_measurements_available']:
+            review = output / 'measurement-review'
+            estimate_video(source, output, review, write_preview=False, cancel_check=check)
         tactical = build_tactics(output / 'tracks.jsonl', output / 'tactics', config=config,
+            review=review, position_only=review is not None,
             write_preview=bool(job['render_media']), cancel_check=check)
         check()
         clips = None
@@ -260,6 +266,8 @@ def run_one(store, *, pipeline=None, model_dir=Path('data/models'), device='cpu'
         build_index(output, check=check)
         check()
         names = list(ARTIFACTS)
+        if review is not None:
+            names += ['measurement-review/'+n for n in ('manifest.json','quality.jsonl','summary.json','estimates.jsonl')]
         if job['render_media']:
             names.append('preview.mp4')
         names += ['tactics/manifest.json'] + ['tactics/' + n for n in tactical['artifacts']]

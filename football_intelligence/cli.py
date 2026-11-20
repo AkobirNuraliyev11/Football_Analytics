@@ -85,6 +85,8 @@ def main(argv: list[str] | None = None) -> int:
     tactics.add_argument("--preview-seconds",type=float,default=12.)
     tactics.add_argument("--separate-identity-maturity",action="store_true",
                         help="Experimental: mature identity separately from each measurement window (requires --review)")
+    tactics.add_argument('--position-only',action='store_true',
+                        help='Experimental reviewed positions without requiring a velocity window; does not enable physical metrics')
     serve = commands.add_parser('serve', help='Start authenticated local API (install backend extras)')
     serve.add_argument('--data-dir', type=Path, default=Path('data/backend'))
     serve.add_argument('--port', type=int, default=8000)
@@ -128,7 +130,7 @@ def main(argv: list[str] | None = None) -> int:
                 config=AppConfig.load(args.config) if args.config else None,video=args.video,
                 cell_m=args.cell_m,sigma_m=args.sigma_m,rotate=args.rotate,
                 preview_start_s=args.preview_start_s,preview_seconds=args.preview_seconds,
-                separate_identity_maturity=args.separate_identity_maturity)
+                separate_identity_maturity=args.separate_identity_maturity,position_only=args.position_only)
         elif args.command == "download-pose-model":
             from .feet import download_pose_model
             result=download_pose_model(args.model_dir)

@@ -44,6 +44,14 @@ class MeasurementQualityTests(unittest.TestCase):
         rgb[:]=[60,115,45]
         with self.assertRaises(CalibrationError):refine_midfield(rgb,matrix,[])
 
+    def test_pale_turf_is_not_used_as_paint(self):
+        from football_intelligence.pitch_paint import paint_mask
+        rgb,matrix=self.field()
+        rgb[:]=[130,150,120]  # Passed the old color-only white threshold.
+        self.assertFalse(paint_mask(rgb).any())
+        with self.assertRaisesRegex(CalibrationError,'Insufficient visible paint'):
+            refine_midfield(rgb,matrix,[])
+
     def test_camera_translation_does_not_become_player_motion(self):
         rgb,matrix=self.field()
         first=refine_midfield(rgb,matrix,[])

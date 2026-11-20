@@ -26,6 +26,30 @@ def frame(i, t, *, x=40, team="A", role="outfield", shot=0, reference="test-pitc
 
 @unittest.skipIf(np is None,"Tactical rendering dependencies not installed")
 class TacticalTests(unittest.TestCase):
+    def test_position_only_keeps_identity_and_geometry_gates_without_speed_window(self):
+        from football_intelligence.tactical import TacticalEngine
+        config=AppConfig(analytics=AnalyticsConfig(min_track_duration_s=.2,smoothing_window_s=.5))
+        e=TacticalEngine(config,experimental=True,position_only=True)
+        def checked(i, available=True):
+            f=frame(i,i*.1)
+            f['detections'][0]['measurement_evidence']={'status':'line_checked_estimate',
+                'ground_evidence':'visible_feet_candidate','camera_stable':True}
+            if not available:f['detections'][0]['pitch_position_candidate']=None
+            return f
+        self.assertFalse(e.update(checked(0,False))['positions'])
+        self.assertFalse(e.update(checked(1,False))['positions'])
+        self.assertEqual(len(e.update(checked(2))['positions']),1)
+        self.assertEqual(len(e.update(checked(3))['positions']),1)
+        bad=checked(4);bad['detections'][0]['measurement_evidence']['camera_stable']=False
+        self.assertFalse(e.update(bad)['positions'])
+        self.assertEqual(len(e.update(checked(5))['positions']),1)
+        summary=e.finish()
+        self.assertEqual(summary['quality'],'experimental_position_only')
+        self.assertEqual(summary['telemetry']['status'],'unavailable')
+        for group in summary['groups']:
+            self.assertAlmostEqual(group['observed_person_seconds'],.1)
+        with self.assertRaises(ValueError):TacticalEngine(position_only=True)
+
     def engine(self, **kwargs):
         from football_intelligence.tactical import TacticalEngine
         config=AppConfig(analytics=AnalyticsConfig(min_track_duration_s=.1,smoothing_window_s=.1))

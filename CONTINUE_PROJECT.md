@@ -1,5 +1,33 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Saved-job review and dashboard verification — November 20, 2026
+
+All 233 Python tests pass. New scripts/review_saved_job.py creates a fingerprinted
+child review in a separate local queue without detector/tracker/classifier reruns
+or videos. Original upload is preserved. Real review workspace data/review-backend,
+job 474889eb-8b71-4697-b760-c58eb38b9352 completed: 44 positions, 0.518% coverage.
+Browser verification passed: radar at 9.56 s, Team A heatmap (0.92 person-seconds),
+and unavailable events. Radar experimental badge now also covers position-only
+quality and empty current frames. Screenshot: data/upload-review/dashboard-reviewed.jpg.
+This enables inspection of the maps through the API/dashboard. Source prediction
+errors remain; read saved_observations_review in the child manifest. No 86% claim.
+
+## Ridge paint and reviewed maps — November 19, 2026
+
+Current milestone corrects pale-turf contamination in refine_midfield using the
+existing narrow-ridge paint mask; final acceptance checks unchanged. New explicit
+experimental position-only tactical mode keeps mature identity/current spatial
+checks without requiring a speed window. Worker automatically runs data-only review
+for new unvalidated uploads, with cancellation/budget checks; strict speed/event
+pipeline unchanged. Existing completed jobs not rewritten. Read
+`docs/reviewed-position-maps.md` and private paired outputs under upload-review.
+Full same-box 375-frame comparison: old mask 0 geometry/positions; ridge mask 195
+geometry frames, 171 camera-checked; position-only maps 44/8488 samples and 1.12
+person-seconds. Sparse research result, not 86% accuracy or validated measurements.
+Known classifier errors remain; no new clip. Priority tracking/geometry/maps/events
+continues, specialist ball sequence trials paused. Research presentation deadline
+November 23; independent labels and final rehearsal/presentation still pending.
+
 ## 86% acceptance work — November 19, 2026
 
 User accepted separate 86% targets for detection precision/recall, team labels and

@@ -8,6 +8,7 @@ import math
 
 from .calibration import CalibrationError, transform
 from .config import PitchConfig
+from .pitch_paint import paint_mask
 
 
 @dataclass
@@ -24,9 +25,9 @@ def refine_midfield(rgb, seed_matrix, detections, pitch=None):
     pitch = pitch or PitchConfig()
     height, width = rgb.shape[:2]
     center = np.array([pitch.length_m/2, pitch.width_m/2])
-    colors = rgb.astype(float)
-    white = ((colors.min(2)>100) & (colors.max(2)-colors.min(2)<75)
-             & (colors[:,:,1]<1.3*colors[:,:,0]))
+    # Bright low-contrast turf can satisfy a simple white-color threshold.
+    # Require narrow bright ridges with nearby grass, as in pitch-paint checks.
+    white = paint_mask(rgb)
     for item in detections:
         b = item["bbox"]
         x1,y1,x2,y2 = [int(b[k]) for k in ("x_min","y_min","x_max","y_max")]
@@ -84,7 +85,7 @@ def refine_midfield(rgb, seed_matrix, detections, pitch=None):
     if (np.linalg.norm(new_points-old_points,axis=1).max()>3 or np.linalg.matrix_rank(refined)<3
         or not ((denominators>1e-8).all() or (denominators<-1e-8).all())):
         raise CalibrationError("Unstable paint refinement")
-    return PaintFit(refined,{"status":"line_checked_estimate","method":"midfield_paint_refinement",
+    return PaintFit(refined,{"status":"line_checked_estimate","method":"midfield_ridge_paint_refinement",
         "holdout_pixels":int((~train).sum()),"paint_p90_before_m":float(np.quantile(before,.9)),
         "paint_p90_after_m":p90,"circle_sectors":len(sectors),
         "scale_assumption":"Configured pitch dimensions and regulation 9.15 m circle",
