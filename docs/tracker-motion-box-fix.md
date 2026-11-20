@@ -26,3 +26,25 @@ new analyses use the correction after a worker restart.
 Player association accuracy, pitch geometry, radar/heatmaps and events remain open.
 The November 23 target is a research presentation with measured limitations; see
 `november-23-research-delivery.md`. Specialist ball sequence trials stay paused.
+
+
+## Recovery history follow-up (November 20, 2026)
+
+An uncertain association increments the continuity segment, but previously retained
+old appearance and blended a velocity across that boundary. The tracker now starts
+motion from zero and reseeds appearance/kit using the current detection. The next
+safe observation learns motion within the new segment. Numeric local IDs may still
+persist; this does not assert that the same athlete was recovered.
+
+Paired replay versus commit 9501f13 used all 375 frames of the same retained-box
+recording. Person starts changed 67→63, matched observations stayed 8,316 and
+ambiguous assignments stayed 49. Reacquisitions changed 51→54, weak assignments
+2→1, and invalid-motion fallbacks 3→4. Both versions preserve positive box extents.
+These mixed diagnostic results are not ground-truth identity accuracy. The change
+repairs history crossing an explicit identity boundary; independent identity labels
+remain necessary to quantify merges and switches.
+
+Separately, sprint event extraction now requires a complete velocity smoothing
+window. A synthetic startup localization jump no longer becomes a sprint under a
+short-duration configuration. Real speed remains withheld without the existing
+calibration/contact evidence. Regression suite: 235 passing tests.

@@ -152,7 +152,8 @@ class MultiObjectTracker:
                 if not track.continuity_safe:
                     track.continuity_segment+=1
                 velocity = (box_array(detection.bbox)-box_array(track.detection.bbox))/dt
-                track.velocity = .5*track.velocity+.5*velocity
+                track.velocity = (.5*track.velocity+.5*velocity if track.continuity_safe
+                                  else np.zeros(4))
                 track.detection, track.last_seen_s = detection, timestamp_s
                 track.hits += 1
                 if track.continuity_safe:
@@ -160,6 +161,11 @@ class MultiObjectTracker:
                     track.appearance /= max(float(np.linalg.norm(track.appearance)),1e-9)
                     if kits[j] is not None:
                         track.kit_feature=kits[j] if track.kit_feature is None else .9*track.kit_feature+.1*kits[j]
+                else:
+                    # An identity boundary also ends the appearance/motion history.
+                    # Do not learn a velocity between potentially different people.
+                    track.appearance = descriptors[j].copy()
+                    track.kit_feature = kits[j]
                 matched[j] = track
         for j,detection in enumerate(detections):
             if j not in matched and detection.confidence >= .4:

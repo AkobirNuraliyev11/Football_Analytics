@@ -52,6 +52,23 @@ class TrackingTests(unittest.TestCase):
         self.assertEqual(recovered.association_reason,'invalid_motion_prediction')
         self.assertEqual(recovered.continuity_segment,1)
 
+    def test_uncertain_recovery_restarts_motion_and_appearance(self):
+        import numpy as np
+        from football_intelligence.tracking import appearance
+        self.rgb[:]=(160,80,50)
+        original=self.update([self.detection()],0)[0][0]
+        self.update([self.detection(12)],.04)
+        self.update([],.08); self.update([],.12); self.update([],.16)
+        self.rgb[:]=(150,85,55)
+        recovered=self.update([self.detection(18)],.20)[0][0]
+        self.assertEqual(recovered.track_id,original.track_id)
+        self.assertEqual(recovered.association_reason,'reacquired_after_gap')
+        np.testing.assert_array_equal(recovered.velocity,np.zeros(4))
+        np.testing.assert_allclose(recovered.appearance,appearance(self.rgb,recovered.detection.bbox))
+        next_track=self.update([self.detection(19)],.24)[0][0]
+        self.assertTrue(next_track.continuity_safe)
+        np.testing.assert_allclose(next_track.velocity,[12.5,0,12.5,0])
+
     def test_valid_prediction_is_unchanged_and_lost_track_is_not_emitted(self):
         import numpy as np
         from football_intelligence.tracking import predict_box

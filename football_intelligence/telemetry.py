@@ -250,7 +250,10 @@ class TelemetryEngine:
                 alpha = (max(start, cutoff)-start)/(end-start)
                 first_radius = (1-alpha)*ra + alpha*rb
                 pixel_sensitivity = (first_radius+radius)/duration*3.6
-            if speed > cfg.sprint_threshold_kmh + 1e-9:
+            # Startup estimates use a shorter, noisier window. They cannot
+            # start or inflate a sprint later exported as an event.
+            full_window = duration+1e-9 >= cfg.smoothing_window_s
+            if full_window and speed > cfg.sprint_threshold_kmh + 1e-9:
                 if state.sprint_start is None:
                     state.sprint_start = state.last
                 state.sprint_peak = max(state.sprint_peak, speed)

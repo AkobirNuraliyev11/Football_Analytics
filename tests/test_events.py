@@ -72,6 +72,20 @@ class EventTests(unittest.TestCase):
             elif changes.get('ground_contact_reliable') is False:
                 self.assertEqual(result['status'], 'unavailable')
 
+    def test_startup_speed_spike_cannot_become_sprint_event(self):
+        from dataclasses import replace
+        from football_intelligence.config import AppConfig, AnalyticsConfig
+        cfg=AppConfig(analytics=replace(AnalyticsConfig(),min_sprint_duration_s=.1))
+        engine=EventEngine(cfg)
+        # One metre localization jump at startup, then stationary. The complete
+        # half-second window never reaches the sprint threshold.
+        for i in range(31):
+            engine.update(frame(i/10,x=0 if i==0 else 1))
+        result=engine.finish()
+        self.assertEqual(result['status'],'available')
+        self.assertEqual(result['events'],[])
+        self.assertLessEqual(result['telemetry']['fragments'][0]['top_speed_kmh'],7.2+1e-8)
+
     def test_exact_distance_and_short_encounters_do_not_qualify(self):
         for distance, length in [(1.3, 31), (1., 24)]:
             engine = EventEngine()

@@ -1,5 +1,23 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Tracking recovery and sprint startup — November 20, 2026
+
+User explicitly prioritized tracking/classification, reliable speed and events.
+Tracker identity boundaries now reset velocity and reseed appearance/kit from the
+current observation; classifier already resets its votes on continuity changes.
+Previously a cross-boundary velocity and old appearance persisted. Regression
+covers reacquisition and subsequent safe velocity learning.
+Paired 375-frame retained-detection replay versus 9501f13: person starts 67→63,
+matched 8316→8316, ambiguous 49→49, reacquired 51→54, weak 2→1, invalid-motion
+fallback 3→4. Both versions emit no inverted predicted boxes. These counts are
+not identity accuracy; fewer starts could also mask wrong merges. Independent
+labels are still required. Private report: data/upload-review/tracker-boundary-comparison.json.
+Sprint detection now excludes incomplete startup smoothing windows. A synthetic
+one-metre startup jump with a deliberately short 0.1 s minimum sprint previously
+exported a 36 km/h sprint candidate; now exports none. This does not validate real
+speed. All 235 Python tests pass. Real referee classification, ground contact,
+continuous validated geometry, and real event accuracy remain unresolved.
+
 ## Saved-job review and dashboard verification — November 20, 2026
 
 All 233 Python tests pass. New scripts/review_saved_job.py creates a fingerprinted
