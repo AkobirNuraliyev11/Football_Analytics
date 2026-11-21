@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Consecutive role review — November 21, 2026
+
+Resumed the interrupted brightness trial; it did not fix the reviewed referee.
+Rejected both brightness feature and immediate out-of-kit rejection after paired
+375-frame replay. Production classifier restored unchanged. Reviewed six crops
+across frames 180–195 (96 observations): role 73 correct, 16 wrong, 7 unknown;
+64/64 selected blue-player team labels correct, 16 false team assignments to an
+official. This is agent-reviewed selected development evidence, not independent
+accuracy. Added fingerprinted fixed-crop classification scorer and regression tests.
+Read docs/classification-sequence-review.md. Private labels and scores reside in
+data/upload-review. Longest accepted experimental measurement fragment is 0.40 s,
+below the 0.50 s speed window; ground contact also remains unverified. Do not claim
+classification, speed, events, or 86% accuracy solved. No new preview generated.
+
 ## Tracking recovery and sprint startup — November 20, 2026
 
 User explicitly prioritized tracking/classification, reliable speed and events.
