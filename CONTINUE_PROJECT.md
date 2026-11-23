@@ -1,5 +1,14 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Private results website — November 23, 2026
+
+Built web/results with scripts/export_hosted_results.py and a byte-range local
+preview server. See docs/hosted-results.md for Site identity, scope and refresh.
+The website packages existing footage, corrected tracks, sparse experimental
+radar/11 heatmaps, 97 reports and 38 documents. It does not host ML inference.
+Real speeds/events remain unavailable; no overall 86% accuracy claim.
+Publishing this viewer does not resolve measurement/model limitations.
+
 ## Current-frame camera transport and foot comparison — November 23, 2026
 
 See docs/measurement-continuity-transport.md. Added current-paint-checked camera
