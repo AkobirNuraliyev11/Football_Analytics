@@ -137,6 +137,14 @@ class FeetTests(unittest.TestCase):
             comparison=json.loads((output/"comparison.json").read_text())
             self.assertEqual(comparison["pose"]["measured_observations"],0)
             self.assertEqual(comparison["foot_status_counts"],{"pose_unavailable":3})
+            from unittest.mock import patch
+            with patch('football_intelligence.foot_review.PreviewWriter',side_effect=AssertionError('Unexpected rendering')):
+                data_only=review_feet(source,geometry,tracks,root/'data-only',pose_model=None,
+                                     detector=MissingPose(),write_preview=False)
+            self.assertFalse(data_only['write_preview'])
+            self.assertNotIn('preview.mp4',data_only['artifacts'])
+            self.assertFalse(list((root/'data-only').glob('*.mp4')))
+            self.assertEqual(json.loads((root/'data-only/comparison.json').read_text()),comparison)
             with self.assertRaisesRegex(ValueError,"No frames"):
                 review_feet(source,geometry,tracks,root/"empty",pose_model=None,detector=MissingPose(),start_s=1)
             self.assertEqual(json.loads((root/"empty/manifest.json").read_text())["status"],"failed")

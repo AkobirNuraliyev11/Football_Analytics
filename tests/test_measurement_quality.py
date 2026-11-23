@@ -64,6 +64,24 @@ class MeasurementQualityTests(unittest.TestCase):
         self.assertLess(np.linalg.norm(transform(stable.matrix,motion)-[[51,32]]),.1)
         self.assertTrue(stable.evidence["camera_stable"])
 
+    def test_current_paint_transport_survives_missing_touchline_but_not_missing_circle(self):
+        from football_intelligence.measurement_quality import transport_midfield
+        rgb,matrix=self.field();first=refine_midfield(rgb,matrix,[])
+        camera=np.array([[1.,0.,2.],[0.,1.,1.],[0.,0.,1.]])
+        current=cv2.warpPerspective(rgb,camera,(rgb.shape[1],rgb.shape[0]),borderValue=(60,115,45))
+        expected=matrix@np.linalg.inv(camera)
+        ys,xs=np.indices(current.shape[:2]);points=np.c_[xs.ravel(),ys.ravel()]
+        field_y=transform(expected,points)[:,1].reshape(ys.shape)
+        current[field_y>65]=[60,115,45]
+        with self.assertRaises(CalibrationError):refine_midfield(current,expected,[])
+        fit=transport_midfield(rgb,current,first,[],[])
+        self.assertTrue(fit.evidence['camera_stable'])
+        self.assertEqual(fit.evidence['method'],'current_paint_checked_camera_transport')
+        pixels=transform(np.linalg.inv(expected),[[51,32],[55,35]])
+        self.assertLess(np.linalg.norm(transform(fit.matrix,pixels)-[[51,32],[55,35]],axis=1).max(),.15)
+        current[:]=[60,115,45]
+        with self.assertRaises(CalibrationError):transport_midfield(rgb,current,first,[],[])
+
     def test_foot_evidence_requires_visibility_and_never_claims_ground_contact(self):
         rgb=np.full((300,300,3),[60,115,45],dtype=np.uint8)
         fit=PaintFit(np.array([[.1,0,37.5],[0,.1,14],[0,0,1]]),{})

@@ -8,14 +8,14 @@ from .analysis import PreviewWriter, annotate
 from .calibration import CalibrationError
 from .config import AppConfig, PitchConfig
 from .ingestion import write_manifest
-from .measurement_quality import refine_midfield, stabilize_camera, foot_candidate
+from .measurement_quality import refine_midfield, stabilize_camera, foot_candidate, transport_midfield
 from .model_assets import sha256
 from .telemetry import TelemetryEngine
 from .validation import integer
 from .video import iter_frames, probe_video
 
 
-def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None):
+def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None, camera_transport_fallback=True):
     import cv2
     source,analysis,output=Path(source),Path(analysis),Path(output)
     if cancel_check is not None: cancel_check()
@@ -39,7 +39,8 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
     job={"status":"running","source_sha256":source_hash,"tracks_sha256":sha256(tracks),
          "calibrations_sha256":sha256(analysis/"calibrations.jsonl"),"processed_frames":0,
          "measurement_quality":"experimental_estimate","config":config.to_dict(),
-         "ground_contact_verified":False,"max_frames":max_frames,"write_preview":write_preview}
+         "ground_contact_verified":False,"max_frames":max_frames,"write_preview":write_preview,
+         "camera_transport_fallback":camera_transport_fallback}
     write_manifest(output/"manifest.json",job)
     previous=previous_items=previous_fit=previous_shot=None
     try:
@@ -72,10 +73,15 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
                             break
                         except CalibrationError as exc:
                             failure=str(exc)
+                    transported=False
+                    if fit is None and consecutive and camera_transport_fallback:
+                        fit=transport_midfield(previous.rgb,frame.rgb,previous_fit,previous_items,items,config.pitch)
+                        fit.evidence['seed_origin']='previous_checked_frame'
+                        transported=True
                     if fit is None: raise CalibrationError(failure)
-                    if consecutive:
+                    if consecutive and not transported:
                         fit=stabilize_camera(previous.rgb,frame.rgb,previous_fit,fit,previous_items,items,config.pitch)
-                    else:
+                    elif not transported:
                         fit.evidence["camera_stable"]=False
                 except CalibrationError as exc:
                     fit=None;reason=str(exc)

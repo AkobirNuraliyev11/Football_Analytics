@@ -26,6 +26,18 @@ def frame(t, x=None, **changes):
 
 
 class TelemetryTests(unittest.TestCase):
+    def test_continuity_diagnostics_do_not_join_gaps_or_publish_short_speed(self):
+        engine=TelemetryEngine()
+        for t in (0,.1,.2):engine.update(frame(t))
+        absent=frame(.3);absent['detections']=[];engine.update(absent)
+        for t in (.4,.5):engine.update(frame(t))
+        result=engine.finish();diag=result['continuity_diagnostics']
+        self.assertEqual(result['status'],'unavailable')
+        self.assertEqual(result['measured_observations'],0)
+        self.assertAlmostEqual(diag['longest_position_fragment_s'],.2)
+        self.assertEqual(diag['short_fragment_end_reasons'],{'missing_observation':1,'end_of_input':1})
+        self.assertEqual(engine.finish(),result)
+
     def test_known_motion_variable_timing_and_calibration_ids(self):
         engine = TelemetryEngine()
         times = [0]

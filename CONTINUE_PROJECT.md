@@ -1,5 +1,24 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Current-frame camera transport and foot comparison — November 23, 2026
+
+See docs/measurement-continuity-transport.md. Added current-paint-checked camera
+transport fallback to experimental review (default on; --no-camera-transport gives
+baseline). Keeps current optical-flow/paint screens, no player interpolation or
+stale matrices. Paired 375-frame result: geometry195→214, camera-stable171→197,
+fragment position samples173→193, longest0.40s unchanged, mature speeds0.
+Quality includes 30 transport and184 refit frames; net gain19, not30.
+
+Downloaded pinned official YOLO11n-pose and ran79 frames296–374 with no preview.
+Box baseline159 samples/max0.40s; shoe5/max0.04s; ankle-proxy9/max0.04s. Both pose
+methods rejected for default use. Proxy reused cached pose data (no inference).
+New review-feet --no-preview option tested without writer construction.
+Telemetry summaries now expose continuity_diagnostics (longest accepted fragment,
+velocity/identity windows, short-fragment end reasons). Speed/events STILL unresolved;
+new review has27 displacement breaks and18 missing-position/reference breaks.
+All private results under data/upload-review/context-* and current-continuity-comparison.json.
+No new video. Original jobs preserved. Do not mistake geometry coverage for accuracy.
+
 ## Contextual official roles — November 23, 2026
 
 Deadline is today. Implemented guarded causal official-kit consensus, enabled by

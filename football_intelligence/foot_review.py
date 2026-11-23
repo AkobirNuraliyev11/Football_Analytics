@@ -1,6 +1,6 @@
 """Compare pose-guided shoes with box anchors using identical saved geometry."""
 from collections import Counter
-from contextlib import closing
+from contextlib import closing, nullcontext
 from fractions import Fraction
 import json
 from pathlib import Path
@@ -16,7 +16,7 @@ from .validation import finite,integer
 from .video import iter_frames,probe_video
 
 
-def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=None,detector=None,allow_ankle_proxy=False):
+def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=None,detector=None,allow_ankle_proxy=False,write_preview=True):
     import cv2
     import numpy as np
     source,geometry,tracks,output=map(Path,(source,geometry,tracks,output))
@@ -36,13 +36,14 @@ def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=
     job={"status":"running","source_sha256":manifest["source_sha256"],"tracks_sha256":manifest["tracks_sha256"],
          "quality_sha256":sha256(quality_path),"pose_sha256":detector.fingerprint,"processed_frames":0,
          "start_s":start_s,"max_frames":max_frames,"ground_contact_verified":False,
-         "measurement_quality":"experimental_pose_estimate","allow_ankle_proxy":allow_ankle_proxy}
+         "measurement_quality":"experimental_pose_estimate","allow_ankle_proxy":allow_ankle_proxy,
+         "write_preview":write_preview}
     write_manifest(output/"manifest.json",job)
     statuses=Counter();rejections=Counter();previous_boxes={};previous_shot=None
     try:
         with quality_path.open() as qfile,tracks.open() as tfile,closing(iter_frames(source)) as frames, \
              (output/"feet.partial.jsonl").open("x") as audit, \
-             closing(PreviewWriter(output/"preview.partial.mp4",meta.width,meta.height,Fraction(meta.average_rate or "25"))) as writer:
+             (closing(PreviewWriter(output/"preview.partial.mp4",meta.width,meta.height,Fraction(meta.average_rate or "25"))) if write_preview else nullcontext()) as writer:
             for qline,tline,frame in zip(qfile,tfile,frames):
                 q,old=json.loads(qline),json.loads(tline)
                 if q["frame_index"]!=frame.frame_index or old["frame_index"]!=frame.frame_index or abs(q["timestamp_s"]-frame.timestamp_s)>1e-6 or abs(old["timestamp_s"]-frame.timestamp_s)>1e-6:
@@ -83,18 +84,19 @@ def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=
                 for item,result in zip(prepared,estimate["observations"]):item["telemetry"]=result
                 audit.write(json.dumps({"frame_index":frame.frame_index,"timestamp_s":frame.timestamp_s,
                     "baseline":base,"pose_estimates":estimate,"detections":prepared},allow_nan=False)+"\n")
-                preview=annotate(frame.rgb,prepared,None,frame.frame_index,old["shot_id"])
-                for item in prepared:
-                    foot=item["foot_localization"]
-                    for p in foot.get("ankles_px",[]):cv2.circle(preview,tuple(round(v) for v in p),3,(70,230,245),-1)
-                    if foot["status"]=="shoe_candidate":
-                        cv2.circle(preview,tuple(round(v) for v in foot["anchor_px"]),4,(255,205,70),-1)
-                cv2.rectangle(preview,(0,0),(meta.width,58),(15,23,36),-1)
-                cv2.putText(preview,"FOOT POSITION TRIAL | cyan: ankles | gold: shoe candidate | ground contact unverified",
-                            (15,24),cv2.FONT_HERSHEY_SIMPLEX,.65,(255,205,100),2)
-                cv2.putText(preview,f"Source time {frame.timestamp_s:.2f}s | experimental estimates only",
-                            (15,48),cv2.FONT_HERSHEY_SIMPLEX,.6,(240,245,250),1)
-                writer.write(preview,frame.timestamp_s-origin)
+                if writer is not None:
+                    preview=annotate(frame.rgb,prepared,None,frame.frame_index,old["shot_id"])
+                    for item in prepared:
+                        foot=item["foot_localization"]
+                        for p in foot.get("ankles_px",[]):cv2.circle(preview,tuple(round(v) for v in p),3,(70,230,245),-1)
+                        if foot["status"]=="shoe_candidate":
+                            cv2.circle(preview,tuple(round(v) for v in foot["anchor_px"]),4,(255,205,70),-1)
+                    cv2.rectangle(preview,(0,0),(meta.width,58),(15,23,36),-1)
+                    cv2.putText(preview,"FOOT POSITION TRIAL | cyan: ankles | gold: shoe candidate | ground contact unverified",
+                                (15,24),cv2.FONT_HERSHEY_SIMPLEX,.65,(255,205,100),2)
+                    cv2.putText(preview,f"Source time {frame.timestamp_s:.2f}s | experimental estimates only",
+                                (15,48),cv2.FONT_HERSHEY_SIMPLEX,.6,(240,245,250),1)
+                    writer.write(preview,frame.timestamp_s-origin)
                 previous_boxes={d["track_id"]:d["bbox"] for d in items};previous_shot=old["shot_id"]
                 job["processed_frames"]+=1;job["last_frame_index"]=frame.frame_index
                 if max_frames and job["processed_frames"]>=max_frames:break
@@ -107,9 +109,10 @@ def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=
         comparison={"baseline":baseline.finish(),"pose":experimental.finish(),"foot_status_counts":dict(statuses),
             "candidate_rejections":dict(rejections),"scope":"Same frames and geometry; foot method only changed. No confirmed airborne labels or independently validated speeds."}
         write_manifest(output/"comparison.partial.json",comparison)
-        for name in ["feet.jsonl","comparison.json","preview.mp4"]:
+        artifacts=["feet.jsonl","comparison.json"]+(["preview.mp4"] if write_preview else [])
+        for name in artifacts:
             stem,suffix=name.rsplit(".",1);(output/f"{stem}.partial.{suffix}").replace(output/name)
-        job.update(status="completed",artifacts=["feet.jsonl","comparison.json","preview.mp4"])
+        job.update(status="completed",artifacts=artifacts)
         write_manifest(output/"manifest.json",job)
         return job
     except (Exception,KeyboardInterrupt) as exc:

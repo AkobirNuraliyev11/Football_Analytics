@@ -195,3 +195,39 @@ def foot_candidate(rgb,item,others,fit,pitch=None,*,anchor_px=None):
             "pixel_localization_radius_m":square_radius,
             "pixel_localization_assumption":"Within +/-3 pixels on each axis, mapping held fixed",
             "ground_evidence":"visible_feet_candidate","ground_contact_verified":False},None
+
+
+def transport_midfield(previous_rgb, rgb, previous_fit, previous_items, current_items, pitch=None):
+    """Current optical flow plus current paint can support a missing-touchline frame.
+
+    Never reuses unobserved positions or simply holds the previous matrix. Current
+    paint is used only for checking, not for fitting this transported calibration.
+    """
+    import numpy as np
+    pitch=pitch or PitchConfig()
+    white=paint_mask(rgb)
+    height,width=rgb.shape[:2]
+    for item in current_items:
+        b=item['bbox'];x1,y1,x2,y2=[int(b[k]) for k in ('x_min','y_min','x_max','y_max')]
+        white[max(0,y1-8):min(height,y2+8),max(0,x1-8):min(width,x2+8)]=False
+    ys,xs=np.where(white);pixels=np.column_stack([xs,ys])
+    if len(pixels)<100:raise CalibrationError('Insufficient current paint for transport')
+    center=np.array([pitch.length_m/2,pitch.width_m/2])
+    xy=transform(previous_fit.matrix,pixels);radius=np.linalg.norm(xy-center,axis=1)
+    residual=np.c_[np.abs(radius-9.15),np.abs(xy[:,0]-center[0])]
+    labels=residual.argmin(axis=1)
+    keep=(residual.min(axis=1)<1.5)&(radius<11)
+    pixels,labels,xy=pixels[keep],labels[keep],xy[keep]
+    counts=np.bincount(labels,minlength=2)
+    if min(counts)<80:raise CalibrationError('Transport needs current circle and halfway paint')
+    circle=xy[labels==0]-center
+    sectors=np.unique(np.floor((np.arctan2(circle[:,1],circle[:,0])+math.pi)/(2*math.pi)*12))
+    if len(sectors)<9:raise CalibrationError('Transport circle coverage is too narrow')
+    # No paint-refinement fit uses these pixels; each marking checks transport.
+    # Optical flow can share image content, so this is not independent validation.
+    evidence=dict(status='line_checked_estimate',method='current_paint_checked_camera_transport',
+                  current_check_pixels=len(pixels),circle_sectors=len(sectors),
+                  scale_assumption='Previously checked pitch dimensions and regulation 9.15 m circle',
+                  scope='Inside center circle only; transport is not verified athlete position/contact')
+    checked=PaintFit(previous_fit.matrix,evidence,pixels,labels)
+    return stabilize_camera(previous_rgb,rgb,previous_fit,checked,previous_items,current_items,pitch)

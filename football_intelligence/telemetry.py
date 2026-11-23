@@ -45,6 +45,8 @@ class TelemetryEngine:
         self.next_fragment = 1
         self.frames = self.observations = self.measured = self.discarded = 0
         self.closed = False
+        self.longest_position_fragment_s = 0.
+        self.short_fragment_end_reasons = Counter()
 
     def _reasons(self, frame, item):
         reasons = []
@@ -131,7 +133,9 @@ class TelemetryEngine:
         if state is None:
             return
         self._end_sprint(state, reason)
+        self.longest_position_fragment_s=max(self.longest_position_fragment_s,state.last-state.start)
         if not self._mature(state):
+            self.short_fragment_end_reasons[reason]+=1
             self.discarded += 1
             return
         continuity, team, role, reference = state.identity
@@ -293,6 +297,12 @@ class TelemetryEngine:
             "person_observations": self.observations, "measured_observations": self.measured,
             "measured_observation_fraction": self.measured/self.observations if self.observations else None,
             "rejection_counts": dict(self.rejections), "discarded_short_fragments": self.discarded,
+            "continuity_diagnostics": {
+                "longest_position_fragment_s":self.longest_position_fragment_s,
+                "velocity_window_s":self.config.analytics.smoothing_window_s,
+                "minimum_identity_duration_s":self.config.analytics.min_track_duration_s,
+                "short_fragment_end_reasons":dict(self.short_fragment_end_reasons),
+                "scope":"Accepted position fragments, including warmup; not validated speed or ground contact"},
             "fragments": self.fragments,
             "scope": "Observed continuous fragments, not verified athletes or full-match totals",
             "quality": "Input quality flags are required assertions, not independently verified here",
