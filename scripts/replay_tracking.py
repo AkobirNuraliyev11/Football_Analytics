@@ -5,7 +5,7 @@ Old runs retain emitted detections only, so low-confidence discarded detections 
 be recovered. This diagnostic deliberately leaves model inference and geometry fixed.
 """
 import argparse
-from contextlib import closing
+from contextlib import closing, nullcontext
 from dataclasses import asdict
 from fractions import Fraction
 import json
@@ -23,7 +23,7 @@ from football_intelligence.tracking import MultiObjectTracker
 from football_intelligence.video import iter_frames, probe_video
 
 
-def replay(source, old_run, output, labels_path=None):
+def replay(source, old_run, output, labels_path=None, *, write_preview=True):
     old_manifest=json.loads((old_run/"manifest.json").read_text())
     if old_manifest["status"]!="completed" or sha256(source)!=old_manifest["source_sha256"]:
         raise ValueError("Replay requires completed records and the exact source video")
@@ -38,8 +38,8 @@ def replay(source, old_run, output, labels_path=None):
     scores={key:{"correct":0,"wrong":0,"unknown":0} for key in ("before","after")}
     count=0; breaks=0; switches=0; old_ids=set();new_ids=set()
     with (old_run/"tracks.jsonl").open() as old_file, (output/"tracks.jsonl").open("x") as new_file, \
-         closing(iter_frames(source)) as frames, closing(PreviewWriter(output/"preview.mp4",meta.width,meta.height,
-                                             Fraction(meta.average_rate or "25"))) as writer:
+         closing(iter_frames(source)) as frames, (closing(PreviewWriter(output/"preview.mp4",meta.width,meta.height,
+                                             Fraction(meta.average_rate or "25"))) if write_preview else nullcontext()) as writer:
         for line,frame in zip(old_file,frames):
             old=json.loads(line)
             if frame.frame_index!=old["frame_index"] or abs(frame.timestamp_s-old["timestamp_s"])>1e-6:
@@ -50,6 +50,7 @@ def replay(source, old_run, output, labels_path=None):
             records=[]
             for track,confirmed in tracker.update(detections,frame.rgb,timestamp_s=frame.timestamp_s,shot_id=old["shot_id"]):
                 record=dict(originals[id(track.detection)])
+                record.pop("telemetry",None)
                 record.update(source_track_id=record["track_id"],track_id=track.track_id,confirmed=confirmed,
                     continuity_segment=track.continuity_segment,continuity_safe=track.continuity_safe,
                     association_reason=track.association_reason)
@@ -71,11 +72,12 @@ def replay(source, old_run, output, labels_path=None):
             current=old|{"detections":records}
             new_file.write(json.dumps(current,allow_nan=False)+"\n")
             supported=SimpleNamespace(landmarks=[]) if old["calibration_status"]=="fit_unvalidated" else None
-            writer.write(annotate(frame.rgb,records,supported,frame.frame_index,old["shot_id"]),frame.timestamp_s)
+            if writer is not None:
+                writer.write(annotate(frame.rgb,records,supported,frame.frame_index,old["shot_id"]),frame.timestamp_s)
             count+=1
     if count!=old_manifest["processed_frames"] or sum(scores["before"].values())!=len(expected):
         raise ValueError("Replay did not consume all expected frames/labels")
-    report={"frames":count,"label_scores":scores,"labels_requested":len(expected),
+    report={"write_preview":write_preview,"frames":count,"label_scores":scores,"labels_requested":len(expected),
             "old_track_count":len(old_ids),"new_track_count":len(new_ids),"team_changes":switches,
             "rejected_measurement_links":breaks,"classification":classifier.summary(),
             "scope":"Replay of retained detections; geometry fixed; track counts are not identity accuracy",
@@ -88,5 +90,6 @@ if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     for key in ("source","old_run","output"):parser.add_argument(key,type=Path)
     parser.add_argument("--labels",type=Path)
+    parser.add_argument("--no-preview",action="store_true",help="Replay data only without rendering a video")
     args=parser.parse_args()
-    replay(args.source,args.old_run,args.output,args.labels)
+    replay(args.source,args.old_run,args.output,args.labels,write_preview=not args.no_preview)

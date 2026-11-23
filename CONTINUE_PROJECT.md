@@ -1,5 +1,23 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Contextual official roles — November 23, 2026
+
+Deadline is today. Implemented guarded causal official-kit consensus, enabled by
+ClassificationConfig.contextual_roles (default true; false restores baseline).
+See docs/contextual-official-roles.md. Inferred role evidence is explicit; no new
+network weights or videos. Initial unscreened trial 85/96 was superseded by guarded
+82/96 (85.42%) versus baseline 73/96 (76.04%) on the SAME 96 selected crop references.
+Not overall/held-out 86%. Only source tracks 21/26 were inferred in integrated replay;
+small distant track83 excluded. Team labels 64/64 on reviewed blue players unchanged.
+New script replay_tracking --no-preview preserves original job and strips stale
+per-observation telemetry. Integrated 375-frame tracking/classification replay saved
+under data/upload-review/context-integrated-replay. Role-score and strict events
+JSON present. Measurement recomputation under context-integrated-measurements is
+complete: 8,487 people observations, zero mature speeds, longest fragment 0.40s,
+56 short fragments. Events unavailable. Speed/contact/geometry are STILL unresolved.
+244 Python tests pass. Existing dashboard jobs remain historical, not silently
+rewritten. Do not overwrite unrelated examples/lumiere_offline_demo.py or generated_images/.
+
 ## Consecutive role review — November 21, 2026
 
 Resumed the interrupted brightness trial; it did not fix the reviewed referee.

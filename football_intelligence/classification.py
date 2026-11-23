@@ -16,8 +16,11 @@ class ClassificationConfig:
     min_color_margin: float = 0.06
     switch_duration_s: float = 0.8
     stale_after_s: float = 2.0
+    contextual_roles: bool = True
 
     def __post_init__(self):
+        if type(self.contextual_roles) is not bool:
+            raise ValueError("contextual_roles must be boolean")
         for name in ("min_bootstrap_tracks", "min_cluster_tracks", "min_samples"):
             integer(name, getattr(self,name), minimum=2)
         for name in ("min_cluster_separation", "max_color_distance", "min_color_margin",
@@ -74,6 +77,8 @@ class TeamRoleClassifier:
         self.shot_id = None
         self.previous_time = None
         self.bootstrap_support = None
+        from .contextual_roles import ContextualRoles
+        self.contextual_roles = ContextualRoles() if self.config.contextual_roles else None
 
     def _initialize(self):
         import numpy as np
@@ -208,6 +213,7 @@ class TeamRoleClassifier:
         output=[]
         for record in records:
             enriched=dict(record)
+            enriched.pop("role_evidence",None)
             enriched.update(team="unknown",role="unknown",team_confidence=0.,role_confidence=0.,
                             classification_reason="non_person",team_changed=False,classification_conflict=False)
             if record["kind"]=="person":
@@ -247,6 +253,10 @@ class TeamRoleClassifier:
                     if conflict and not enriched["team_changed"]:
                         enriched.update(team="unknown",team_confidence=0.,classification_reason="conflicting_kit_evidence")
             output.append(enriched)
+        if self.contextual_roles is not None:
+            from .contextual_roles import kit_features
+            output=self.contextual_roles.update(output,kit_features(rgb,records),
+                timestamp_s=timestamp_s,shot_id=shot_id)
         return output
 
     def summary(self):
@@ -256,4 +266,5 @@ class TeamRoleClassifier:
                 "team_color_radii":self.color_radii.tolist() if self.color_radii is not None else None,
                 "bootstrap_track_support":self.bootstrap_support,
                 "labels":"arbitrary persistent A/B; not team names or attacking direction",
+                "contextual_role_scope":"Experimental kit consensus from detector-supported officials; not verified roles",
                 "confidence":"heuristic quality scores, not calibrated probabilities"}
