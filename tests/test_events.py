@@ -92,3 +92,38 @@ class EventTests(unittest.TestCase):
             for i in range(length):
                 engine.update(pair(i/10, distance=distance))
             self.assertEqual(engine.finish()['events'], [])
+
+    def test_known_pixel_uncertainty_prevents_false_sprint(self):
+        for radius,expected in ((.3,0),(.1,1)):
+            engine=EventEngine()
+            for i in range(31):
+                engine.update(frame(i/10,x=.6*i,measurement_evidence={'pixel_localization_radius_m':radius}))
+            result=engine.finish()
+            self.assertEqual(len(result['events']),expected)
+            if expected:self.assertEqual(result['events'][0]['threshold_evidence'],'pixel_lower_bound')
+            else:self.assertGreater(result['telemetry']['sprint_threshold_decisions']['localization_ambiguous'],0)
+
+    def test_known_position_uncertainty_prevents_false_proximity(self):
+        for radius,expected in ((.2,0),(.05,1)):
+            engine=EventEngine()
+            for i in range(31):
+                row=pair(i/10)
+                for item in row['detections']:item['measurement_evidence']={'pixel_localization_radius_m':radius}
+                engine.update(row)
+            result=engine.finish()
+            self.assertEqual(len(result['events']),expected)
+            if expected:self.assertEqual(result['events'][0]['threshold_evidence'],'pixel_upper_bound')
+            else:self.assertGreater(result['pair_threshold_decisions']['localization_ambiguous'],0)
+
+    def test_uncertainty_boundary_cannot_join_two_short_encounters(self):
+        engine=EventEngine()
+        for i in range(29):
+            row=pair(i/10)
+            for item in row['detections']:item['measurement_evidence']={'pixel_localization_radius_m':.2 if i==24 else .05}
+            engine.update(row)
+        self.assertEqual(engine.finish()['events'],[])
+
+    def test_nominal_event_cannot_claim_complete_uncertainty_bounds(self):
+        engine=EventEngine()
+        for i in range(31):engine.update(pair(i/10))
+        self.assertEqual(engine.finish()['events'][0]['threshold_evidence'],'nominal_without_complete_pixel_bounds')

@@ -1,5 +1,6 @@
 """Data-only event candidates from strict telemetry. No tackle or possession inference."""
 from itertools import combinations
+from collections import Counter
 from math import hypot
 
 from .telemetry import TelemetryEngine
@@ -11,6 +12,7 @@ class EventEngine:
         self.active = {}
         self.events = []
         self.result = None
+        self.pair_decisions = Counter()
 
     def _end_pair(self, key, reason):
         row = self.active.pop(key)
@@ -42,15 +44,27 @@ class EventEngine:
             comparable.add(key)
             p, q = first['pitch_position_candidate'], second['pitch_position_candidate']
             distance = hypot(p['x_m']-q['x_m'], p['y_m']-q['y_m'])
-            if distance >= self.telemetry.config.analytics.duel_distance_m:
+            threshold = self.telemetry.config.analytics.duel_distance_m
+            if distance >= threshold:
+                self.pair_decisions['separated'] += 1
                 continue
+            radii = [p.get('measurement_evidence', {}).get('pixel_localization_radius_m') for p in (first, second)]
+            complete = all(radius is not None for radius in radii)
+            # Telemetry validates each supplied radius as finite and nonnegative.
+            if distance+sum(radius for radius in radii if radius is not None) >= threshold:
+                self.pair_decisions['localization_ambiguous'] += 1
+                comparable.discard(key)
+                continue
+            self.pair_decisions['within_pixel_upper_bound' if complete else 'within_nominal_threshold'] += 1
             current.add(key)
             if key not in self.active:
                 self.active[key] = dict(match_id=frame['match_id'], shot_id=frame['shot_id'],
                     track_ids=[a, b], fragment_ids=[fa, fb], coordinate_reference_id=reference,
-                    start_s=t, end_s=t, min_separation_m=distance)
+                    start_s=t, end_s=t, min_separation_m=distance,
+                    threshold_evidence='pixel_upper_bound' if complete else 'nominal_without_complete_pixel_bounds')
             else:
                 row = self.active[key]
+                if not complete: row['threshold_evidence']='nominal_without_complete_pixel_bounds'
                 row['end_s'] = t
                 row['min_separation_m'] = min(row['min_separation_m'], distance)
         for key in list(self.active):
@@ -76,7 +90,7 @@ class EventEngine:
             row.update(event_id=index, measurement_quality='input_validated')
         self.result = dict(schema_version=1,
             status='available' if summary['measured_observations'] else 'unavailable',
-            events=self.events, telemetry=summary,
+            events=self.events, telemetry=summary, pair_threshold_decisions=dict(self.pair_decisions),
             scope='Candidates on observed local tracks. Proximity does not establish a tackle. '
                   'Speed does not establish a counterattack. Input quality assertions are not independently verified.')
         return self.result

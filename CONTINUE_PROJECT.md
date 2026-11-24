@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Uncertainty-aware motion and event fixes — November 24
+
+User requests existing footage only. See docs/uncertain-motion-and-events.md.
+Default sprint decisions now require pixel-only lower bound when supplied;
+proximity uses upper separation bound and splits uncertainty boundaries. Events
+label complete bounds versus nominal. Optional experimental displacement policy
+retains observed jumps only when assumed endpoint bounds permit physical motion.
+Paired replay with separate identity maturity in BOTH arms:0→58 experimental
+speed samples, longest0.40→1.44s,5 fragments,37 uncertain intervals retained.
+30 sprint crossings ambiguous,5 clear lower bound but no qualifying1s sprint.
+All257tests pass. No validated speed/contact or tackle claim; strict production
+displacement gate unchanged. Data/every estimate in evaluations/uncertain-motion-nov24.json.
+Website measurement section exposes all58 values with conditional pixel ranges.
+
 ## November 24 meeting update
 
 See docs/november-24-measurement-review.md and evaluations/pose-resolution-nov24.json.

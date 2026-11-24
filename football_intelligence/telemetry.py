@@ -26,16 +26,21 @@ class Fragment:
     top_speed: float = 0.0
     sprint_start: float | None = None
     sprint_peak: float = 0.0
+    sprint_pixel_bounds_complete: bool = True
     sprints: list = field(default_factory=list)
     position_radius_m: float | None = None
 
 
 class TelemetryEngine:
-    def __init__(self, config=None, *, experimental=False, separate_identity_maturity=False):
+    def __init__(self, config=None, *, experimental=False, separate_identity_maturity=False, uncertainty_aware_displacement=False):
         self.config = config or AppConfig()
         self.experimental = experimental
         if separate_identity_maturity and not experimental:
             raise ValueError("Separate identity maturity is currently experimental only")
+        if uncertainty_aware_displacement and not experimental:
+            raise ValueError("Uncertainty-aware displacement is experimental only")
+        self.uncertainty_aware_displacement = uncertainty_aware_displacement
+        self.uncertainty_retained = 0
         self.separate_identity_maturity = separate_identity_maturity
         self.identity_history = {}
         self.active = {}
@@ -47,6 +52,7 @@ class TelemetryEngine:
         self.closed = False
         self.longest_position_fragment_s = 0.
         self.short_fragment_end_reasons = Counter()
+        self.sprint_decisions = Counter()
 
     def _reasons(self, frame, item):
         reasons = []
@@ -95,9 +101,11 @@ class TelemetryEngine:
             if duration + 1e-9 >= self.config.analytics.min_sprint_duration_s:
                 state.sprints.append({"start_s": state.sprint_start, "end_s": state.last,
                     "duration_s": duration, "peak_speed_kmh": state.sprint_peak,
-                    "end_reason": reason, "truncated": reason != "below_threshold"})
+                    "end_reason": reason, "truncated": reason != "below_threshold",
+                    "threshold_evidence": "pixel_lower_bound" if state.sprint_pixel_bounds_complete else "nominal_without_complete_pixel_bounds"})
             state.sprint_start = None
             state.sprint_peak = 0.0
+            state.sprint_pixel_bounds_complete = True
 
     def _mature(self, state):
         if self.separate_identity_maturity:
@@ -209,8 +217,15 @@ class TelemetryEngine:
                     boundary = "identity_or_reference_change"
                 elif dt > cfg.max_observation_gap_s + 1e-9:
                     boundary = "observation_gap"
-                elif math.hypot(point.x_m-state.position.x_m, point.y_m-state.position.y_m) / dt * 3.6 > cfg.max_speed_kmh + 1e-9:
-                    boundary = "implausible_displacement"
+                else:
+                    displacement = math.hypot(point.x_m-state.position.x_m, point.y_m-state.position.y_m)
+                    minimum = displacement
+                    if self.uncertainty_aware_displacement and radius is not None and state.position_radius_m is not None:
+                        minimum = max(0., displacement-radius-state.position_radius_m)
+                    if minimum / dt * 3.6 > cfg.max_speed_kmh + 1e-9:
+                        boundary = "implausible_displacement"
+                    elif displacement / dt * 3.6 > cfg.max_speed_kmh + 1e-9:
+                        self.uncertainty_retained += 1
                 if boundary:
                     self._finish(key, boundary)
                     self.rejections[boundary] += 1
@@ -257,12 +272,25 @@ class TelemetryEngine:
             # Startup estimates use a shorter, noisier window. They cannot
             # start or inflate a sprint later exported as an event.
             full_window = duration+1e-9 >= cfg.smoothing_window_s
-            if full_window and speed > cfg.sprint_threshold_kmh + 1e-9:
+            # A known localization bound must clear the threshold too. A nominal
+            # threshold crossing inside that bound is ambiguous, not a sprint.
+            lower_speed = max(0., speed-pixel_sensitivity) if pixel_sensitivity is not None else speed
+            if not full_window:
+                sprint_decision = "incomplete_velocity_window"
+            elif speed <= cfg.sprint_threshold_kmh + 1e-9:
+                sprint_decision = "below_threshold"
+            elif lower_speed <= cfg.sprint_threshold_kmh + 1e-9:
+                sprint_decision = "localization_ambiguous"
+            else:
+                sprint_decision = "above_pixel_lower_bound" if pixel_sensitivity is not None else "above_nominal_threshold"
+            self.sprint_decisions[sprint_decision] += 1
+            if sprint_decision in {"above_pixel_lower_bound", "above_nominal_threshold"}:
                 if state.sprint_start is None:
                     state.sprint_start = state.last
+                state.sprint_pixel_bounds_complete &= pixel_sensitivity is not None
                 state.sprint_peak = max(state.sprint_peak, speed)
             else:
-                self._end_sprint(state, "below_threshold")
+                self._end_sprint(state, sprint_decision)
             state.distance += speed/3.6*dt
             # A partial startup window must not set a fragment's reported peak.
             if duration+1e-9 >= cfg.smoothing_window_s:
@@ -277,7 +305,7 @@ class TelemetryEngine:
                     t-state.sprint_start+1e-9 >= cfg.min_sprint_duration_s)
                 result.update(speed_kmh=speed, observed_distance_m=state.distance,
                     observed_duration_s=t-state.start, sprint_count=len(state.sprints)+int(sprinting),
-                    sprinting=sprinting)
+                    sprinting=sprinting, sprint_threshold_decision=sprint_decision)
                 if pixel_sensitivity is not None:
                     result.update(speed_pixel_sensitivity_kmh=pixel_sensitivity,
                         speed_pixel_range_kmh=[max(0., speed-pixel_sensitivity), speed+pixel_sensitivity])
@@ -297,6 +325,10 @@ class TelemetryEngine:
             "person_observations": self.observations, "measured_observations": self.measured,
             "measured_observation_fraction": self.measured/self.observations if self.observations else None,
             "rejection_counts": dict(self.rejections), "discarded_short_fragments": self.discarded,
+            "displacement_policy": "experimental_pixel_bound" if self.uncertainty_aware_displacement else "nominal_displacement",
+            "uncertainty_retained_intervals": self.uncertainty_retained,
+            "sprint_threshold_decisions": dict(self.sprint_decisions),
+            "sprint_threshold_policy": "Use the pixel-only lower speed bound when available; missing bounds are explicitly nominal. This excludes other measurement errors.",
             "continuity_diagnostics": {
                 "longest_position_fragment_s":self.longest_position_fragment_s,
                 "velocity_window_s":self.config.analytics.smoothing_window_s,
@@ -308,5 +340,5 @@ class TelemetryEngine:
             "quality": "Input quality flags are required assertions, not independently verified here",
             "pixel_speed_sensitivity": "Conditional endpoint-localization bound with geometry held fixed. "
                 "Excludes calibration, camera, scale, identity and ground-contact errors. Not a confidence interval. "
-                "Unavailable if endpoint radii are absent. Does not validate speed or change sprint eligibility.",
+                "Unavailable if endpoint radii are absent. Does not validate speed. When available, its lower bound gates sprint eligibility.",
             "smoothing": "Causal time-weighted mean velocity; distance integrates its magnitude"}
