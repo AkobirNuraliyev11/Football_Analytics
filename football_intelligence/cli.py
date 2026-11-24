@@ -70,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
     feet.add_argument("--tracks",type=Path,required=True)
     feet.add_argument("--output",type=Path,required=True)
     feet.add_argument("--pose-model",type=Path,default=Path("data/models/yolo11n-pose.pt"))
+    feet.add_argument("--pose-image-size",type=int,choices=(256,512),default=256,help="Pose crop resolution for paired experiments")
     feet.add_argument("--start-s",type=float,default=0)
     feet.add_argument("--max-frames",type=int)
     feet.add_argument("--no-preview",action="store_true",help="Write comparison data without rendering video")
@@ -139,7 +140,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "review-feet":
             from .foot_review import review_feet
             result=review_feet(args.path,args.geometry,args.tracks,args.output,pose_model=args.pose_model,
-                               start_s=args.start_s,max_frames=args.max_frames,allow_ankle_proxy=args.allow_ankle_proxy,write_preview=not args.no_preview)
+                               start_s=args.start_s,max_frames=args.max_frames,allow_ankle_proxy=args.allow_ankle_proxy,write_preview=not args.no_preview,pose_image_size=args.pose_image_size)
         elif args.command == "review-measurements":
             from .real_measurements import estimate_video
             result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames,write_preview=not args.no_preview,camera_transport_fallback=not args.no_camera_transport)

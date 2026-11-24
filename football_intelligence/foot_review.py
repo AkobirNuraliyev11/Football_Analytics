@@ -16,7 +16,7 @@ from .validation import finite,integer
 from .video import iter_frames,probe_video
 
 
-def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=None,detector=None,allow_ankle_proxy=False,write_preview=True):
+def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=None,detector=None,allow_ankle_proxy=False,write_preview=True,pose_image_size=256):
     import cv2
     import numpy as np
     source,geometry,tracks,output=map(Path,(source,geometry,tracks,output))
@@ -28,13 +28,13 @@ def review_feet(source,geometry,tracks,output,*,pose_model,start_s=0,max_frames=
     quality_path=geometry/"quality.jsonl"
     before={p:(p.stat().st_size,p.stat().st_mtime_ns) for p in [source,tracks,quality_path]}
     config=AppConfig.from_dict(manifest["config"])
-    detector=detector or AnkleDetector(pose_model)
+    detector=detector or AnkleDetector(pose_model,image_size=pose_image_size)
     localizer=FootLocalizer(allow_ankle_proxy=allow_ankle_proxy)
     baseline,experimental=TelemetryEngine(config,experimental=True),TelemetryEngine(config,experimental=True)
     meta=probe_video(source)
     output.mkdir(parents=True,exist_ok=False)
     job={"status":"running","source_sha256":manifest["source_sha256"],"tracks_sha256":manifest["tracks_sha256"],
-         "quality_sha256":sha256(quality_path),"pose_sha256":detector.fingerprint,"processed_frames":0,
+         "quality_sha256":sha256(quality_path),"pose_sha256":detector.fingerprint,"pose_image_size":getattr(detector,"image_size",None),"processed_frames":0,
          "start_s":start_s,"max_frames":max_frames,"ground_contact_verified":False,
          "measurement_quality":"experimental_pose_estimate","allow_ankle_proxy":allow_ankle_proxy,
          "write_preview":write_preview}

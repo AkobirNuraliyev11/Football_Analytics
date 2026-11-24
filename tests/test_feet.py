@@ -77,6 +77,11 @@ class FeetTests(unittest.TestCase):
             out=FootLocalizer().update(rgb,items,{1:{"status":"localized","keypoints":bad}},timestamp_s=0,shot_id=0)[1]
             self.assertEqual(out["status"],"invalid_pose")
 
+    def test_pose_resolution_rejects_invalid_values_before_loading(self):
+        for size in (0, 257, 512.0, True):
+            with self.assertRaisesRegex(ValueError, "image_size"):
+                AnkleDetector(Path("missing.pt"), image_size=size)
+
     def test_model_hash_is_checked_before_loading(self):
         with tempfile.TemporaryDirectory() as folder:
             path=Path(folder)/"yolo11n-pose.pt";path.write_bytes(b"not a model")

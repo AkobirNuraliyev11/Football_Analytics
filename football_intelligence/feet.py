@@ -29,8 +29,11 @@ def download_pose_model(directory):
 
 
 class AnkleDetector:
-    def __init__(self,path,*,device="cpu"):
+    def __init__(self,path,*,device="cpu",image_size=256):
         import os
+        if type(image_size) is not int or image_size not in (256,512):
+            raise ValueError("Pose image_size must be 256 or 512")
+        self.image_size=image_size
         path=Path(path)
         if sha256(path)!=POSE_SHA256:
             raise ValueError("Unexpected pose model hash; refusing to load")
@@ -56,7 +59,7 @@ class AnkleDetector:
             crops.append(np.ascontiguousarray(rgb[y1:y2,x1:x2,::-1]))
             targets.append((item,x1,y1))
         if not crops:return output
-        results=self.model.predict(crops,imgsz=256,conf=.25,device=self.device,verbose=False,rect=False)
+        results=self.model.predict(crops,imgsz=self.image_size,conf=.25,device=self.device,verbose=False,rect=False)
         for result,(item,x,y) in zip(results,targets):
             b=item["bbox"]
             boxes=result.boxes.xyxy.cpu().numpy()+np.array([x,y,x,y])

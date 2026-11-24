@@ -1,5 +1,17 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## November 24 meeting update
+
+See docs/november-24-measurement-review.md and evaluations/pose-resolution-nov24.json.
+Audited all 27 displacement breaks; median anchor component0.536m versus mapping0.063m
+(vector decomposition, not error attribution). Pose512 trial79frames did not improve
+continuity:3 eligible samples vs cached256 rescored on SAME current geometry5;
+0.04s max and0 mature speeds both. Current paired box baseline170, not historical159.
+Current quality SHA309f089... differs from historical8f886b...; comparisons now
+reject mismatched geometry/frame windows. 256 remains default. Added reproducible
+displacement audit and strict foot-review comparator;250tests. No new preview.
+Speed/contact/events still unresolved; no new classification/tracking accuracy claim.
+
 ## Private results website — November 23, 2026
 
 Built web/results with scripts/export_hosted_results.py and a byte-range local

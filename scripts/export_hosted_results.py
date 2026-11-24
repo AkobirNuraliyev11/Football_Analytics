@@ -36,7 +36,7 @@ def export(destination):
         counts['frames_without_ball']+=not balls;counts['unsafe_person_observations']+=sum(not d.get('continuity_safe') for d in persons)
     counts['person_tracks']=len(people)
     catalog=[];selected=list((ROOT/'evaluations').glob('*.json'))+list(root.glob('*.json'))
-    for folder in [replay,geometry,root/'context-integrated-measurements',root/'context-shoe-comparison',root/'context-ankle-proxy-comparison',maps]:selected+=list(folder.glob('*.json'))
+    for folder in [replay,geometry,root/'context-integrated-measurements',root/'context-shoe-comparison',root/'context-ankle-proxy-comparison',root/'pose512-shoe-comparison',root/'pose256-current-geometry',maps]:selected+=list(folder.glob('*.json'))
     for p in sorted(set(selected)):
         if p.name in {'kit-features.json','official-kit-trial.json'}:continue
         relative=p.relative_to(ROOT).as_posix();name=hashlib.sha256(relative.encode()).hexdigest()[:12]+'.json'
@@ -46,7 +46,7 @@ def export(destination):
     for p in sorted((ROOT/'docs').glob('*.md')):
         (evidence/p.name).write_text(clean(p.read_text()))
         docs.append(dict(title=p.stem.replace('-',' '),url='evidence/'+p.name,source='https://github.com/AkobirNuraliyev11/Football_Analytics/blob/'+commit+'/docs/'+p.name))
-    manifest=dict(updated='2026-11-23',source_commit=commit,source_sha256=meta['source_sha256'],width=1280,height=720,fps=25,frames=frames,radar=radar,groups=groups,coverage=occupancy['coverage'],counts=dict(counts),pitch=occupancy['pitch'],video='assets/match.mp4',catalog=catalog,documents=docs,role_score=json.loads((replay/'role-score.json').read_text()),continuity=json.loads((root/'current-continuity-comparison.json').read_text()),measurements=json.loads((geometry/'summary.json').read_text()),events=json.loads((replay/'events.json').read_text()),scope='Retained-detection replay. Experimental positions only; physical measurements unavailable.',excluded_artifacts=['Model weights, databases, credentials, raw feature dumps, and unavailable historical local videos'])
+    manifest=dict(updated='2026-11-24',source_commit=commit,source_sha256=meta['source_sha256'],width=1280,height=720,fps=25,frames=frames,radar=radar,groups=groups,coverage=occupancy['coverage'],counts=dict(counts),pitch=occupancy['pitch'],video='assets/match.mp4',catalog=catalog,documents=docs,role_score=json.loads((replay/'role-score.json').read_text()),continuity=json.loads((root/'current-continuity-comparison.json').read_text()),measurements=json.loads((geometry/'summary.json').read_text()),events=json.loads((replay/'events.json').read_text()),scope='Retained-detection replay. Experimental positions only; physical measurements unavailable.',excluded_artifacts=['Model weights, databases, credentials, raw feature dumps, and unavailable historical local videos'])
     (out/'results.json').write_text(json.dumps(clean(manifest),separators=(',',':'),allow_nan=False))
     with (evidence/'latest-tracks.jsonl').open('w') as f:
         for r in rows:f.write(json.dumps(clean(r),separators=(',',':'))+'\n')

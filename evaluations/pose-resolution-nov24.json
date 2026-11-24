@@ -1,0 +1,27 @@
+{
+  "source_sha256": "386ddffcb89b0f1d64d0210268b77da92ecb98758962a1ce08575c07bed01609",
+  "tracks_sha256": "13a8f1c381a077211d1f7a34b47e142318f0adf5a30aa6a81a02da5637903f1a",
+  "quality_sha256": "309f0894563b4116e2be3ece61567b8993d6bbe5d719008b6241846e111cf1d3",
+  "frames": 79,
+  "results": [
+    {
+      "review": "pose256-current-geometry",
+      "pose_image_size": 256,
+      "eligible_samples": 5,
+      "longest_fragment_s": 0.03999999999999915,
+      "measured_samples": 0,
+      "shoe_candidates": 53,
+      "box_samples": 170
+    },
+    {
+      "review": "pose512-shoe-comparison",
+      "pose_image_size": 512,
+      "eligible_samples": 3,
+      "longest_fragment_s": 0.040000000000000924,
+      "measured_samples": 0,
+      "shoe_candidates": 51,
+      "box_samples": 170
+    }
+  ],
+  "scope": "Matched input availability comparison, not independent accuracy or verified ground contact."
+}
