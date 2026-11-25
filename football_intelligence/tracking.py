@@ -155,7 +155,9 @@ class MultiObjectTracker:
                 track.velocity = (.5*track.velocity+.5*velocity if track.continuity_safe
                                   else np.zeros(4))
                 track.detection, track.last_seen_s = detection, timestamp_s
-                track.hits += 1
+                # Confirmation belongs to the current identity segment, not the
+                # lifetime of a possibly reassigned numeric track ID.
+                track.hits = track.hits+1 if track.continuity_safe else 1
                 if track.continuity_safe:
                     track.appearance = .8*track.appearance+.2*descriptors[j]
                     track.appearance /= max(float(np.linalg.norm(track.appearance)),1e-9)

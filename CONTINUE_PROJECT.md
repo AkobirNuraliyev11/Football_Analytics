@@ -1,5 +1,21 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Continuity recovery — November 25
+
+Tracking now resets confirmation after an uncertain identity boundary. Replay of
+375 frames preserves every ID, box, role and team assignment; 234 observations
+(including 162 person observations) must earn confirmation again. This is a
+confidence correctness fix, not measured identity-accuracy improvement.
+
+Optional review flag `--retain-checked-refit` retains a CURRENT paint-checked fit
+when camera stabilization rejects it, marking it camera-unstable and resetting
+its reference. It can seed the next frame; it never substitutes a stale matrix.
+Same-input trial: geometry 214→227/375, camera-stable 197→205, longest accepted
+position fragment 0.40→0.48 seconds, still zero mature speed observations.
+Default remains off pending independent position checks. Full 259-test suite
+passes. Saved live product results unchanged. Exact paired provenance and summaries:
+`evaluations/continuity-recovery-nov25.json`.
+
 ## Product interface — November 25
 
 User rejected presentation/research-report UI. Main site now only Match review,

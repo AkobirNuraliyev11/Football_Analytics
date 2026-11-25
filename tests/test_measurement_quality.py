@@ -82,6 +82,23 @@ class MeasurementQualityTests(unittest.TestCase):
         current[:]=[60,115,45]
         with self.assertRaises(CalibrationError):transport_midfield(rgb,current,first,[],[])
 
+    def test_failed_camera_check_retains_only_current_refit_as_unstable_seed(self):
+        from unittest.mock import patch
+        from football_intelligence.real_measurements import stabilize_checked_refit
+        previous=PaintFit(np.eye(3),{'camera_stable':True})
+        matrix=np.array([[1,0,2],[0,1,0],[0,0,1]])
+        current=PaintFit(matrix,{'status':'line_checked_estimate'})
+        with patch('football_intelligence.real_measurements.stabilize_camera',side_effect=CalibrationError('flow rejected')):
+            with self.assertRaises(CalibrationError):stabilize_checked_refit(None,None,previous,current,[],[],None)
+            result=stabilize_checked_refit(None,None,previous,current,[],[],None,retain=True)
+        np.testing.assert_array_equal(result.matrix,matrix)
+        self.assertFalse(result.evidence['camera_stable'])
+        self.assertTrue(result.evidence['camera_reference_reset'])
+        self.assertTrue(previous.evidence['camera_stable'])
+        with patch('football_intelligence.real_measurements.stabilize_camera',return_value=previous) as check:
+            self.assertIs(stabilize_checked_refit(None,None,result,previous,[],[],None,retain=True),previous)
+            self.assertIs(check.call_args.args[2],result)
+
     def test_foot_evidence_requires_visibility_and_never_claims_ground_contact(self):
         rgb=np.full((300,300,3),[60,115,45],dtype=np.uint8)
         fit=PaintFit(np.array([[.1,0,37.5],[0,.1,14],[0,0,1]]),{})

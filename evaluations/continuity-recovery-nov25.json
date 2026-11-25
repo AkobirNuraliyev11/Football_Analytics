@@ -1,0 +1,168 @@
+{
+  "scope": "Paired retained-detection and checked-refit diagnostics on one 375-frame clip; not identity or speed accuracy. Camera retention remains opt-in.",
+  "geometry": {
+    "context-transport-measurements": {
+      "quality_sha256": "309f0894563b4116e2be3ece61567b8993d6bbe5d719008b6241846e111cf1d3",
+      "geometry_frames": 214,
+      "camera_stable_frames": 197,
+      "reference_reset_frames": 0,
+      "summary": {
+        "schema_version": 1,
+        "status": "unavailable",
+        "measurement_quality": "experimental_estimate",
+        "maturity_policy": "continuous_measurement_fragment",
+        "config": {
+          "schema_version": 1,
+          "pitch": {
+            "length_m": 105.0,
+            "width_m": 68.0
+          },
+          "analytics": {
+            "sprint_threshold_kmh": 18.0,
+            "max_speed_kmh": 36.0,
+            "smoothing_window_s": 0.5,
+            "min_track_duration_s": 2.0,
+            "min_sprint_duration_s": 1.0,
+            "duel_distance_m": 1.3,
+            "min_duel_duration_s": 0.5,
+            "highlight_padding_s": 1.5,
+            "max_observation_gap_s": 0.25
+          }
+        },
+        "processed_frames": 375,
+        "person_observations": 8487,
+        "measured_observations": 0,
+        "measured_observation_fraction": 0.0,
+        "rejection_counts": {
+          "role_unknown": 470,
+          "unconfirmed_track": 112,
+          "uncertain_association": 210,
+          "missing_coordinate_reference_id": 8240,
+          "paint_check_unavailable": 8240,
+          "feet_evidence_unavailable": 8240,
+          "camera_stability_unverified": 8261,
+          "position_unavailable": 8240,
+          "missing_calibration_id": 5010,
+          "implausible_displacement": 27,
+          "identity_or_reference_change": 2
+        },
+        "discarded_short_fragments": 51,
+        "displacement_policy": "nominal_displacement",
+        "uncertainty_retained_intervals": 0,
+        "sprint_threshold_decisions": {
+          "incomplete_velocity_window": 142
+        },
+        "sprint_threshold_policy": "Use the pixel-only lower speed bound when available; missing bounds are explicitly nominal. This excludes other measurement errors.",
+        "continuity_diagnostics": {
+          "longest_position_fragment_s": 0.40000000000000036,
+          "velocity_window_s": 0.5,
+          "minimum_identity_duration_s": 2.0,
+          "short_fragment_end_reasons": {
+            "missing_coordinate_reference_id": 18,
+            "implausible_displacement": 27,
+            "missing_calibration_id": 2,
+            "identity_or_reference_change": 2,
+            "role_unknown": 1,
+            "end_of_input": 1
+          },
+          "scope": "Accepted position fragments, including warmup; not validated speed or ground contact"
+        },
+        "fragments": [],
+        "scope": "Observed continuous fragments, not verified athletes or full-match totals",
+        "quality": "Input quality flags are required assertions, not independently verified here",
+        "pixel_speed_sensitivity": "Conditional endpoint-localization bound with geometry held fixed. Excludes calibration, camera, scale, identity and ground-contact errors. Not a confidence interval. Unavailable if endpoint radii are absent. Does not validate speed. When available, its lower bound gates sprint eligibility.",
+        "smoothing": "Causal time-weighted mean velocity; distance integrates its magnitude"
+      }
+    },
+    "refit-reset-trial": {
+      "quality_sha256": "416d9a69bcb6a0968408f16d20c666047107338cabdf49e1487ce62f23dafede",
+      "geometry_frames": 227,
+      "camera_stable_frames": 205,
+      "reference_reset_frames": 19,
+      "summary": {
+        "schema_version": 1,
+        "status": "unavailable",
+        "measurement_quality": "experimental_estimate",
+        "maturity_policy": "continuous_measurement_fragment",
+        "config": {
+          "schema_version": 1,
+          "pitch": {
+            "length_m": 105.0,
+            "width_m": 68.0
+          },
+          "analytics": {
+            "sprint_threshold_kmh": 18.0,
+            "max_speed_kmh": 36.0,
+            "smoothing_window_s": 0.5,
+            "min_track_duration_s": 2.0,
+            "min_sprint_duration_s": 1.0,
+            "duel_distance_m": 1.3,
+            "min_duel_duration_s": 0.5,
+            "highlight_padding_s": 1.5,
+            "max_observation_gap_s": 0.25
+          }
+        },
+        "processed_frames": 375,
+        "person_observations": 8487,
+        "measured_observations": 0,
+        "measured_observation_fraction": 0.0,
+        "rejection_counts": {
+          "role_unknown": 470,
+          "unconfirmed_track": 112,
+          "uncertain_association": 210,
+          "missing_coordinate_reference_id": 8216,
+          "paint_check_unavailable": 8216,
+          "feet_evidence_unavailable": 8216,
+          "camera_stability_unverified": 8238,
+          "position_unavailable": 8216,
+          "missing_calibration_id": 5009,
+          "implausible_displacement": 34,
+          "identity_or_reference_change": 2
+        },
+        "discarded_short_fragments": 57,
+        "displacement_policy": "nominal_displacement",
+        "uncertainty_retained_intervals": 0,
+        "sprint_threshold_decisions": {
+          "incomplete_velocity_window": 152
+        },
+        "sprint_threshold_policy": "Use the pixel-only lower speed bound when available; missing bounds are explicitly nominal. This excludes other measurement errors.",
+        "continuity_diagnostics": {
+          "longest_position_fragment_s": 0.47999999999999865,
+          "velocity_window_s": 0.5,
+          "minimum_identity_duration_s": 2.0,
+          "short_fragment_end_reasons": {
+            "implausible_displacement": 34,
+            "missing_coordinate_reference_id": 8,
+            "camera_stability_unverified": 7,
+            "missing_calibration_id": 4,
+            "identity_or_reference_change": 2,
+            "role_unknown": 1,
+            "end_of_input": 1
+          },
+          "scope": "Accepted position fragments, including warmup; not validated speed or ground contact"
+        },
+        "fragments": [],
+        "scope": "Observed continuous fragments, not verified athletes or full-match totals",
+        "quality": "Input quality flags are required assertions, not independently verified here",
+        "pixel_speed_sensitivity": "Conditional endpoint-localization bound with geometry held fixed. Excludes calibration, camera, scale, identity and ground-contact errors. Not a confidence interval. Unavailable if endpoint radii are absent. Does not validate speed. When available, its lower bound gates sprint eligibility.",
+        "smoothing": "Causal time-weighted mean velocity; distance integrates its magnitude"
+      }
+    }
+  },
+  "tracking": {
+    "baseline_sha256": "13a8f1c381a077211d1f7a34b47e142318f0adf5a30aa6a81a02da5637903f1a",
+    "updated_sha256": "942c541668688ac57d08ccb7ccbca9e8c11a2a54dce9fbc0dc1ce81163178035",
+    "changed_observations": {
+      "track_id": 0,
+      "continuity_segment": 0,
+      "continuity_safe": 0,
+      "role": 0,
+      "team": 0,
+      "confirmed": 234,
+      "bbox": 0
+    },
+    "newly_unconfirmed_observations": 234
+  },
+  "source_sha256": "386ddffcb89b0f1d64d0210268b77da92ecb98758962a1ce08575c07bed01609",
+  "tracks_sha256": "13a8f1c381a077211d1f7a34b47e142318f0adf5a30aa6a81a02da5637903f1a"
+}

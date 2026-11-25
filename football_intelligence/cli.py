@@ -61,6 +61,7 @@ def main(argv: list[str] | None = None) -> int:
     review.add_argument("--output",type=Path,required=True)
     review.add_argument("--max-frames",type=int)
     review.add_argument("--no-preview",action="store_true",help="Write only measurement data")
+    review.add_argument("--retain-checked-refit",action="store_true",help="Experimental: retain a current paint fit as a recovery seed after a failed camera check")
     review.add_argument("--no-camera-transport",action="store_true",help="Disable current-paint-checked camera fallback for baseline comparisons")
     pose_download=commands.add_parser("download-pose-model",help="Download the pinned optional ankle model")
     pose_download.add_argument("--model-dir",type=Path,default=Path("data/models"))
@@ -143,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
                                start_s=args.start_s,max_frames=args.max_frames,allow_ankle_proxy=args.allow_ankle_proxy,write_preview=not args.no_preview,pose_image_size=args.pose_image_size)
         elif args.command == "review-measurements":
             from .real_measurements import estimate_video
-            result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames,write_preview=not args.no_preview,camera_transport_fallback=not args.no_camera_transport)
+            result=estimate_video(args.path,args.analysis,args.output,tracks=args.tracks,max_frames=args.max_frames,write_preview=not args.no_preview,camera_transport_fallback=not args.no_camera_transport,retain_checked_refit=args.retain_checked_refit)
         elif args.command == "compute-telemetry":
             from .telemetry_io import compute_telemetry
             result = compute_telemetry(args.path,args.output,

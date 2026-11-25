@@ -15,7 +15,17 @@ from .validation import integer
 from .video import iter_frames, probe_video
 
 
-def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None, camera_transport_fallback=True):
+def stabilize_checked_refit(previous_rgb, rgb, previous_fit, fit, previous_items, items, pitch, *, retain=False):
+    """Retain a current paint refit as a new seed, never as camera evidence."""
+    try:
+        return stabilize_camera(previous_rgb,rgb,previous_fit,fit,previous_items,items,pitch)
+    except CalibrationError as exc:
+        if not retain: raise
+        fit.evidence=dict(fit.evidence,camera_stable=False,camera_rejection=str(exc),camera_reference_reset=True)
+        return fit
+
+
+def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None, camera_transport_fallback=True, retain_checked_refit=False):
     import cv2
     source,analysis,output=Path(source),Path(analysis),Path(output)
     if cancel_check is not None: cancel_check()
@@ -40,7 +50,7 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
          "calibrations_sha256":sha256(analysis/"calibrations.jsonl"),"processed_frames":0,
          "measurement_quality":"experimental_estimate","config":config.to_dict(),
          "ground_contact_verified":False,"max_frames":max_frames,"write_preview":write_preview,
-         "camera_transport_fallback":camera_transport_fallback}
+         "camera_transport_fallback":camera_transport_fallback,"retain_checked_refit":retain_checked_refit}
     write_manifest(output/"manifest.json",job)
     previous=previous_items=previous_fit=previous_shot=None
     try:
@@ -80,7 +90,8 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
                         transported=True
                     if fit is None: raise CalibrationError(failure)
                     if consecutive and not transported:
-                        fit=stabilize_camera(previous.rgb,frame.rgb,previous_fit,fit,previous_items,items,config.pitch)
+                        fit=stabilize_checked_refit(previous.rgb,frame.rgb,previous_fit,fit,previous_items,items,
+                                                    config.pitch,retain=retain_checked_refit)
                     elif not transported:
                         fit.evidence["camera_stable"]=False
                 except CalibrationError as exc:

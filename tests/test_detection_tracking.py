@@ -69,6 +69,20 @@ class TrackingTests(unittest.TestCase):
         self.assertTrue(next_track.continuity_safe)
         np.testing.assert_allclose(next_track.velocity,[12.5,0,12.5,0])
 
+    def test_reacquired_identity_must_earn_confirmation_again(self):
+        from football_intelligence.tracking import MultiObjectTracker
+        self.tracker=MultiObjectTracker(min_hits=3)
+        for i in range(4):result=self.update([self.detection()],i*.04)[0]
+        self.assertTrue(result[1])
+        old_id=result[0].track_id
+        self.update([],.16);self.update([],.20);self.update([],.24)
+        recovered=self.update([self.detection()],.28)[0]
+        self.assertEqual(recovered[0].track_id,old_id)
+        self.assertFalse(recovered[1])
+        self.assertEqual(recovered[0].hits,1)
+        self.assertFalse(self.update([self.detection()],.32)[0][1])
+        self.assertTrue(self.update([self.detection()],.36)[0][1])
+
     def test_valid_prediction_is_unchanged_and_lost_track_is_not_emitted(self):
         import numpy as np
         from football_intelligence.tracking import predict_box
