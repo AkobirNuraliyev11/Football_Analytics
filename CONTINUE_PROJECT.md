@@ -1,5 +1,19 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Product interface — November 25
+
+User rejected presentation/research-report UI. Main site now only Match review,
+Players, Heatmaps, Speeds, Moments. No model comparisons, evidence-library routes,
+release diagnostics or implementation cards in product screens. Data/reports remain
+preserved separately. Map defaults to explicitly labeled camera-frame positions
+from current boxes, not invented pitch coordinates. Optional pitch view retains
+current sparse samples with next-mapped-moment navigation. This is a usability
+fix, not a solved pitch-calibration model. Estimated speeds retain concise labels.
+Manual moments support save, rename, replay, remove and export; local browser
+storage only. Product loads product.json without report catalogs. Browser QA
+checked camera/pitch maps, synchronized seeking, player following, heatmap loading,
+speed-to-video links, saved moment persistence and removal. New deadline Nov26.
+
 ## Uncertainty-aware motion and event fixes — November 24
 
 User requests existing footage only. See docs/uncertain-motion-and-events.md.

@@ -47,6 +47,9 @@ def export(destination):
         (evidence/p.name).write_text(clean(p.read_text()))
         docs.append(dict(title=p.stem.replace('-',' '),url='evidence/'+p.name,source='https://github.com/AkobirNuraliyev11/Football_Analytics/blob/'+commit+'/docs/'+p.name))
     manifest=dict(updated='2026-11-24',source_commit=commit,source_sha256=meta['source_sha256'],width=1280,height=720,fps=25,frames=frames,radar=radar,groups=groups,coverage=occupancy['coverage'],counts=dict(counts),pitch=occupancy['pitch'],video='assets/match.mp4',catalog=catalog,documents=docs,role_score=json.loads((replay/'role-score.json').read_text()),continuity=json.loads((root/'current-continuity-comparison.json').read_text()),measurements=json.loads((geometry/'summary.json').read_text()),events=json.loads((replay/'events.json').read_text()),motion_trial=json.loads((ROOT/'evaluations/uncertain-motion-nov24.json').read_text()),scope='Retained-detection replay. Experimental positions only; physical measurements unavailable.',excluded_artifacts=['Model weights, databases, credentials, raw feature dumps, and unavailable historical local videos'])
+    product={k:manifest[k] for k in ('source_sha256','width','height','fps','frames','radar','groups','video')}
+    product['speeds']=manifest['motion_trial']['measured_samples']
+    (out/'product.json').write_text(json.dumps(clean(product),separators=(',',':'),allow_nan=False))
     (out/'results.json').write_text(json.dumps(clean(manifest),separators=(',',':'),allow_nan=False))
     with (evidence/'latest-tracks.jsonl').open('w') as f:
         for r in rows:f.write(json.dumps(clean(r),separators=(',',':'))+'\n')
