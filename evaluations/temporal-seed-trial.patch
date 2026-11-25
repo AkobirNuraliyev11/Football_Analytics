@@ -1,0 +1,34 @@
+diff --git a/football_intelligence/real_measurements.py b/football_intelligence/real_measurements.py
+index 7c98e23..497b47b 100644
+--- a/football_intelligence/real_measurements.py
++++ b/football_intelligence/real_measurements.py
+@@ -25,7 +25,7 @@ def stabilize_checked_refit(previous_rgb, rgb, previous_fit, fit, previous_items
+         return fit
+ 
+ 
+-def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None, camera_transport_fallback=True, retain_checked_refit=False):
++def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, write_preview=True, cancel_check=None, camera_transport_fallback=True, retain_checked_refit=False, prefer_previous_seed=False):
+     import cv2
+     source,analysis,output=Path(source),Path(analysis),Path(output)
+     if cancel_check is not None: cancel_check()
+@@ -50,7 +50,7 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
+          "calibrations_sha256":sha256(analysis/"calibrations.jsonl"),"processed_frames":0,
+          "measurement_quality":"experimental_estimate","config":config.to_dict(),
+          "ground_contact_verified":False,"max_frames":max_frames,"write_preview":write_preview,
+-         "camera_transport_fallback":camera_transport_fallback,"retain_checked_refit":retain_checked_refit}
++         "camera_transport_fallback":camera_transport_fallback,"retain_checked_refit":retain_checked_refit,"prefer_previous_seed":prefer_previous_seed}
+     write_manifest(output/"manifest.json",job)
+     previous=previous_items=previous_fit=previous_shot=None
+     try:
+@@ -74,7 +74,10 @@ def estimate_video(source, analysis, output, *, tracks=None, max_frames=None, wr
+                     if cal is not None and (cal["width"],cal["height"],cal["shot_id"],cal["match_id"])!=(meta.width,meta.height,old["shot_id"],old["match_id"]):
+                         raise ValueError("Calibration scope mismatch")
+                     seeds=[("model",cal["matrix"])] if cal else []
+-                    if consecutive: seeds.append(("previous_checked_frame",previous_fit.matrix))
++                    if consecutive:
++                        previous_seed=("previous_checked_frame",previous_fit.matrix)
++                        if prefer_previous_seed: seeds.insert(0,previous_seed)
++                        else: seeds.append(previous_seed)
+                     failure="No seed pitch fit"
+                     for origin,seed in seeds:
+                         try:

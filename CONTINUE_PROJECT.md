@@ -1,5 +1,27 @@
 # Continuation prompt for ChatGPT Astra or another coding assistant
 
+## Tracking and pitch follow-up — November 25
+
+Confirmation and lifetime association counts are now separate: reconfirming a
+recovered track no longer disables its existing kit mismatch gate. Gap decisions
+use a 1 ns roundoff tolerance; exact 0.12-second gaps behave identically at different
+timestamp origins. Real gaps above the limit still reset confidence.
+
+Exact pre/post labeled aerial replay has unchanged scores: 331/682 matched,
+248 same-ID links, 143 eligible links, one adjacent ID change. Earlier historical
+scores differ and must not be attributed to this change. Broadcast replay changes
+some IDs/labels (45 person ID observations); selected role score remains 82/96 and
+team score 64/64. Rejected measurement links decrease 380→362, which is not proof
+of better identity accuracy. Regression tests cover kit changes after recovery,
+confirmation warmup and timestamp origins. All 262 tests pass.
+
+Two pitch trials rejected: previous-fit-first seeds give the same 214 geometry /
+197 camera-stable frames and 0.40s longest fragment; denser optical-flow features
+(500 corners, 6px spacing) reduce this to 212 / 195, same longest fragment. No
+pitch default changes or website redeployment. Full provenance/results in
+`evaluations/tracking-pitch-followup-nov25.json`; rejected seed experiment diff in
+`evaluations/temporal-seed-trial.patch`. Reliable speeds still unresolved.
+
 ## Continuity recovery — November 25
 
 Tracking now resets confirmation after an uncertain identity boundary. Replay of

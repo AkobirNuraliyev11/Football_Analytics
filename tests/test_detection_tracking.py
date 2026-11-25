@@ -25,6 +25,27 @@ class TrackingTests(unittest.TestCase):
     def update(self,detections,time,shot=0):
         return self.tracker.update(detections,self.rgb,timestamp_s=time,shot_id=shot)
 
+    def test_gap_boundary_is_invariant_to_timestamp_origin(self):
+        from football_intelligence.tracking import MultiObjectTracker
+        for offset in (0.,1.,10.,3600.):
+            for gap,expected in ((.12,'matched'),(.120001,'reacquired_after_gap')):
+                with self.subTest(offset=offset,gap=gap):
+                    tracker=MultiObjectTracker(min_hits=2)
+                    tracker.update([self.detection()],self.rgb,timestamp_s=offset,shot_id=0)
+                    result=tracker.update([self.detection()],self.rgb,timestamp_s=offset+gap,shot_id=0)
+                    self.assertEqual(result[0][0].association_reason,expected)
+                    self.assertEqual(result[0][1],expected=='matched')
+
+    def test_gap_reset_and_track_expiry_respect_exact_time_limits(self):
+        from football_intelligence.tracking import MultiObjectTracker
+        for gap,same_id in ((.12,True),(.120001,False)):
+            for field in ('max_gap_s','max_lost_s'):
+                with self.subTest(gap=gap,field=field):
+                    tracker=MultiObjectTracker(**{field:.12})
+                    first=tracker.update([self.detection()],self.rgb,timestamp_s=1.,shot_id=0)[0][0].track_id
+                    recovered=tracker.update([self.detection()],self.rgb,timestamp_s=1.+gap,shot_id=0)[0][0].track_id
+                    self.assertEqual(first==recovered,same_id)
+
     def test_motion_and_short_occlusion_retain_identity(self):
         first = self.update([self.detection()],0)[0][0].track_id
         self.update([self.detection(12)],.04)
@@ -79,9 +100,21 @@ class TrackingTests(unittest.TestCase):
         recovered=self.update([self.detection()],.28)[0]
         self.assertEqual(recovered[0].track_id,old_id)
         self.assertFalse(recovered[1])
-        self.assertEqual(recovered[0].hits,1)
+        self.assertEqual(recovered[0].confirmation_hits,1)
+        self.assertEqual(recovered[0].hits,5)
         self.assertFalse(self.update([self.detection()],.32)[0][1])
         self.assertTrue(self.update([self.detection()],.36)[0][1])
+
+    def test_reconfirmation_does_not_disable_established_kit_gate(self):
+        from unittest.mock import patch
+        import numpy as np
+        with patch('football_intelligence.tracking.torso_feature',return_value=np.array([1.,0.,0.])):
+            for t in (0.,.04,.08): self.update([self.detection()],t)
+            old_id=self.update([self.detection()],.24)[0][0].track_id
+        with patch('football_intelligence.tracking.torso_feature',return_value=np.array([0.,1.,0.])):
+            replacement=self.update([self.detection()],.28)[0]
+        self.assertNotEqual(replacement[0].track_id,old_id)
+        self.assertFalse(replacement[1])
 
     def test_valid_prediction_is_unchanged_and_lost_track_is_not_emitted(self):
         import numpy as np

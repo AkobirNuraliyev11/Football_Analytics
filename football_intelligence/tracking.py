@@ -1,5 +1,6 @@
 """Timestamp-aware multi-object association with motion and torso appearance."""
 from dataclasses import asdict, dataclass
+import math
 
 from .detection import Detection
 from .validation import finite, integer
@@ -18,6 +19,12 @@ class Track:
     continuity_segment: int = 0
     continuity_safe: bool = False
     association_reason: str = "new_track"
+    confirmation_hits: int = 1
+
+
+def exceeds_time_limit(elapsed, limit):
+    """Keep timestamp subtraction roundoff from changing gap decisions."""
+    return elapsed > limit and not math.isclose(elapsed,limit,rel_tol=0.,abs_tol=1e-9)
 
 
 def appearance(rgb, bbox):
@@ -86,10 +93,10 @@ class MultiObjectTracker:
         integer("shot_id", shot_id)
         if self.previous_time is not None and timestamp_s <= self.previous_time:
             raise ValueError("Tracker timestamps must strictly increase")
-        if self.shot_id != shot_id or (self.previous_time is not None and timestamp_s-self.previous_time > self.max_gap_s):
+        if self.shot_id != shot_id or (self.previous_time is not None and exceeds_time_limit(timestamp_s-self.previous_time,self.max_gap_s)):
             self.tracks.clear()
         self.previous_time, self.shot_id = timestamp_s, shot_id
-        self.tracks = {k:t for k,t in self.tracks.items() if timestamp_s-t.last_seen_s <= self.max_lost_s}
+        self.tracks = {k:t for k,t in self.tracks.items() if not exceeds_time_limit(timestamp_s-t.last_seen_s,self.max_lost_s)}
         descriptors = [appearance(rgb,d.bbox) for d in detections]
         kits = [torso_feature(rgb,asdict(d.bbox)) if d.kind=="person" else None for d in detections]
         old = list(self.tracks.values())
@@ -145,7 +152,7 @@ class MultiObjectTracker:
                 alternatives=np.concatenate([np.delete(costs[i],j),np.delete(costs[:,j],i)])
                 margin=float(alternatives.min()-costs[i,j]) if len(alternatives) else float("inf")
                 reason=("invalid_motion_prediction" if i in prediction_resets else
-                        "reacquired_after_gap" if dt>.12 else "ambiguous_assignment" if margin<.08
+                        "reacquired_after_gap" if exceeds_time_limit(dt,.12) else "ambiguous_assignment" if margin<.08
                         else "weak_assignment" if costs[i,j]>.6 else "matched")
                 track.continuity_safe=reason=="matched"
                 track.association_reason=reason
@@ -157,7 +164,8 @@ class MultiObjectTracker:
                 track.detection, track.last_seen_s = detection, timestamp_s
                 # Confirmation belongs to the current identity segment, not the
                 # lifetime of a possibly reassigned numeric track ID.
-                track.hits = track.hits+1 if track.continuity_safe else 1
+                track.hits += 1
+                track.confirmation_hits = track.confirmation_hits+1 if track.continuity_safe else 1
                 if track.continuity_safe:
                     track.appearance = .8*track.appearance+.2*descriptors[j]
                     track.appearance /= max(float(np.linalg.norm(track.appearance)),1e-9)
@@ -176,4 +184,4 @@ class MultiObjectTracker:
                 self.next_id += 1
                 matched[j] = track
         # Only observed boxes are emitted. Unseen predictions never become telemetry.
-        return [(matched[j], matched[j].hits >= self.min_hits) for j in sorted(matched)]
+        return [(matched[j], matched[j].confirmation_hits >= self.min_hits) for j in sorted(matched)]
